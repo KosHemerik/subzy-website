@@ -75,9 +75,7 @@ export default function AanvraagForm() {
     setForm((prev) => ({ ...prev, maatregel }));
   }, [searchParams]);
 
-  const doelgroepParam = searchParams.get("doelgroep");
-  const [doelgroep, setDoelgroep] = useState(doelgroepParam || null);
-  const showDoelgroepStep = !doelgroepParam && doelgroep === null;
+  const doelgroep = searchParams.get("doelgroep") || "particulier";
   const regeling = DOELGROEP_REGELING[doelgroep] || "ISDE";
 
   const showIsolatieType = form.maatregel === "isolatie";
@@ -191,38 +189,6 @@ export default function AanvraagForm() {
       setLoading(false);
     }
   };
-
-  if (showDoelgroepStep) {
-    return (
-      <div className="bg-white rounded-2xl border-2 border-gray-100 shadow-sm overflow-hidden">
-        <div className="px-6 pt-6 pb-4">
-          <h2 className="text-primary font-bold text-xl">Voor wie vraagt u subsidie aan?</h2>
-          <p className="text-gray-500 text-sm mt-0.5">Dit bepaalt welke subsidieregeling voor u van toepassing is.</p>
-        </div>
-        <div className="px-6 pb-8 flex flex-col gap-4">
-          {[
-            { value: "particulier", icon: "fa-solid fa-house", label: "Particulier", description: "Voor uw eigen woning" },
-            { value: "verhuurder", icon: "fa-solid fa-building", label: "Verhuurder", description: "Voor uw huurwoning(en)" },
-            { value: "vve", icon: "fa-solid fa-users", label: "VvE", description: "Voor uw appartementencomplex" },
-          ].map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => setDoelgroep(opt.value)}
-              className="flex items-center gap-4 w-full border-2 border-gray-200 hover:border-secondary rounded-xl px-5 py-4 text-left transition"
-            >
-              <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-secondary text-xl shrink-0">
-                <i className={opt.icon} />
-              </div>
-              <div>
-                <p className="font-semibold text-primary text-base">{opt.label}</p>
-                <p className="text-gray-500 text-sm">{opt.description}</p>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-    );
-  }
 
   if (submitted) {
     return (

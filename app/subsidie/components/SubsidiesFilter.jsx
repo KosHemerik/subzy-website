@@ -3,171 +3,183 @@
 import Link from "next/link";
 import { useState } from "react";
 
-const tabs = ["Particulier", "Zakelijk", "Verhuurder", "VvE"];
+const tabs = ["Particulier", "Verhuurder", "VvE"];
 
 const subsidyCards = {
   Particulier: [
     {
-      icon: "fa-solid fa-house-chimney-window",
-      title: "Isolatie subsidie",
-      badge: "Populair",
-      description:
-        "Spouwmuur, vloer, dak of gevel isoleren. Beschikbaar voor eigenaar-bewoners die isoleren via een erkend installateur.",
-      avgReturn: "Gem. €1.200 terug",
-      from: "Vanaf €65",
-    },
-    {
       icon: "fa-solid fa-fan",
       title: "Warmtepomp subsidie",
-      badge: null,
-      description:
-        "Hybride of volledig elektrische warmtepomp. De meest aangevraagde subsidie bij ons, waarbij het type systeem en het vermogen bepalen hoeveel u terugkrijgt.",
+      badge: "Populair",
+      slug: "warmtepomp",
+      description: "Hybride of volledig elektrische warmtepomp. Type systeem en vermogen bepalen uw subsidiebedrag.",
       avgReturn: "Gem. €2.400 terug",
       from: "Vanaf €85",
     },
     {
-      icon: "fa-solid fa-border-all",
-      title: "Glas & kozijnen",
+      icon: "fa-solid fa-solar-panel",
+      title: "Zonneboiler subsidie",
       badge: null,
-      description:
-        "HR glas, of kozijnen. U ontvangt subsidie per geplaatste vierkante meter, mits de factuur aan de juiste eisen voldoet.",
-      avgReturn: "Gem. €1.500 terug",
+      slug: "zonneboiler",
+      description: "Een zonneboiler gebruikt zonne-energie om water te verwarmen. Subsidie bij installatie door erkend installateur.",
+      avgReturn: "Gem. €900 terug",
       from: "Vanaf €65",
     },
     {
       icon: "fa-solid fa-utensils",
       title: "Elektrische kookvoorziening",
       badge: null,
-      description:
-        "Vervangt u uw gasaansluiting door een elektrische kookvoorziening? Dan komt u mogelijk in aanmerking voor subsidie. Wij regelen de aanvraag volledig voor u.",
+      slug: "elektrisch",
+      description: "Vervangt u gas door een elektrische kookvoorziening? Dan komt u mogelijk in aanmerking voor subsidie.",
       avgReturn: "Gem. €450 terug",
       from: "Vanaf €65",
     },
-  ],
-  Zakelijk: [
-    {
-      icon: "fa-solid fa-building",
-      title: "Zakelijke isolatie",
-      badge: null,
-      description:
-        "Subsidie voor bedrijfspanden die isolatiemaatregelen nemen via erkende installateurs.",
-      avgReturn: "Gem. €2.500 terug",
-      from: "Vanaf €95",
-    },
-    {
-      icon: "fa-solid fa-industry",
-      title: "Zakelijke warmtepomp",
-      badge: "Populair",
-      description:
-        "Warmtepompen voor zakelijk gebruik. Hoge subsidiebedragen beschikbaar afhankelijk van vermogen.",
-      avgReturn: "Gem. €4.000 terug",
-      from: "Vanaf €95",
-    },
-  ],
-  Verhuurder: [
-    {
-      icon: "fa-solid fa-key",
-      title: "Verhuurder isolatie",
-      badge: null,
-      description:
-        "Als verhuurder kunt u subsidie aanvragen voor isolatiemaatregelen in uw huurpanden.",
-      avgReturn: "Gem. €1.400 terug",
-      from: "Vanaf €75",
-    },
-    {
-      icon: "fa-solid fa-house-circle-check",
-      title: "Verhuurder warmtepomp",
-      badge: "Populair",
-      description:
-        "Subsidie voor warmtepompen in huurwoningen. Uw huurders profiteren van lagere energiekosten.",
-      avgReturn: "Gem. €2.800 terug",
-      from: "Vanaf €85",
-    },
     {
       icon: "fa-solid fa-house-chimney-window",
-      title: "Isolatie subsidie",
+      title: "Isolatie & glas",
       badge: null,
-      description:
-        "Spouwmuur, vloer, dak of gevel isoleren. Beschikbaar voor verhuurders die isoleren via een erkend installateur.",
+      slug: "isolatie",
+      description: "Spouwmuur, vloer, dak, gevel of HR glas — subsidie per maatregel. Installatie via erkend installateur vereist.",
       avgReturn: "Gem. €1.200 terug",
       from: "Vanaf €65",
     },
     {
+      icon: "fa-solid fa-wind",
+      title: "Ventilatiesysteem",
+      badge: null,
+      slug: "ventilatie",
+      description: "WTW of CO₂-gestuurd systeem voor betere luchtkwaliteit. Subsidie bij installatie door erkend installateur.",
+      avgReturn: "Gem. €600 terug",
+      from: "Vanaf €65",
+    },
+  ],
+
+  Verhuurder: [
+    {
       icon: "fa-solid fa-fan",
       title: "Warmtepomp subsidie",
-      badge: null,
-      description:
-        "Hybride of volledig elektrische warmtepomp. Het type systeem en het vermogen bepalen hoeveel u terugkrijgt.",
-      avgReturn: "Gem. €2.400 terug",
+      badge: "Populair",
+      slug: "warmtepomp",
+      description: "Hybride of volledig elektrische warmtepomp voor huurwoningen. Type systeem en vermogen bepalen uw subsidiebedrag.",
+      avgReturn: "Gem. €2.800 terug",
       from: "Vanaf €85",
     },
     {
-      icon: "fa-solid fa-border-all",
-      title: "Glas & kozijnen",
+      icon: "fa-solid fa-solar-panel",
+      title: "Zonneboiler subsidie",
       badge: null,
-      description:
-        "HR glas, of kozijnen. U ontvangt subsidie per geplaatste vierkante meter, mits de factuur aan de juiste eisen voldoet.",
-      avgReturn: "Gem. €1.500 terug",
+      slug: "zonneboiler",
+      description: "Een zonneboiler gebruikt zonne-energie om water te verwarmen. Subsidie bij installatie door erkend installateur.",
+      avgReturn: "Gem. €900 terug",
+      from: "Vanaf €65",
+    },
+    {
+      icon: "fa-solid fa-house-chimney-window",
+      title: "Isolatie & glas",
+      badge: null,
+      slug: "isolatie",
+      description: "Spouwmuur, vloer, dak, gevel of HR glas — subsidie per maatregel. Installatie via erkend installateur vereist.",
+      avgReturn: "Gem. €1.200 terug",
+      from: "Vanaf €65",
+    },
+    {
+      icon: "fa-solid fa-wind",
+      title: "Ventilatiesysteem",
+      badge: null,
+      slug: "ventilatie",
+      description: "WTW of CO₂-gestuurd systeem voor betere luchtkwaliteit. Subsidie bij installatie door erkend installateur.",
+      avgReturn: "Gem. €600 terug",
       from: "Vanaf €65",
     },
   ],
   VvE: [
     {
-      icon: "fa-solid fa-building-columns",
-      title: "VvE isolatie",
+      icon: "fa-solid fa-fan",
+      title: "Warmtepomp subsidie",
       badge: "Populair",
-      description:
-        "Verenigingen van eigenaren kunnen gezamenlijk subsidie aanvragen voor isolatiemaatregelen in het pand.",
-      avgReturn: "Gem. €3.000 terug",
+      slug: "warmtepomp",
+      description: "Hybride of volledig elektrische warmtepomp voor VvE-panden. Type systeem en vermogen bepalen uw subsidiebedrag.",
+      avgReturn: "Gem. €2.800 terug",
       from: "Vanaf €85",
     },
     {
       icon: "fa-solid fa-solar-panel",
-      title: "VvE zonneboiler",
+      title: "Zonneboiler subsidie",
       badge: null,
-      description:
-        "Collectieve zonneboilerinstallaties voor VvE's. Profiteer van extra subsidie bij gecombineerde maatregelen.",
-      avgReturn: "Gem. €1.800 terug",
-      from: "Vanaf €75",
+      slug: "zonneboiler",
+      description: "Een zonneboiler gebruikt zonne-energie om water te verwarmen. Subsidie bij installatie door erkend installateur.",
+      avgReturn: "Gem. €900 terug",
+      from: "Vanaf €65",
+    },
+    {
+      icon: "fa-solid fa-house-chimney-window",
+      title: "Isolatie & glas",
+      badge: null,
+      slug: "isolatie",
+      description: "Spouwmuur, vloer, dak, gevel of HR glas — subsidie per maatregel. Installatie via erkend installateur vereist.",
+      avgReturn: "Gem. €1.200 terug",
+      from: "Vanaf €65",
+    },
+    {
+      icon: "fa-solid fa-wind",
+      title: "Ventilatiesysteem",
+      badge: null,
+      slug: "ventilatie",
+      description: "WTW of CO₂-gestuurd systeem voor betere luchtkwaliteit. Subsidie bij installatie door erkend installateur.",
+      avgReturn: "Gem. €600 terug",
+      from: "Vanaf €65",
     },
   ],
 };
 
-function SubsidyCard({ card }) {
+const TAB_SLUG = {
+  Particulier: "particulier",
+  Verhuurder: "verhuurder",
+  VvE: "vve",
+};
+
+function SubsidyCard({ card, activeTab }) {
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-8 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.1)] transition-shadow duration-300 relative flex flex-col h-full">
+    <div className="relative bg-white border border-gray-100 rounded-2xl px-6 py-5 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.1)] transition-shadow duration-300 flex flex-col h-full">
+      {/* Badge — absolute top-right */}
       {card.badge && (
-        <div className="absolute top-6 right-6 bg-yellow-100 text-yellow-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+        <span className="absolute top-4 right-4 bg-[#1a2e6b] text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
           {card.badge}
-        </div>
+        </span>
       )}
-      <div className="flex items-center gap-4 mb-6">
-        <div className="w-12 h-12 bg-background rounded-xl flex items-center justify-center text-secondary text-xl">
-          <i className={card.icon} />
-        </div>
-        <h3 className="text-xl font-bold text-primary">{card.title}</h3>
+
+      {/* Icon above title */}
+      <div className="w-10 h-10 bg-[#E6F1FB] rounded-xl flex items-center justify-center text-[#185FA5] text-base mb-4 flex-shrink-0">
+        <i className={card.icon} />
       </div>
-      <p className="text-gray-600 mb-8 leading-relaxed flex-grow">{card.description}</p>
-      <div className="border-t border-gray-100 pt-6 mb-6">
-        <div className="flex justify-between items-center">
-          <span className="font-bold text-primary text-lg">{card.avgReturn}</span>
-          <span className="bg-gray-50 text-gray-600 text-sm px-3 py-1 rounded-md font-medium">
-            {card.from}
-          </span>
-        </div>
+
+      <h3 className="text-base font-bold text-primary mb-2 pr-16">{card.title}</h3>
+      <p className="text-gray-500 mb-5 text-[13px] leading-[1.6] flex-grow">{card.description}</p>
+
+      {/* Financial info — stacked vertically */}
+      <div className="border-t border-gray-100 pt-4 mb-4 flex flex-col gap-0.5">
+        <span className="font-bold text-primary text-[15px]">{card.avgReturn}</span>
+        <span className="text-gray-400 text-[12px]">{card.from}</span>
       </div>
-      <div className="grid grid-cols-2 gap-4">
+
+      {/* Actions */}
+      <div className="grid grid-cols-2 gap-3">
         <Link
-          href="/subsidie/aanvragen"
-          className="bg-yellow-400 hover:bg-yellow-500 text-primary font-bold py-3 px-4 rounded-xl transition duration-300 text-sm text-center"
+          href={
+            activeTab === "Particulier"
+              ? `/subsidie/aanvragen/isde?maatregel=${card.slug}&doelgroep=${TAB_SLUG[activeTab]}`
+              : `/subsidie/aanvragen/svoh?maatregel=${card.slug}&doelgroep=${TAB_SLUG[activeTab]}`
+          }
+          className="h-12 flex items-center justify-center bg-[#F5C518] hover:bg-[#e0b310] text-[#1a2e6b] font-semibold rounded-xl transition duration-200 text-sm text-center"
         >
           Direct regelen
         </Link>
         <Link
-          href="/faq"
-          className="bg-white border-2 border-surface text-secondary hover:border-secondary font-bold py-3 px-4 rounded-xl transition duration-300 text-sm text-center"
+          href={activeTab === "Particulier" ? "/subsidie/isde" : "/subsidie/svoh"}
+          className="h-12 flex items-center justify-center bg-white text-[#185FA5] hover:bg-[#E6F1FB] font-medium rounded-xl transition duration-200 text-sm text-center border border-[#E6F1FB]"
+          style={{ borderWidth: "1px" }}
         >
-          Meer info
+          Meer info →
         </Link>
       </div>
     </div>
@@ -187,10 +199,10 @@ export default function SubsidiesFilter() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-8 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
+                className={`px-8 py-2.5 rounded-full text-sm transition-all duration-300 ${
                   activeTab === tab
-                    ? "bg-secondary/20 text-primary shadow-sm"
-                    : "text-gray-600 hover:text-primary hover:bg-white/50"
+                    ? "bg-[#1a2e6c] text-white font-semibold shadow-sm"
+                    : "bg-gray-100 text-gray-500 font-normal hover:bg-gray-200 hover:text-[#1a2e6c]"
                 }`}
               >
                 {tab}
@@ -201,7 +213,7 @@ export default function SubsidiesFilter() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {cards.map((card, index) => (
-            <SubsidyCard key={index} card={card} />
+            <SubsidyCard key={index} card={card} activeTab={activeTab} />
           ))}
         </div>
       </div>

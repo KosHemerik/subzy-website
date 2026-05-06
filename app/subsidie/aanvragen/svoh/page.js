@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Footer, Header, TopBar } from "@/components/layout";
 import SvohWizard from "./SvohWizard";
 
@@ -28,7 +29,9 @@ export default function SvohAanvraagPage() {
 
         {/* Wizard */}
         <section className="bg-[#eef1f6] min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-          <SvohWizard regelingType="SVOH" />
+          <Suspense fallback={<div className="text-center py-10 text-gray-400">Laden...</div>}>
+            <SvohWizard regelingType="SVOH" />
+          </Suspense>
         </section>
 
         {/* Trust row */}

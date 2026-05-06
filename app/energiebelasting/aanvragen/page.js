@@ -81,8 +81,8 @@ export default function AanvraagPage() {
                     </div>
                   </div>
                   <p className="text-gray-700 text-sm leading-relaxed italic">
-                    "Binnen 3 weken €1.207,- teruggekregen. Subzy regelde alles,
-                    ik hoefde niets te doen."
+                    &ldquo;Binnen 3 weken €1.207,- teruggekregen. Subzy regelde alles,
+                    ik hoefde niets te doen.&rdquo;
                   </p>
                 </div>
 

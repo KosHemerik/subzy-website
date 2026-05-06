@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export default function SubsidieHero() {
   const scrollToSection = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -28,12 +30,12 @@ export default function SubsidieHero() {
           </p>
 
           <div className="flex flex-row items-center justify-center gap-4 flex-wrap">
-            <button
-              onClick={() => scrollToSection("subsidies")}
+            <Link
+              href="/subsidie/aanvragen/isde"
               className="bg-yellow-400 hover:bg-yellow-500 text-primary font-bold px-8 py-3 rounded-lg transition duration-300 shadow-lg text-lg"
             >
               Bereken mijn subsidie →
-            </button>
+            </Link>
             <button
               onClick={() => scrollToSection("hoe-het-werkt")}
               className="bg-transparent border border-white text-white hover:bg-white/10 font-bold px-8 py-3 rounded-lg transition duration-300 text-lg"
