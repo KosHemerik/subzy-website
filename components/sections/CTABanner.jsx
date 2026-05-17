@@ -19,10 +19,10 @@ export default function CTABanner() {
 
           <div className="relative z-10 text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Start uw subsidie aanvraag in 3 minuten
+              Haal alles terug waar u recht op heeft
             </h2>
             <p className="text-lg text-blue-200 mb-8 max-w-xl mx-auto">
-              Geen stress, geen documenten, geen kosten. Wij doen het voor u. Start nu met onze gratis check.
+              Energiebelasting terugvragen of subsidie aanvragen — wij regelen het van A tot Z. Geen ingewikkelde formulieren, geen verborgen kosten. Start vandaag nog met uw gratis check.
             </p>
 
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4">

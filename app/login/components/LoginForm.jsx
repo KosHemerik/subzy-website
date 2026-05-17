@@ -115,15 +115,6 @@ export default function LoginForm() {
         )}
       </Button>
 
-      <div className="text-center text-sm text-gray-600">
-        Nog geen account?{" "}
-        <Link
-          href="/registreren"
-          className="text-secondary hover:text-accent font-medium transition"
-        >
-          Registreer hier
-        </Link>
-      </div>
     </form>
   );
 }

@@ -1,28 +1,23 @@
-import Link from "next/link";
-import { Logo, StarRating } from "@/components/ui";
+import { StarRating } from "@/components/ui";
 import { COMPANY_INFO } from "@/lib/constants";
+import Image from "next/image";
+import Link from "next/link";
 
 const footerLinks = {
   diensten: [
-    { label: "Teruggave Energiebelasting", href: "/diensten/energiebelasting" },
-    { label: "Isolatiesubsidie (ISDE)", href: "/diensten/isde" },
-    { label: "Warmtepomp subsidie", href: "/diensten/warmtepomp" },
-    { label: "Zonnepanelen BTW", href: "/diensten/zonnepanelen" },
+    { label: "Teruggave energiebelasting", href: "/energiebelasting" },
+    { label: "Duurzaamheidssubsidies", href: "/subsidie" },
+    { label: "ISDE subsidie", href: "/subsidie/isde" },
+    { label: "SVOH subsidie", href: "/subsidie/svoh" },
   ],
   handig: [
     { label: "Over ons", href: "/over-ons" },
     { label: "Veelgestelde vragen", href: "/faq" },
-    { label: "Klantportaal", href: "/portaal" },
+    { label: "Klantportaal", href: "/dashboard" },
     { label: "Algemene voorwaarden", href: "/voorwaarden" },
     { label: "Privacy beleid", href: "/privacy" },
   ],
 };
-
-const socialLinks = [
-  { icon: "fa-brands fa-facebook-f", href: "https://facebook.com" },
-  { icon: "fa-brands fa-linkedin-in", href: "https://linkedin.com" },
-  { icon: "fa-brands fa-instagram", href: "https://instagram.com" },
-];
 
 /**
  * Main footer component
@@ -34,24 +29,13 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Company Info */}
           <div className="col-span-1">
-            <Logo className="mb-6" textColor="text-white" />
+            <Link href="/" className="flex items-center mb-6">
+              <Image src="/subzy_logo_transparant_wit.png" alt="Subzy" width={120} height={40} priority />
+            </Link>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
               Dé vertrouwde partner voor huiseigenaren. Wij maken het aanvragen
               van subsidies en teruggaven simpel, snel en 100% zorgeloos.
             </p>
-            <div className="flex space-x-4">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.icon}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-secondary transition"
-                >
-                  <i className={social.icon} />
-                </a>
-              ))}
-            </div>
           </div>
 
           {/* Diensten */}

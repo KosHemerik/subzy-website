@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { COMPANY_INFO } from "@/lib/constants";
 
 const faqCategories = [
   {
@@ -52,7 +53,7 @@ const faqData = {
       {
         question: "Hoe lang bestaat Subzy al?",
         answer:
-          "Subzy is opgericht in 2020 en heeft sindsdien duizenden huishoudens geholpen met het aanvragen van subsidies en energiebelasting teruggaves. Ons team bestaat uit ervaren specialisten die dagelijks werken aan het maximaliseren van uw voordeel.",
+          "Subzy is opgericht in 2020 en heeft sindsdien duizenden huishoudens geholpen met het aanvragen van subsidies en energiebelasting teruggaves. Wij hebben ruime ervaring en weten precies hoe de aanvraagprocedures werken.",
       },
       {
         question: "Kan ik ook als huurder gebruik maken van jullie diensten?",
@@ -122,7 +123,7 @@ const faqData = {
       {
         question: "Voor hoeveel klanten hebben jullie dit al geregeld?",
         answer:
-          "Wij hebben al meer dan 1.500 aanvragen succesvol afgerond voor eigenaren, verhuurders en VvE's door heel Nederland.",
+          "Wij hebben al meer dan 1.400 aanvragen succesvol afgerond voor eigenaren, verhuurders en VvE's door heel Nederland.",
       },
     ],
   },
@@ -282,7 +283,7 @@ function TrustBlock() {
           <i className="fa-solid fa-star-half-stroke" />
         </div>
       </div>
-      <p className="text-center font-bold text-primary text-xl mb-1">4.8/5</p>
+      <p className="text-center font-bold text-primary text-xl mb-1">{COMPANY_INFO.rating}/5</p>
       <p className="text-center text-sm text-gray-600 mb-4">
         Gebaseerd op 450+ reviews
       </p>
@@ -336,7 +337,7 @@ export default function FAQContent({ searchQuery = "" }) {
   const isSearching = searchQuery.trim().length > 0;
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-surface">
       <div className="max-w-5xl mx-auto flex flex-col lg:flex-row gap-12">
         {/* Sidebar / Tabs */}
         <div className="lg:w-1/3">

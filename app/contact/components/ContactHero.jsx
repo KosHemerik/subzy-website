@@ -12,10 +12,10 @@ export default function ContactHero() {
 
       <div className="max-w-3xl mx-auto relative z-10">
         <h1 className="text-4xl lg:text-5xl font-bold text-white mb-6">
-          Neem contact met ons op
+          Hoe kunnen wij u helpen?
         </h1>
         <p className="text-lg text-blue-100 mb-8 max-w-2xl mx-auto">
-          Heeft u een vraag over uw aanvraag of onze diensten? Wij staan voor u klaar. Vriendelijk, persoonlijk en deskundig.
+          Geen chatbot, geen wachtrij. U krijgt altijd een persoonlijk antwoord van iemand die uw dossier kent, binnen één werkdag.
         </p>
       </div>
     </section>

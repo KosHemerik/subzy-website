@@ -15,6 +15,7 @@ export default function Button({
     primary: "bg-yellow-400 hover:bg-yellow-500 text-primary shadow-lg",
     secondary: "bg-secondary hover:bg-accent text-white shadow-md shadow-secondary/30",
     outline: "bg-white border-2 border-primary text-primary hover:bg-gray-50",
+    dark: "bg-primary hover:bg-primary/90 text-white shadow-md",
   };
   
   const sizes = {

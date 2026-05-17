@@ -1,14 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { Button, Input, Select, Textarea } from "@/components/ui";
+import { useState } from "react";
 
 const SUBJECT_OPTIONS = [
   { value: "", label: "Kies een onderwerp..." },
-  { value: "energiebelasting", label: "Vraag over Teruggave Energiebelasting" },
-  { value: "subsidie", label: "Vraag over Duurzaamheidssubsidie" },
+  { value: "energiebelasting", label: "Vraag over teruggave energiebelasting" },
+  { value: "subsidie", label: "Vraag over duurzaamheidssubsidie" },
   { value: "lopende_aanvraag", label: "Vraag over lopende aanvraag" },
-  { value: "klantportaal", label: "Probleem met Klantportaal" },
   { value: "anders", label: "Anders" },
 ];
 
@@ -89,8 +88,9 @@ export default function ContactForm() {
               bericht: "",
             });
           }}
-          className="text-secondary hover:text-accent font-medium transition"
+          className="inline-flex items-center gap-2 text-secondary hover:text-accent font-medium transition underline underline-offset-4"
         >
+          <i className="fa-solid fa-arrow-left text-sm" />
           Nog een bericht versturen
         </button>
       </div>
@@ -157,8 +157,8 @@ export default function ContactForm() {
 
       <Button
         type="submit"
-        variant="secondary"
-        size="lg"
+        variant="dark"
+        size="md"
         className="w-full md:w-auto"
         disabled={isLoading}
       >

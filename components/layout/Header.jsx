@@ -1,6 +1,7 @@
 "use client";
 
 import { Button, Logo } from "@/components/ui";
+import { useAuth } from "@/lib/auth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -28,6 +29,8 @@ const navItems = [
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { user } = useAuth();
+  const portalHref = user ? "/dashboard" : "/login";
 
   const isActive = (href, dropdown) => {
     if (dropdown) {
@@ -92,7 +95,7 @@ export default function Header() {
 
           {/* CTA Button */}
           <div className="flex items-center">
-            <Link href="/portaal">
+            <Link href={portalHref}>
               <Button variant="secondary" size="md">
                 Klantportaal
               </Button>

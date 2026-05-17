@@ -63,14 +63,6 @@ export default function ContactInfo() {
         </div>
       </div>
 
-      {/* Map Placeholder */}
-      <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 h-[300px] relative">
-        <div className="absolute inset-0 bg-gray-200 flex flex-col items-center justify-center text-gray-500">
-          <i className="fa-solid fa-map-location-dot text-4xl mb-3 text-gray-400" />
-          <p className="font-medium">Google Maps Embed</p>
-          <p className="text-sm">Den Haag, Nederland</p>
-        </div>
-      </div>
     </div>
   );
 }

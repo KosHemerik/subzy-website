@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { COMPANY_INFO } from "@/lib/constants";
+import { Button } from "@/components/ui";
 
 /**
  * Contact CTA Section for FAQ page
@@ -37,11 +38,10 @@ export default function ContactCTA() {
           </a>
         </div>
 
-        <Link
-          href="/contact"
-          className="inline-block bg-yellow-400 hover:bg-yellow-500 text-primary font-bold px-8 py-3.5 rounded-lg transition duration-300 shadow-lg text-lg"
-        >
-          Ga naar de contactpagina
+        <Link href="/contact">
+          <Button variant="primary" size="lg">
+            Ga naar de contactpagina
+          </Button>
         </Link>
       </div>
     </section>
