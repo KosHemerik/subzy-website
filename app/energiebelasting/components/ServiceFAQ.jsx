@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
 import { Button } from "@/components/ui";
+import Link from "next/link";
+import { useState } from "react";
 
 const faqItems = [
   {
@@ -34,17 +34,17 @@ function FAQItem({ question, answer }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden">
+    <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
       <button
-        className="w-full flex justify-between items-center p-5 bg-gray-50 hover:bg-gray-100 transition focus:outline-none"
+        className="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="font-semibold text-primary text-left">{question}</span>
-        <i className={`fa-solid ${isOpen ? "fa-chevron-up" : "fa-chevron-down"} text-gray-400`} />
+        <span className="font-semibold text-primary">{question}</span>
+        <i className={`fa-solid fa-chevron-down text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`} />
       </button>
       {isOpen && (
-        <div className="p-5 bg-white border-t border-gray-200">
-          <p className="text-gray-600">{answer}</p>
+        <div className="px-6 pb-5">
+          <p className="text-gray-600 text-sm">{answer}</p>
         </div>
       )}
     </div>
@@ -60,7 +60,7 @@ export default function ServiceFAQ() {
   };
 
   return (
-    <section id="faq" className="py-20 bg-white max-w-[1440px] mx-auto">
+    <section id="faq" className="py-20 bg-white w-full">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12">
@@ -88,9 +88,11 @@ export default function ServiceFAQ() {
                 Bekijk alle veelgestelde vragen
               </Button>
             </Link>
-            <Button variant="primary" size="lg" onClick={scrollToCalculator}>
-              Start de gratis scan
-            </Button>
+            <Link href="/energiebelasting/aanvragen">
+              <Button variant="primary" size="lg">
+                Start de gratis scan
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

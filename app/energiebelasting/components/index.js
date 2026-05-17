@@ -1,6 +1,5 @@
 export { default as ServiceHero } from "./ServiceHero";
 export { default as ProblemAwareness } from "./ProblemAwareness";
-export { default as TargetAudience } from "./TargetAudience";
 export { default as Eligibility } from "./Eligibility";
 export { default as MidCTA } from "./MidCTA";
 export { default as HowItWorksTimeline } from "./HowItWorksTimeline";

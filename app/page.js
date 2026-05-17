@@ -3,11 +3,9 @@ import {
     CTABanner,
     FAQ,
     Hero,
-    HowItWorks,
     Services,
     Testimonials,
     TrustBar,
-    WhySubzy
 } from "@/components/sections";
 
 /**
@@ -26,7 +24,7 @@ export default function Home() {
         {/* <HowItWorks />
         <WhySubzy /> */}
         <Testimonials />
-        {/* <FAQ /> */}
+        <FAQ />
         <CTABanner />
       </main>
       <Footer />

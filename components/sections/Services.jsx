@@ -2,11 +2,8 @@ import Link from "next/link";
 
 const services = [
   {
-    icon: "fa-solid fa-file-invoice-dollar",
-    iconBg: "bg-blue-100",
-    iconColor: "text-blue-600",
     badge: "NAUWELIJKS BEKEND",
-    badgeColor: "bg-green-100 text-green-700",
+    badgeColor: "bg-yellow text-primary",
     title: "Teruggave Energiebelasting",
     description: "Heeft u meerdere woningen, units of appartementen achter één elektriciteitsaansluiting? Dan betaalt u waarschijnlijk te veel energiebelasting. De Belastingdienst geeft dit terug — wij regelen de aanvraag volledig voor u.",
     features: [
@@ -23,11 +20,8 @@ const services = [
     cta: "Bekijk of u in aanmerking komt",
   },
   {
-    icon: "fa-solid fa-leaf",
-    iconBg: "bg-green-100",
-    iconColor: "text-green-600",
     badge: "TOT €3.200 SUBSIDIE",
-    badgeColor: "bg-blue-100 text-blue-700",
+    badgeColor: "bg-surface text-primary",
     title: "Duurzaamheidssubsidie",
     description: "Investeert u in isolatie, een warmtepomp of zonneboiler? De overheid vergoedt een groot deel via verschillende subsidieregelingen. Wij bepalen welke regeling voor u van toepassing is en regelen de aanvraag volledig.",
     features: [
@@ -52,17 +46,10 @@ const stats = [
   { value: "Ruim 8 jaar", label: "Ervaring in energiebelasting & subsidie" },
 ];
 
-/**
- * Service card component
- */
-function ServiceCard({ icon, iconBg, iconColor, badge, badgeColor, title, description, features, tags, href, cta }) {
+function ServiceCard({ badge, badgeColor, title, description, features, tags, href, cta }) {
   return (
-    <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border-2 border-gray-100 hover:border-blue-200 flex flex-col h-full relative">
-      {/* Header with icon and badge */}
-      <div className="flex items-start justify-between mb-6">
-        <div className={`w-12 h-12 ${iconBg} rounded-xl flex items-center justify-center ${iconColor}`}>
-          <i className={`${icon} text-xl`} />
-        </div>
+    <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border-2 border-gray-100 hover:border-accent/30 flex flex-col h-full relative">
+      <div className="mb-6">
         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${badgeColor}`}>
           {badge}
         </span>
@@ -91,17 +78,17 @@ function ServiceCard({ icon, iconBg, iconColor, badge, badgeColor, title, descri
       {/* Tags */}
       <div className="flex flex-wrap gap-2 mb-6">
         {tags.map((tag, index) => (
-            <span key={index} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 rounded-[12px] text-xs text-white font-medium">
-            <i className={`${tag.icon}`} />
+          <span key={index} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface rounded-full text-xs text-primary font-medium">
+            <i className={`${tag.icon} text-accent`} />
             {tag.label}
           </span>
         ))}
       </div>
 
-      {/* CTA Link */}
-      <Link 
+      {/* CTA Button */}
+      <Link
         href={href}
-        className="inline-flex items-center text-blue-600 font-semibold text-sm hover:text-blue-700 transition-colors group"
+        className="inline-flex items-center justify-center w-full bg-primary hover:bg-primary-hover text-white font-semibold text-sm px-5 py-3 rounded-xl transition-colors duration-200 group mt-auto"
       >
         {cta}
         <i className="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform" />
@@ -110,17 +97,14 @@ function ServiceCard({ icon, iconBg, iconColor, badge, badgeColor, title, descri
   );
 }
 
-/**
- * Services overview section
- */
 export default function Services() {
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-20 bg-background">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Haal terug waar u <span className="text-blue-600">recht op heeft</span>
+          <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
+            Haal terug waar u recht op heeft
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Geen documenten zoeken, geen formulieren invullen — wij regelen alles van A tot Z.
@@ -140,7 +124,7 @@ export default function Services() {
           <div className="flex flex-wrap justify-center gap-8 md:gap-16">
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-1">{stat.value}</div>
+                <div className="text-3xl md:text-4xl font-bold text-accent mb-1">{stat.value}</div>
                 <div className="text-sm text-gray-500">{stat.label}</div>
               </div>
             ))}

@@ -9,7 +9,7 @@ export default function Button({
   type = "button",
   ...props 
 }) {
-  const baseStyles = "font-bold transition duration-300 rounded-[12px] inline-flex items-center justify-center";
+  const baseStyles = "font-bold transition duration-300 rounded-lg inline-flex items-center justify-center";
   
   const variants = {
     primary: "bg-yellow-400 hover:bg-yellow-500 text-primary shadow-lg",

@@ -13,10 +13,14 @@ export const metadata = {
   description: "Wij ontzorgen huiseigenaren volledig bij het terugvragen van energiebelasting en het aanvragen van duurzaamheidssubsidies.",
   keywords: ["subsidie", "energiebelasting", "teruggave", "ISDE", "duurzaamheid"],
   icons: {
-    icon: "/subzy_logo_transparant.png",
-    shortcut: "/subzy_logo_transparant.png",
-    apple: "/subzy_logo_transparant.png",
+    icon: [
+      { url: "/favicon/favicon.ico", sizes: "any" },
+      { url: "/favicon/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+    ],
+    apple: "/favicon/apple-touch-icon.png",
   },
+  manifest: "/favicon/site.webmanifest",
 };
 
 export default function RootLayout({ children }) {

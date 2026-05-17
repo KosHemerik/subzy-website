@@ -1,5 +1,5 @@
-import { Suspense } from "react";
 import { Footer, Header, TopBar } from "@/components/layout";
+import { Suspense } from "react";
 import SvohWizard from "../svoh/SvohWizard";
 
 export const metadata = {

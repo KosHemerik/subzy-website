@@ -32,7 +32,7 @@ const testimonials = [
  */
 function TestimonialCard({ rating, text, name, service, initial, bgColor }) {
   return (
-    <div className="bg-gray-50 p-8 rounded-[12px] border border-gray-100">
+    <div className="bg-surface p-8 rounded-[12px] border border-surface">
       <StarRating rating={rating} className="text-sm mb-4" />
       <p className="text-gray-700 italic mb-6">"{text}"</p>
       <div className="flex items-center">

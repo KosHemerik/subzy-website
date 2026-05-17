@@ -4,9 +4,7 @@ import {
     Mission,
     OverOnsCTA,
     OverOnsHero,
-    Team,
     Testimonials,
-    WhySubzy
 } from "./components";
 
 export const metadata = {
@@ -14,10 +12,6 @@ export const metadata = {
   description: "Maak kennis met Subzy. Wij helpen particuliere woningbezitters bij het aanvragen van teruggave energiebelasting en duurzaamheidssubsidies.",
 };
 
-/**
- * Over Ons Page
- * Company information, mission, values, and team
- */
 export default function OverOnsPage() {
   return (
     <>
@@ -27,8 +21,6 @@ export default function OverOnsPage() {
         <OverOnsHero />
         <Mission />
         <CoreValues />
-        <WhySubzy />
-        <Team />
         <Testimonials />
         <OverOnsCTA />
       </main>

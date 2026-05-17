@@ -43,9 +43,9 @@ Heeft u meerdere woningen, units of appartementen achter één elektriciteitsaan
             >
              Check teruggave
             </Button>
-            <button 
+            <button
               onClick={() => scrollToSection("hoe-het-werkt")}
-              className="w-full sm:w-auto bg-transparent border border-white text-white hover:bg-white/10 font-bold px-8 py-3.5 rounded-lg transition duration-300 text-lg"
+              className="inline-flex items-center justify-center bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold px-8 py-3.5 rounded-lg transition duration-300 text-lg w-full sm:w-auto"
             >
               Hoe werkt het?
             </button>

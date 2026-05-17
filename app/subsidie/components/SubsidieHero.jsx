@@ -18,7 +18,7 @@ export default function SubsidieHero() {
         <div className="max-w-3xl mx-auto text-center">
           <div className="inline-flex items-center justify-center bg-white/10 rounded-full px-4 py-1.5 mb-6 border border-white/20">
             <i className="fa-solid fa-leaf text-secondary mr-2" />
-            <span className="text-white text-sm font-medium">🌱 Duurzaamheidssubsidie</span>
+            <span className="text-white text-sm font-medium">Duurzaamheidssubsidie</span>
           </div>
 
           <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight mb-6">
@@ -29,16 +29,16 @@ export default function SubsidieHero() {
             Wij bepalen welke subsidieregeling voor u geldt en regelen de volledige duurzaamheidssubsidie aanvraag voor u. No Cure No Pay, geen gedoe.
           </p>
 
-          <div className="flex flex-row items-center justify-center gap-4 flex-wrap">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/subsidie/aanvragen/isde"
-              className="bg-yellow-400 hover:bg-yellow-500 text-primary font-bold px-8 py-3 rounded-lg transition duration-300 shadow-lg text-lg"
+              className="inline-flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-primary font-bold px-8 py-3.5 rounded-lg transition duration-300 shadow-lg text-lg w-full sm:w-auto"
             >
-              Bereken mijn subsidie →
+              Bereken mijn subsidie <i className="fa-solid fa-arrow-right ml-2" />
             </Link>
             <button
               onClick={() => scrollToSection("hoe-het-werkt")}
-              className="bg-transparent border border-white text-white hover:bg-white/10 font-bold px-8 py-3 rounded-lg transition duration-300 text-lg"
+              className="inline-flex items-center justify-center bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold px-8 py-3.5 rounded-lg transition duration-300 text-lg w-full sm:w-auto"
             >
               Hoe werkt het?
             </button>

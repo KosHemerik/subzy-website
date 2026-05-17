@@ -4,7 +4,7 @@
  */
 export default function OverOnsHero() {
   return (
-    <section className="hero-bg py-20 curve-bottom max-w-[1440px] mx-auto text-center px-4 relative">
+    <section className="hero-bg py-20 curve-bottom w-full text-center px-4 relative">
       <div className="max-w-3xl mx-auto relative z-10">
         <h1 className="text-4xl lg:text-5xl font-bold text-white mb-6">
           Wij maken complexe zaken simpel

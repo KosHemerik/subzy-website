@@ -31,7 +31,7 @@ const teamMembers = [
  */
 export default function Team() {
   return (
-    <section className="py-16 bg-surface max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-16 bg-surface w-full px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto text-center">
         <h2 className="text-3xl font-bold text-primary mb-4">Ons Team</h2>
         <p className="text-gray-600 max-w-2xl mx-auto text-lg mb-12">

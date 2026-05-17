@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui";
+import Link from "next/link";
 
 /**
  * Mid-page CTA Banner - Light style
@@ -51,7 +52,7 @@ export default function MidCTA() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
           {trustItems.map((item, index) => (
             <div key={index} className="flex flex-col items-center group">
-              <div className="w-12 h-12 bg-secondary rounded-full flex items-center justify-center mb-3 text-white transition-transform duration-300 group-hover:scale-110">
+              <div className="w-12 h-12 bg-surface rounded-full flex items-center justify-center mb-3 text-accent transition-transform duration-300 group-hover:scale-110">
                 <i className={item.icon} />
               </div>
               <p className="font-semibold text-primary">{item.title}</p>
@@ -60,10 +61,12 @@ export default function MidCTA() {
           ))}
         </div>
 
-        <Button variant="primary" size="lg" onClick={scrollToCalculator}>
-          <i className="fa-solid fa-bolt mr-2" />
-          Start Mijn Teruggave Check
-        </Button>
+        <Link href="/energiebelasting/aanvragen">
+          <Button variant="primary" size="lg">
+            <i className="fa-solid fa-bolt mr-2" />
+            Start Mijn Teruggave Check
+          </Button>
+        </Link>
         <p className="text-gray-400 text-sm mt-4">
           Gratis check • Geen verplichtingen
         </p>

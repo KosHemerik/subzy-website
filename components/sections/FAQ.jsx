@@ -6,7 +6,7 @@ import Link from "next/link";
 const faqs = [
   {
     question: "Wat kost de service van Subzy?",
-    answer: "Wij werken op basis van No Cure No Pay. Voor teruggave energiebelasting hanteren wij een vast tarief van €150,- of 15% van het teruggekregen bedrag, afhankelijk van wat voordeliger is voor jou. Je betaalt pas achteraf.",
+    answer: "Wij werken op basis van No Cure No Pay. Voor teruggave energiebelasting hanteren wij een vast tarief van €150,- of 15% van het teruggekregen bedrag, afhankelijk van wat voordeliger is voor u. U betaalt pas achteraf.",
   },
   {
     question: "Hoelang duurt een aanvraag gemiddeld?",
@@ -14,11 +14,11 @@ const faqs = [
   },
   {
     question: "Welke documenten heb ik nodig?",
-    answer: "Dit verschilt per aanvraag. Voor energiebelasting hebben we jaarrekeningen van je energieleverancier nodig. Voor ISDE subsidie vragen we om facturen en betaalbewijzen van de installateur. In ons portaal zie je precies wat er nodig is.",
+    answer: "Dit verschilt per aanvraag. Voor energiebelasting hebben we jaarrekeningen van uw energieleverancier nodig. Voor ISDE subsidie vragen we om facturen en betaalbewijzen van de installateur. In ons portaal ziet u precies wat er nodig is.",
   },
   {
     question: "Is mijn data veilig bij jullie?",
-    answer: "Ja, 100%. Ons klantportaal is beveiligd volgens de hoogste standaarden en wij zijn AVG-compliant. Je documenten worden uitsluitend gebruikt voor de aanvraag en nooit gedeeld met derden.",
+    answer: "Ja, 100%. Ons klantportaal is beveiligd volgens de hoogste standaarden en wij zijn AVG-compliant. Uw documenten worden uitsluitend gebruikt voor de aanvraag en nooit gedeeld met derden.",
   },
 ];
 
@@ -51,14 +51,14 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState(null);
 
   return (
-    <section className="py-20 bg-gray-50 max-w-[1440px] mx-auto">
+    <section className="py-20 bg-background">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-primary mb-4">
             Veelgestelde vragen
           </h2>
           <p className="text-gray-600">
-            Staat je vraag er niet tussen? Neem dan contact met ons op.
+            Staat uw vraag er niet tussen? Neem dan contact met ons op.
           </p>
         </div>
         <div className="space-y-4">

@@ -124,7 +124,7 @@ export default function Calculator() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
               {/* Left Column - Explanation */}
               <div className="space-y-6">
-                <div className="inline-flex items-center justify-center bg-blue-50 border border-blue-200 rounded-full px-4 py-1.5 mb-2">
+                <div className="inline-flex items-center justify-center bg-surface rounded-full px-4 py-1.5 mb-2">
                   <span className="text-accent text-sm font-medium">Gratis rekenmodule</span>
                 </div>
 
@@ -196,7 +196,7 @@ export default function Calculator() {
                   <Link href="/energiebelasting/aanvragen">
                     <Button
                       variant="primary"
-                      className="w-full py-4 mt-4 rounded-xl text-lg font-semibold"
+                      className="w-full py-4 mt-4 text-lg font-semibold"
                     >
                       Vraag mijn gratis scan aan
                     </Button>

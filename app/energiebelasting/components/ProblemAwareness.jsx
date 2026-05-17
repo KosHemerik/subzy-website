@@ -34,7 +34,7 @@ Het gevolg: u betaalt jaarlijks honderden tot duizenden euro’s te veel — zon
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
             {stats.map((stat, index) => (
               <div key={index} className="bg-white p-6 rounded-xl shadow-sm">
-                <p className="text-4xl font-bold text-secondary mb-2">{stat.value}</p>
+                <p className="text-4xl font-bold text-accent mb-2">{stat.value}</p>
                 <p className="text-gray-600">{stat.description}</p>
               </div>
             ))}

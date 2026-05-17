@@ -22,7 +22,7 @@ const values = [
  */
 export default function CoreValues() {
   return (
-    <section className="py-16 bg-background max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-16 bg-background w-full px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-primary mb-4">Onze Kernwaarden</h2>
@@ -35,10 +35,10 @@ export default function CoreValues() {
           {values.map((value) => (
             <div 
               key={value.title}
-              className="bg-white p-8 rounded-2xl shadow-sm border border-blue-50 text-center hover:shadow-md transition"
+              className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center hover:shadow-md hover:border-accent/20 transition-all duration-300"
             >
               <div className="w-16 h-16 bg-surface rounded-full flex items-center justify-center mx-auto mb-6">
-                <i className={`fa-solid ${value.icon} text-2xl text-secondary`} />
+                <i className={`fa-solid ${value.icon} text-2xl text-accent`} />
               </div>
               <h3 className="text-xl font-bold text-primary mb-3">{value.title}</h3>
               <p className="text-gray-600">{value.description}</p>

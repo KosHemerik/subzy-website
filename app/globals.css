@@ -3,9 +3,11 @@
 @theme inline {
   /* Brand Colors */
   --color-primary: #1B3A6B;
+  --color-primary-hover: #244e8a;
   --color-primary-dark: #152A4A;
   --color-secondary: #3B82F6;
   --color-accent: #2D6BE4;
+  --color-yellow: #FACC15;
   --color-background: #F0F5FF;
   --color-surface: #EBF2FF;
   
@@ -26,7 +28,12 @@
 
 /* Hero gradient background */
 .hero-bg {
-  background: linear-gradient(135deg, #1B3A6B 0%, #152A4A 100%);
+  background: linear-gradient(135deg, #1B3A6B 0%, #1a3560 50%, #152A4A 100%);
+}
+
+/* CTA banner — accent blue fading into primary navy */
+.cta-bg {
+  background: linear-gradient(135deg, #2D6BE4 0%, #1e4fa3 50%, #1B3A6B 100%);
 }
 
 /* Curved bottom edge */
