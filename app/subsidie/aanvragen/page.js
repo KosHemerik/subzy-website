@@ -15,13 +15,13 @@ export default function SubsidieAanvraagPage() {
       <Header />
       <main>
         {/* Compact page header */}
-        <section className="hero-bg py-10 text-center">
+        <section className="hero-bg py-16 text-center curve-bottom overflow-hidden">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <p className="text-sm text-white/60 mb-2">Duurzaamheidssubsidie aanvragen</p>
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
+            <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4">
               Start uw subsidieaanvraag
             </h1>
-            <p className="text-white/70 text-base">
+            <p className="text-lg text-blue-100">
               Vul uw gegevens in — wij beoordelen uw situatie en nemen binnen 2 werkdagen contact op.
             </p>
           </div>

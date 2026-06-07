@@ -78,7 +78,7 @@ const faqData = {
       {
         question: "Hoeveel kan ik terugkrijgen?",
         answer:
-          "Voor 2025 bedraagt de heffingskorting gemiddeld €635,19 inclusief btw per woning per jaar. Omdat u tot vijf jaar terug kunt vorderen, kan dit per woning oplopen tot meer dan €3.000.",
+          "Het bedrag verschilt per jaar en per aansluiting. Omdat u tot vijf jaar terug kunt vorderen, kan het totaalbedrag aanzienlijk oplopen. Wij berekenen het exacte bedrag na de gratis scan.",
       },
       {
         question: "Hoe ver terug kan ik de teruggave aanvragen?",
@@ -193,7 +193,7 @@ const faqData = {
       {
         question: "Wat kost jullie dienstverlening?",
         answer:
-          "Voor ISDE-subsidies werken we met een vast tarief van €85,- per aanvraag, ongeacht het aantal maatregelen. Voor de teruggave energiebelasting werken we op basis van No Cure, No Pay: we rekenen 15% (excl. BTW) over het bedrag dat daadwerkelijk aan u wordt uitgekeerd. Wordt er niets uitgekeerd? Dan betaalt u ook niets.",
+          "Voor de teruggave energiebelasting werken we op basis van No Cure, No Pay: we rekenen 20% excl. BTW over het bedrag dat daadwerkelijk aan u wordt uitgekeerd. Voor ISDE-subsidies rekenen we 10% excl. BTW over de ontvangen subsidie. Wordt er niets uitgekeerd? Dan betaalt u ook niets.",
       },
       {
         question: "Zijn er vooraf kosten verbonden?",
@@ -285,7 +285,7 @@ function TrustBlock() {
       </div>
       <p className="text-center font-bold text-primary text-xl mb-1">{COMPANY_INFO.rating}/5</p>
       <p className="text-center text-sm text-gray-600 mb-4">
-        Gebaseerd op 450+ reviews
+        Klantreviews
       </p>
       <hr className="border-blue-200 mb-4" />
       <div className="flex items-center text-sm text-gray-700 mb-2">

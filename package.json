@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "dev:local": "node scripts/startLocalDev.js && next dev --turbopack",
+    "supabase:local": "node scripts/startLocalDev.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

@@ -72,7 +72,7 @@ export default function SubsidieTestimonials() {
           <div className="inline-flex items-center gap-3 bg-gray-50 px-6 py-3 rounded-full">
             <span className="text-2xl font-bold text-primary">4.8</span>
             <StarRating rating={4.8} className="text-sm" />
-            <span className="text-xs text-gray-500">Gebaseerd op 450+ reviews</span>
+            <span className="text-xs text-gray-500">Klantreviews</span>
           </div>
         </div>
 

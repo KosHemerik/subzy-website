@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 const ownershipOptions = [
-  { value: "", label: "Selecteer..." },
+  { value: "", label: "Kies aantal jaren" },
   { value: "1", label: "1 jaar" },
   { value: "2", label: "2 jaar" },
   { value: "3", label: "3 jaar" },
@@ -14,7 +14,7 @@ const ownershipOptions = [
 ];
 
 const wozOptions = [
-  { value: "", label: "Selecteer..." },
+  { value: "", label: "Kies aantal units" },
   { value: "2", label: "2" },
   { value: "3", label: "3" },
   { value: "4", label: "4" },
@@ -51,7 +51,7 @@ function CustomSelect({ options, value, onChange, placeholder = "Selecteer..." }
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full px-4 py-3 bg-white border-2 rounded-xl text-left flex items-center justify-between transition-all duration-200 ${
+        className={`w-full h-14 px-4 py-3 bg-white border-2 rounded-xl text-left flex items-center justify-between transition-all duration-200 ${
           isOpen 
             ? "border-secondary ring-4 ring-secondary/20" 
             : "border-gray-200 hover:border-gray-300"
@@ -110,22 +110,36 @@ export default function Calculator() {
 
   const refundAmount = calculateRefund();
   const showResult = refundAmount !== null;
+  const formattedRefund = refundAmount?.toLocaleString("nl-NL", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 
   return (
     <section id="calculator" className="py-20 bg-background w-full">
       <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           {/* Section Title */}
-          <h2 className="text-3xl md:text-4xl font-bold text-primary text-center mb-12">
-            Bereken uw mogelijk teruggaaf
-          </h2>
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 bg-white border border-gray-200 text-primary text-sm font-semibold px-4 py-2 rounded-full mb-4 shadow-sm">
+              <span className="w-2 h-2 rounded-full bg-secondary" />
+              Gratis rekenmodule
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-primary">
+              Bereken uw mogelijke teruggaaf
+            </h2>
+            <p className="text-gray-600 mt-3 max-w-2xl mx-auto">
+              Beantwoord twee korte vragen en zie direct een indicatie van wat u mogelijk terug kunt krijgen.
+            </p>
+          </div>
 
           <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-gray-100">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
               {/* Left Column - Explanation */}
               <div className="space-y-6">
-                <div className="inline-flex items-center justify-center bg-surface rounded-full px-4 py-1.5 mb-2">
-                  <span className="text-accent text-sm font-medium">Gratis rekenmodule</span>
+                <div className="inline-flex items-center gap-2 bg-primary/10 text-primary rounded-full px-4 py-2 mb-2">
+                  <i className="fa-solid fa-bolt text-secondary" />
+                  <span className="text-sm font-semibold">Snel inzicht, zonder gedoe</span>
                 </div>
 
                 <h3 className="text-2xl md:text-3xl font-bold text-primary">
@@ -140,10 +154,10 @@ export default function Calculator() {
                 <div className="space-y-3 pt-4">
                   {["Vrijblijvend en gratis", "Resultaat binnen 30 seconden", "Geen registratie vereist"].map((item, index) => (
                     <div key={index} className="flex items-center">
-                      <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                        <i className="fa-solid fa-check text-green-600 text-xs" />
+                      <div className="w-6 h-6 bg-secondary/15 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                        <i className="fa-solid fa-check text-secondary text-xs" />
                       </div>
-                      <span className="text-gray-700">{item}</span>
+                      <span className="text-gray-700 font-medium">{item}</span>
                     </div>
                   ))}
                 </div>
@@ -155,52 +169,83 @@ export default function Calculator() {
 
               {/* Right Column - Calculator Form */}
               <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-lg">
-                <h3 className="text-xl font-bold text-primary mb-6">Berekening</h3>
-
-                <div className="space-y-6">
-                  {/* Question 1 */}
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-full bg-secondary/15 flex items-center justify-center text-secondary">
+                    <i className="fa-solid fa-calculator" />
+                  </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-3">
-                     Hoe lang heeft u al meerdere woningen achter één aansluiting? 
+                    <h3 className="text-xl font-bold text-primary">Bereken uw teruggaaf</h3>
+                    <p className="text-sm text-gray-500">Een snelle indicatie op basis van uw situatie.</p>
+                  </div>
+                </div>
+
+                <div className="space-y-8">
+                  {/* Question 1 */}
+                  <div className="space-y-6 pb-1">
+                    <label className="block text-sm font-semibold text-primary mb-4">
+                      Hoe lang zitten er meerdere woningen achter één aansluiting?
                     </label>
-                    <CustomSelect
-                      options={ownershipOptions}
-                      value={ownership}
-                      onChange={setOwnership}
-                    />
+                    <p className="text-sm text-gray-500 mb-6">
+                      Dit helpt ons om de mogelijke teruggaaf beter in te schatten.
+                    </p>
+                    <div className="mt-4">
+                      <CustomSelect
+                        options={ownershipOptions}
+                        value={ownership}
+                        onChange={setOwnership}
+                      />
+                    </div>
                   </div>
 
                   {/* Question 2 */}
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-3">
+                  <div className="space-y-6 pb-1">
+                    <label className="block text-sm font-semibold text-primary mb-4">
                     Hoeveel woningen of units zitten achter één elektriciteitsaansluiting?
                     </label>
-                    <CustomSelect
-                      options={wozOptions}
-                      value={woz}
-                      onChange={setWoz}
-                    />
+                    <p className="text-sm text-gray-500 mb-6">
+                      Tel alle woningen mee die op dezelfde aansluiting zitten.
+                    </p>
+                    <div className="mt-4">
+                      <CustomSelect
+                        options={wozOptions}
+                        value={woz}
+                        onChange={setWoz}
+                      />
+                    </div>
                   </div>
 
                   {/* Calculated Result Field */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-3">
-                     U kunt mogelijk terugkrijgen:
+                    <label className="block text-sm font-semibold text-primary mb-3">
+                     Mogelijke teruggave
                     </label>
-                    <div className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-700 font-medium">
-                      {showResult ? `${refundAmount?.toLocaleString("nl-NL", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €` : "— €"}
+                    <div className="w-full h-14 px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl flex items-center justify-between gap-4">
+                      {showResult ? (
+                        <span className="text-base font-bold text-primary whitespace-nowrap">
+                          € {formattedRefund}
+                        </span>
+                      ) : (
+                        <span className="text-base text-gray-400 font-medium whitespace-nowrap">€ 0,-</span>
+                      )}
+                      <span className="text-sm text-gray-400 whitespace-nowrap">Indicatie op basis van uw gegevens</span>
                     </div>
                   </div>
 
                   {/* CTA Button */}
-                  <Link href="/energiebelasting/aanvragen">
+                  <Link
+                    href={`/energiebelasting/aanvragen${ownership && woz ? `?jaren=${ownership}&units=${woz}${refundAmount ? `&indicatie=${refundAmount.toFixed(2)}` : ""}` : ""}`}
+                  >
                     <Button
                       variant="primary"
-                      className="w-full py-4 mt-4 text-lg font-semibold"
+                      className="group w-full py-3 mt-8 text-base font-semibold"
                     >
                       Vraag mijn gratis scan aan
+                      <i className="fa-solid fa-arrow-right ml-2 cta-arrow-bounce" />
                     </Button>
                   </Link>
+                  <p className="text-sm text-gray-400 text-center pt-3">
+                    Vrijblijvend · Geen verplichtingen · No Cure No Pay
+                  </p>
                 </div>
               </div>
             </div>

@@ -42,6 +42,37 @@
   border-bottom-right-radius: 50% 10%;
 }
 
+@keyframes cta-arrow-bounce-right {
+  0% {
+    transform: translateX(0);
+  }
+  35% {
+    transform: translateX(5px);
+  }
+  65% {
+    transform: translateX(2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.cta-arrow-bounce {
+  display: inline-block;
+}
+
+.group:hover .cta-arrow-bounce,
+.group:focus-visible .cta-arrow-bounce {
+  animation: cta-arrow-bounce-right 0.45s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .group:hover .cta-arrow-bounce,
+  .group:focus-visible .cta-arrow-bounce {
+    animation: none;
+  }
+}
+
 body {
   font-family: var(--font-sans), sans-serif;
   -webkit-font-smoothing: antialiased;

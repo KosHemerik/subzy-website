@@ -1,20 +1,41 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { supabase } from "@/lib/supabase/client";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 
 const required = ["voornaam", "achternaam", "email", "telefoon", "adres", "huisnummer", "postcode", "stad"];
 
 export default function AanvraagForm() {
+  const searchParams = useSearchParams();
+  const calculatorJaren = searchParams.get("jaren") ? parseInt(searchParams.get("jaren")) : null;
+  const calculatorUnits = searchParams.get("units") ? parseInt(searchParams.get("units")) : null;
+  const calculatorIndicatie = searchParams.get("indicatie") ? parseFloat(searchParams.get("indicatie")) : null;
+  const scanSlaagkans = searchParams.get("slagingskans") ? parseInt(searchParams.get("slagingskans"), 10) : null;
+  const scanKansLabel = searchParams.get("kansLabel") || "";
+
+  const prefillStraat = searchParams.get("straat") || "";
+  const prefillHuisnummer = searchParams.get("huisnummer") || "";
+  const prefillPostcode = searchParams.get("postcode") || "";
+  const prefillStad = searchParams.get("stad") || "";
+
+  const fallbackAdres = searchParams.get("adres") || "";
+  const fallbackAdresMatch = fallbackAdres.match(/^(.+?)\s+(\d+\w*)\s*,\s*(\d{4}\s?[A-Za-z]{2})\s+(.+)$/);
+  const fallbackStraat = fallbackAdresMatch?.[1] ?? "";
+  const fallbackHuisnummer = fallbackAdresMatch?.[2] ?? "";
+  const fallbackPostcode = fallbackAdresMatch?.[3] ?? "";
+  const fallbackStad = fallbackAdresMatch?.[4] ?? "";
+
   const [form, setForm] = useState({
     voornaam: "",
     achternaam: "",
     email: "",
     telefoon: "",
-    adres: "",
-    huisnummer: "",
-    postcode: "",
-    stad: "",
+    adres: prefillStraat || fallbackStraat,
+    huisnummer: prefillHuisnummer || fallbackHuisnummer,
+    postcode: prefillPostcode || fallbackPostcode,
+    stad: prefillStad || fallbackStad,
     opmerkingen: "",
   });
   const [errors, setErrors] = useState({});
@@ -100,10 +121,58 @@ export default function AanvraagForm() {
     }
 
     setLoading(true);
-    // Simulate submission
-    await new Promise((r) => setTimeout(r, 800));
-    setLoading(false);
-    setSubmitted(true);
+
+    try {
+      const payloadBase = {
+        voornaam: form.voornaam.trim(),
+        achternaam: form.achternaam.trim(),
+        email: form.email.trim(),
+        telefoon: form.telefoon.trim(),
+        adres: form.adres.trim(),
+        huisnummer: form.huisnummer.trim(),
+        postcode: form.postcode.trim(),
+        stad: form.stad.trim(),
+        opmerkingen: form.opmerkingen.trim() || null,
+        status: "nieuw",
+        calculator_jaren: calculatorJaren,
+        calculator_units: calculatorUnits,
+        calculator_indicatie: calculatorIndicatie,
+      };
+
+      const payloadWithScan = {
+        ...payloadBase,
+        scan_slaagkans: scanSlaagkans,
+        scan_kans_label: scanKansLabel || null,
+      };
+
+      const hasScanData = scanSlaagkans !== null || Boolean(scanKansLabel);
+
+      let error;
+      if (hasScanData) {
+        const res = await supabase.from("energiebelasting_aanvragen").insert([payloadWithScan]);
+        error = res.error;
+
+        // If these columns are not yet created in Supabase, retry without them.
+        if (error && /scan_slaagkans|scan_kans_label|column/i.test(error.message || "")) {
+          const retry = await supabase.from("energiebelasting_aanvragen").insert([payloadBase]);
+          error = retry.error;
+        }
+      } else {
+        const res = await supabase.from("energiebelasting_aanvragen").insert([payloadBase]);
+        error = res.error;
+      }
+
+      if (error) throw error;
+
+      setSubmitted(true);
+    } catch {
+      setErrors((prev) => ({
+        ...prev,
+        _form: "Er is iets misgegaan. Probeer het opnieuw of bel ons op 06 81 41 49 67.",
+      }));
+    } finally {
+      setLoading(false);
+    }
   };
 
   const inputClass = (name) =>
@@ -115,13 +184,39 @@ export default function AanvraagForm() {
 
   return (
     <div className="bg-white rounded-2xl border-2 border-gray-100 shadow-sm overflow-hidden">
-      {/* Card header */}
-      <div className="px-6 pt-6 pb-2">
-        <h2 className="text-primary font-bold text-xl">Uw gegevens</h2>
-        <p className="text-gray-500 text-sm mt-0.5">
-          Invullen duurt minder dan 2 minuten
-        </p>
-      </div>
+      {/* Calculator result banner */}
+      {calculatorIndicatie !== null && (
+        <div className="bg-green-50 border-b border-green-100 px-6 py-3 flex items-center gap-3">
+          <i className="fa-solid fa-circle-check text-green-500 shrink-0" />
+          <p className="text-sm text-green-800">
+            Op basis van uw berekening kunt u mogelijk{" "}
+            <span className="font-bold">
+              €{calculatorIndicatie.toLocaleString("nl-NL", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </span>{" "}
+            terugkrijgen. Vul uw gegevens in om de gratis scan te starten.
+          </p>
+        </div>
+      )}
+
+      {scanSlaagkans !== null && !Number.isNaN(scanSlaagkans) && (
+        <div className="bg-blue-50 border-b border-blue-100 px-6 py-3 flex items-center gap-3">
+          <i className="fa-solid fa-chart-line text-secondary shrink-0" />
+          <p className="text-sm text-blue-800">
+            Uw pre-scan toonde een kans van <span className="font-bold">{scanSlaagkans}%</span>
+            {scanKansLabel ? <> ({scanKansLabel})</> : null}. Rond uw aanvraag af voor de uitgebreide beoordeling.
+          </p>
+        </div>
+      )}
+
+      {/* Card header — alleen tonen als formulier nog niet verstuurd */}
+      {!submitted && (
+        <div className="px-6 pt-6 pb-2">
+          <h2 className="text-primary font-bold text-xl">Uw gegevens</h2>
+          <p className="text-gray-500 text-sm mt-0.5">
+            Invullen duurt minder dan 2 minuten
+          </p>
+        </div>
+      )}
 
       {submitted ? (
         <div className="px-6 py-14 text-center">
@@ -266,7 +361,7 @@ export default function AanvraagForm() {
                   value={form.adres}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  placeholder="Wordt automatisch ingevuld"
+                  placeholder="Dorpsstraat"
                   className={inputClass("adres")}
                 />
                 {lookupStatus === "loading" && (
@@ -296,7 +391,7 @@ export default function AanvraagForm() {
                 value={form.stad}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                placeholder="Wordt automatisch ingevuld"
+                placeholder="Amsterdam"
                 className={inputClass("stad")}
               />
               {errors.stad && (
@@ -325,7 +420,7 @@ export default function AanvraagForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-yellow-400 hover:bg-yellow-500 text-primary font-bold px-8 py-4 rounded-[12px] transition duration-300 shadow-lg text-lg disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full bg-yellow-400 hover:bg-yellow-500 text-primary font-bold px-7 py-3 rounded-lg transition duration-300 shadow-lg text-base disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
@@ -340,9 +435,16 @@ export default function AanvraagForm() {
             )}
           </button>
 
+          {errors._form && (
+            <p className="text-red-500 text-sm text-center">{errors._form}</p>
+          )}
+
           {/* Microcopy */}
           <p className="text-center text-xs text-gray-400">
-            🔒 Veilig verwerkt · Geen spam · Geen verplichtingen
+            🔒 Veilig verwerkt · Geen spam · Geen verplichtingen ·{" "}
+            <a href="/privacy" className="underline hover:text-gray-600 transition">
+              Privacybeleid
+            </a>
           </p>
         </form>
       )}

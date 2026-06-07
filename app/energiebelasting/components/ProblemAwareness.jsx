@@ -21,7 +21,7 @@ export default function ProblemAwareness() {
   ];
 
   return (
-    <section id="problem" className="-mt-16 pt-36 pb-20 bg-background w-full">
+    <section id="problem" className="-mt-16 pt-32 pb-20 bg-background w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-primary mb-6">
@@ -31,11 +31,18 @@ export default function ProblemAwareness() {
 Door onduidelijke regelgeving en versnipperde aansluitingen wordt belasting vaak onjuist berekend. 
 Het gevolg: u betaalt jaarlijks honderden tot duizenden euro’s te veel — zonder dat dit automatisch wordt gecorrigeerd. De mogelijkheid om energiebelasting terug te vragen bestaat, maar wordt zelden benut omdat deze nauwelijks bekend is en niet actief wordt gecommuniceerd door instanties.
 </p>          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+        </div>
+
+        <div className="mt-10 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 md:divide-x md:divide-primary/10 divide-y md:divide-y-0 divide-primary/10 rounded-[1.5rem] overflow-hidden">
             {stats.map((stat, index) => (
-              <div key={index} className="bg-white p-6 rounded-xl shadow-sm">
-                <p className="text-4xl font-bold text-accent mb-2">{stat.value}</p>
-                <p className="text-gray-600">{stat.description}</p>
+              <div key={index} className="px-5 py-7 md:py-8 text-center bg-transparent">
+                <p className="text-3xl md:text-4xl font-bold tracking-tight text-secondary mb-2">
+                  {stat.value}
+                </p>
+                <p className="text-sm md:text-base text-gray-600 leading-snug max-w-[11rem] mx-auto">
+                  {stat.description}
+                </p>
               </div>
             ))}
           </div>

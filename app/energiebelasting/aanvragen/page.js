@@ -1,4 +1,5 @@
 import { Footer, Header, TopBar } from "@/components/layout";
+import { Suspense } from "react";
 import AanvraagForm from "./components/AanvraagForm";
 
 export const metadata = {
@@ -14,24 +15,40 @@ export default function AanvraagPage() {
       <Header />
       <main>
         {/* Compact page header */}
-        <section className="hero-bg py-10 text-center">
+        <section className="hero-bg py-16 text-center curve-bottom overflow-hidden">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <p className="text-sm text-white/60 mb-2">
               Energiebelasting teruggave aanvragen
             </p>
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
+            <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4">
               Start uw gratis energiescan
             </h1>
-            <p className="text-white/70 text-base">
+            <p className="text-lg text-blue-100">
               Vul uw gegevens in — wij nemen binnen 2 werkdagen contact op.
             </p>
+
+            {/* Trust bar in hero */}
+            <div className="flex flex-wrap justify-center gap-6 mt-6 text-sm text-white/70">
+              <div className="flex items-center gap-2">
+                <i className="fa-solid fa-shield-halved text-secondary" />
+                <span>No Cure No Pay</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <i className="fa-solid fa-bolt text-secondary" />
+                <span>Reactie binnen 2 werkdagen</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <i className="fa-solid fa-star text-yellow-400" />
+                <span>4.8/5 beoordeling</span>
+              </div>
+            </div>
           </div>
         </section>
 
         {/* Main content */}
         <section className="py-16 bg-white">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col-reverse md:grid md:grid-cols-[55%_45%] gap-12">
+            <div className="flex flex-col-reverse md:grid md:grid-cols-[34%_66%] gap-12">
               {/* Left column */}
               <div className="flex flex-col justify-start">
                 <h2 className="text-2xl font-bold text-primary mb-3">
@@ -45,11 +62,10 @@ export default function AanvraagPage() {
                 {/* Checkmark bullets */}
                 <ul className="space-y-3 mb-8">
                   {[
-                    "Geen energienota nodig om te starten",
                     "Beoordeling binnen 2 werkdagen",
-                    "100% No Cure No Pay — u betaalt alleen bij succes",
+                    "Geen energienota nodig om te starten",
                     "Terugvorderen tot 5 jaar terug mogelijk",
-                    "Honorarium 20% excl. BTW — alleen bij succes",
+                    "Honorarium 20% excl. BTW — uitsluitend bij succes (No Cure No Pay)",
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-3 text-gray-700">
                       <i className="fa-solid fa-circle-check text-secondary mt-0.5 text-base shrink-0" />
@@ -101,29 +117,15 @@ export default function AanvraagPage() {
 
               {/* Right column — form */}
               <div>
-                <AanvraagForm />
+                <Suspense fallback={<div className="bg-white rounded-2xl border-2 border-gray-100 shadow-sm h-96 animate-pulse" />}>
+                  <AanvraagForm />
+                </Suspense>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Trust row */}
-        <section className="py-10 bg-gray-50 border-t border-gray-100">
-          <div className="max-w-3xl mx-auto px-4 flex flex-wrap justify-center gap-8 text-sm text-gray-600">
-            <div className="flex items-center gap-2">
-              <i className="fa-solid fa-shield-halved text-secondary" />
-              <span>No Cure No Pay</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <i className="fa-solid fa-bolt text-secondary" />
-              <span>Reactie binnen 2 werkdagen</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <i className="fa-solid fa-star text-yellow-400" />
-              <span>4.8/5 beoordeling</span>
-            </div>
-          </div>
-        </section>
+
       </main>
       <Footer />
     </>

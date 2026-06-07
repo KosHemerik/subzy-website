@@ -62,9 +62,9 @@ export default function MidCTA() {
         </div>
 
         <Link href="/energiebelasting/aanvragen">
-          <Button variant="primary" size="lg">
-            <i className="fa-solid fa-bolt mr-2" />
-            Start Mijn Teruggave Check
+          <Button variant="primary" size="md" className="group">
+            Vraag gratis scan aan
+            <i className="fa-solid fa-arrow-right ml-2 cta-arrow-bounce" />
           </Button>
         </Link>
         <p className="text-gray-400 text-sm mt-4">

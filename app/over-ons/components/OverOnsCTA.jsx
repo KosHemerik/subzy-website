@@ -23,13 +23,13 @@ export default function OverOnsCTA() {
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
               <Link
                 href="/energiebelasting/aanvragen"
-                className="inline-flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-primary font-bold px-8 py-3.5 rounded-lg transition duration-300 shadow-lg text-lg w-full sm:w-auto"
+                className="inline-flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-primary font-bold px-7 py-3 rounded-lg transition duration-300 shadow-lg text-base w-full sm:w-auto"
               >
                 Energiebelasting terugvragen <i className="fa-solid fa-arrow-right ml-2" />
               </Link>
               <Link
                 href="/subsidie/aanvragen/isde"
-                className="inline-flex items-center justify-center bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold px-8 py-3.5 rounded-lg transition duration-300 text-lg w-full sm:w-auto"
+                className="inline-flex items-center justify-center bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold px-7 py-3 rounded-lg transition duration-300 text-base w-full sm:w-auto"
               >
                 Subsidie aanvragen <i className="fa-solid fa-arrow-right ml-2" />
               </Link>

@@ -96,7 +96,7 @@ export default function Header() {
           {/* CTA Button */}
           <div className="flex items-center">
             <Link href={portalHref}>
-              <Button variant="secondary" size="md">
+              <Button variant="secondary" size="sm">
                 Klantportaal
               </Button>
             </Link>

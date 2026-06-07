@@ -1,38 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Subzy Website
 
-## Getting Started
+## Lokale setup
 
-First, run the development server:
+1. Installeer dependencies:
+
+```bash
+npm install
+```
+
+2. Maak een lokale env file op basis van het voorbeeld:
+
+```bash
+cp .env.local.example .env.local
+```
+
+3. Vul in `.env.local` je Supabase projectgegevens in:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://<jouw-project-ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<jouw-anon-key>
+```
+
+4. Start de app:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Of start app + lokale Supabase server samen:
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```bash
+npm run dev:local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+5. Open `http://localhost:3000`.
 
-## Learn More
+## Controle of Supabase werkt
 
-To learn more about Next.js, take a look at the following resources:
+- Dien een testformulier in via:
+	- `/subsidie/aanvragen`
+	- `/energiebelasting/aanvragen`
+- Controleer in Supabase of de records verschijnen in:
+	- `subsidie_aanvragen`
+	- `energiebelasting_aanvragen`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Opmerking
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Als de env variabelen ontbreken, geeft de app nu een duidelijke foutmelding dat Supabase nog niet geconfigureerd is.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# subzy-website
-# subzy-website
+Voor `npm run dev:local` heb je Docker en de Supabase CLI nodig.

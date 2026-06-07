@@ -68,7 +68,7 @@ export default function Testimonials() {
             <span className="text-3xl font-bold text-primary mr-3">4.8</span>
             <div>
               <StarRating rating={4.8} className="text-sm mb-1" />
-              <span className="text-xs text-gray-500">Gebaseerd op 450+ reviews</span>
+              <span className="text-xs text-gray-500">Klantreviews</span>
             </div>
           </div>
         </div>

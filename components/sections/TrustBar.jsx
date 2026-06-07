@@ -23,7 +23,7 @@ const trustItems = [
   {
     icon: "fa-solid fa-star",
     label: "4.8/5 beoordeling",
-    subtitle: "Gebaseerd op 450+ reviews",
+    subtitle: "Klantreviews",
     iconBg: "bg-yellow-50",
     iconColor: "text-yellow-400",
   },

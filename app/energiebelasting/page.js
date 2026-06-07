@@ -1,13 +1,11 @@
 import { Footer, Header, TopBar } from "@/components/layout";
 import {
-  Calculator,
-  Eligibility,
-  HowItWorksTimeline,
-  MidCTA,
-  Pricing,
-  ProblemAwareness,
-  ServiceFAQ,
-  ServiceHero,
+    Eligibility,
+    HowItWorksTimeline,
+    MidCTA,
+    ProblemAwareness,
+    ServiceFAQ,
+    ServiceHero,
 } from "./components";
 
 export const metadata = {
@@ -21,14 +19,12 @@ export default function TeruggaveEnergiebelastingPage() {
     <>
       <TopBar />
       <Header />
-      <main>
+      <main className="bg-white">
         <ServiceHero />
         <ProblemAwareness />
         <HowItWorksTimeline />
         <Eligibility />
         <MidCTA />
-        {/* <Pricing /> */}
-        <Calculator />
         <ServiceFAQ />
       </main>
       <Footer />

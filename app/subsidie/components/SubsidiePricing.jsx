@@ -42,7 +42,7 @@ export default function SubsidiePricing() {
 
             <Link
               href="/subsidie/aanvragen"
-              className="block w-full bg-yellow-400 hover:bg-yellow-500 text-primary font-bold py-3.5 rounded-lg transition duration-300 text-center"
+              className="block w-full bg-yellow-400 hover:bg-yellow-500 text-primary font-bold py-3 rounded-lg transition duration-300 text-center"
             >
               Start uw aanvraag
             </Link>

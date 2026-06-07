@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -15,7 +14,7 @@ const faqItems = [
   },
   {
     question: "Hoeveel kan ik terugkrijgen?",
-    answer: "Voor 2025 bedraagt de heffingskorting gemiddeld €635,19 inclusief btw per woning per jaar. Omdat u tot vijf jaar terug kunt vorderen, kan dit per woning oplopen tot meer dan €3.000.",
+    answer: "Het bedrag verschilt per jaar en per aansluiting. Gemiddeld loopt de teruggave per extra woning op tot enkele honderden euro's per jaar. Omdat u tot vijf jaar terug kunt vorderen, kan het totaalbedrag aanzienlijk oplopen. Wij berekenen het exacte bedrag voor u na de scan.",
   },
   {
     question: "Wat kost het?",
@@ -55,12 +54,8 @@ function FAQItem({ question, answer }) {
  * Service FAQ Section - Energy Tax specific questions
  */
 export default function ServiceFAQ() {
-  const scrollToCalculator = () => {
-    document.getElementById("calculator")?.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
-    <section id="faq" className="py-20 bg-white w-full">
+    <section id="faq" className="py-20 bg-background w-full">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12">
@@ -79,21 +74,12 @@ export default function ServiceFAQ() {
 
         {/* Link to full FAQ */}
         <div className="mt-12 text-center">
-          <p className="text-gray-600 mb-6">
-            Staat uw vraag er niet bij?
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/faq">
-              <Button variant="outline" size="lg">
-                Bekijk alle veelgestelde vragen
-              </Button>
-            </Link>
-            <Link href="/energiebelasting/aanvragen">
-              <Button variant="primary" size="lg">
-                Start de gratis scan
-              </Button>
-            </Link>
-          </div>
+          <Link
+            href="/faq"
+            className="text-secondary font-medium hover:text-primary transition underline decoration-secondary underline-offset-4"
+          >
+            Bekijk alle veelgestelde vragen
+          </Link>
         </div>
       </div>
     </section>

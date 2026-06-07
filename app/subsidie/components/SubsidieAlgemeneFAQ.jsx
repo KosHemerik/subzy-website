@@ -22,7 +22,7 @@ const faqItems = [
   {
     question: "Wat kost het als er geen subsidie wordt toegekend?",
     answer:
-      "Niets. Wij werken volledig op basis van No Cure No Pay. U betaalt alleen ons honorarium van 20% excl. BTW als de subsidie daadwerkelijk wordt uitbetaald. Bij afwijzing zijn er geen kosten.",
+      "Niets. Wij werken volledig op basis van No Cure No Pay. U betaalt alleen ons honorarium van 10% excl. BTW als de subsidie daadwerkelijk wordt uitbetaald. Bij afwijzing zijn er geen kosten.",
   },
   {
     question: "Kan ik subsidie aanvragen voor meerdere maatregelen tegelijk?",
