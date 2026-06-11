@@ -19,7 +19,7 @@ function formatEuro(amount) {
 const CHANCE_BASE = {
   label: "Kans aanwezig",
   sublabel: "Er is kans op teruggave. Met een gratis uitgebreide scan controleren we dit nauwkeurig voor u.",
-  percentage: 74,
+  percentage: 55,
   segments: 1,
   colorClass: "text-amber-600",
   bgClass: "bg-amber-50",
@@ -217,8 +217,6 @@ async function runAddressAnalysis(selectedDoc) {
 
   // Step 1 — determine neighbour house numbers (±2, only > 0)
   const neighborNumbers = [baseNumber - 2, baseNumber, baseNumber + 2].filter((n) => n > 0);
-  console.group("🏠 Adresanalyse:", selectedDoc.weergavenaam);
-  console.log("Buur-huisnummers:", neighborNumbers);
 
   // Step 2 — fetch sub-addresses for each neighbour
   const subAddressesByNumber = await Promise.all(
@@ -249,8 +247,6 @@ async function runAddressAnalysis(selectedDoc) {
     seenAddressKeys.add(key);
     return true;
   });
-
-  console.log(`Totaal gevonden adressen (incl. sub-nummers): ${uniqueAddresses.length}`, uniqueAddresses);
 
   // Step 3 — fetch EAN for every address
   const eanResults = await Promise.all(
@@ -318,10 +314,6 @@ async function runAddressAnalysis(selectedDoc) {
   if (!selectedHasEan) {
     veryHighReasons.push("Het ingevoerde adres zelf heeft geen EAN.");
   }
-
-  console.log("EAN-resultaten per adres:", eanResults);
-  console.log("Zeer hoge kans redenen:", veryHighReasons);
-  console.groupEnd();
 
   return {
     veryHighReasons,
@@ -470,7 +462,10 @@ export default function ServiceHero() {
             </div>
 
             <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight mb-6">
-              Veel woningeigenaren betalen onnodig te veel energiebelasting.
+              <span className="inline-block whitespace-nowrap" style={{ wordSpacing: "-0.08em" }}>
+                Energiebelasting terugvragen?
+              </span>{" "}
+              Veel woningeigenaren betalen onnodig te veel.
             </h1>
 
             <p className="text-lg text-gray-200 mb-10 leading-relaxed">
@@ -496,7 +491,7 @@ export default function ServiceHero() {
 
           {/* Right — address checker card */}
           <div className="bg-white rounded-2xl shadow-xl p-6 max-w-md w-full lg:ml-auto">
-            <h2 className="text-base font-bold text-primary mb-1">Gratis pre-scan, zie direct uw kans</h2>
+            <h2 className="text-lg font-bold text-primary mb-1">Gratis pre-scan, zie direct uw kans</h2>
             <p className="text-xs text-gray-500 mb-5">Vul hier uw adres in · Geen registratie nodig</p>
 
             {/* Address input + autocomplete */}
@@ -519,6 +514,7 @@ export default function ServiceHero() {
                     setChance(null);
                   }}
                   placeholder="Bijv. Kalverstraat 1, Amsterdam..."
+                  aria-label="Voer uw adres in"
                   className="flex-1 py-3.5 pr-3 text-sm text-gray-800 placeholder:text-gray-400 outline-none bg-transparent font-medium"
                 />
                 {fetchLoading && (
@@ -589,11 +585,12 @@ export default function ServiceHero() {
                   </span>
                 </div>
 
-                <Link href={aanvraagHref}>
-                  <button className="group w-full py-3 bg-yellow-400 hover:bg-yellow-500 text-primary font-bold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg text-sm">
-                    Ja, vraag gratis scan aan
-                    <i className="fa-solid fa-arrow-right ml-2 cta-arrow-bounce" />
-                  </button>
+                <Link
+                  href={aanvraagHref}
+                  className="group w-full block py-3 bg-yellow-400 hover:bg-yellow-500 text-primary font-bold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg text-sm text-center"
+                >
+                  Ja, vraag gratis scan aan
+                  <i className="fa-solid fa-arrow-right ml-2 cta-arrow-bounce" />
                 </Link>
 
                 <p className="text-center text-xs text-gray-400 pt-3">
@@ -610,11 +607,12 @@ export default function ServiceHero() {
                   </p>
                 </div>
 
-                <Link href="/energiebelasting/aanvragen">
-                  <button className="group w-full py-3 bg-yellow-400 hover:bg-yellow-500 text-primary font-bold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg mb-2 text-sm">
-                    Vraag gratis scan aan
-                    <i className="fa-solid fa-arrow-right ml-2 cta-arrow-bounce" />
-                  </button>
+                <Link
+                  href="/energiebelasting/aanvragen"
+                  className="group w-full block py-3 bg-yellow-400 hover:bg-yellow-500 text-primary font-bold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg mb-2 text-sm text-center"
+                >
+                  Vraag gratis scan aan
+                  <i className="fa-solid fa-arrow-right ml-2 cta-arrow-bounce" />
                 </Link>
 
                 <p className="text-center text-xs text-gray-400 pt-1">

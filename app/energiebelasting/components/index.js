@@ -6,3 +6,4 @@ export { default as HowItWorksTimeline } from "./HowItWorksTimeline";
 export { default as Pricing } from "./Pricing";
 export { default as Calculator } from "./Calculator";
 export { default as ServiceFAQ } from "./ServiceFAQ";
+export { default as TestimonialsCarousel } from "./TestimonialsCarousel";

@@ -1,10 +1,5 @@
 import Link from "next/link";
-import { Button } from "@/components/ui";
 
-/**
- * FAQ Teaser Section
- * Promotes the FAQ page for quick answers
- */
 export default function FAQTeaser() {
   return (
     <section className="py-16 bg-surface px-4 sm:px-6 lg:px-8">
@@ -13,12 +8,13 @@ export default function FAQTeaser() {
           Misschien staat uw vraag er al tussen
         </h2>
         <p className="text-gray-600 mb-8">
-          Bekijk onze veelgestelde vragen. Grote kans dat uw vraag hier al tussen staat.
+          Meer dan 20 vragen beantwoord over subsidies en energiebelasting teruggave.
         </p>
-        <Link href="/faq">
-          <Button variant="outline" size="lg">
-            Naar de FAQ pagina
-          </Button>
+        <Link
+          href="/faq"
+          className="inline-flex items-center font-bold transition duration-300 rounded-lg border-2 border-primary text-primary hover:bg-gray-50 px-7 py-3 text-base"
+        >
+          Naar de FAQ pagina
         </Link>
       </div>
     </section>

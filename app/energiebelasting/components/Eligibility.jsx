@@ -41,7 +41,7 @@ export default function Eligibility() {
           <div>
             <img
               src="/apartments.jpg"
-              alt="Appartementencomplex"
+              alt="Appartementencomplex – teruggave energiebelasting voor VvE en verhuurders"
               className="rounded-2xl shadow-lg object-cover object-top w-full h-[500px]"
             />
           </div>
@@ -56,7 +56,7 @@ export default function Eligibility() {
                   </div>
                 </div>
                 <div className="ml-4">
-                  <h4 className="text-lg font-bold text-primary mb-0.5">{item.title}</h4>
+                  <h3 className="text-lg font-bold text-primary mb-0.5">{item.title}</h3>
                   <p className="text-gray-500 text-xs mb-1">{item.subtitle}</p>
                   <p className="text-gray-600 text-sm">{item.description}</p>
                 </div>

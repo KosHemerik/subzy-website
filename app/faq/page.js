@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { TopBar, Header, Footer } from "@/components/layout";
 import { FAQHero, FAQContent, ContactCTA } from "./components";
@@ -10,6 +11,8 @@ import { FAQHero, FAQContent, ContactCTA } from "./components";
  */
 export default function FAQPage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const searchParams = useSearchParams();
+  const initialCategory = searchParams.get("category") || "algemeen";
 
   return (
     <>
@@ -17,7 +20,7 @@ export default function FAQPage() {
       <Header />
       <main>
         <FAQHero onSearch={setSearchQuery} />
-        <FAQContent searchQuery={searchQuery} />
+        <FAQContent searchQuery={searchQuery} initialCategory={initialCategory} />
         <ContactCTA />
       </main>
       <Footer />

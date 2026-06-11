@@ -110,6 +110,7 @@ export default function ContactForm() {
           label="Naam"
           type="text"
           name="naam"
+          autoComplete="name"
           value={formData.naam}
           onChange={handleChange}
           placeholder="Uw volledige naam"
@@ -119,6 +120,7 @@ export default function ContactForm() {
           label="E-mailadres"
           type="email"
           name="email"
+          autoComplete="email"
           value={formData.email}
           onChange={handleChange}
           placeholder="uw@email.nl"
@@ -131,6 +133,7 @@ export default function ContactForm() {
           label="Telefoonnummer"
           type="tel"
           name="telefoon"
+          autoComplete="tel"
           value={formData.telefoon}
           onChange={handleChange}
           placeholder="06 12345678"
@@ -157,7 +160,7 @@ export default function ContactForm() {
 
       <Button
         type="submit"
-        variant="dark"
+        variant="primary"
         size="md"
         className="w-full md:w-auto"
         disabled={isLoading}

@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui";
 import Link from "next/link";
 
 /**
@@ -20,10 +19,10 @@ export default function MidCTA() {
     {
       icon: "fa-solid fa-rocket",
       title: "Snel geregeld",
-      description: "Binnen 5 dagen volledig afgehandeld door onze specialisten",
+      description: "Binnen 2 werkdagen duidelijkheid van onze specialisten.",
     },
     {
-      icon: "fa-solid fa-hands-helping",
+      icon: "fa-solid fa-handshake",
       title: "Geen gedoe",
       description: "Wij regelen alles voor u, van begin tot eind.",
     },
@@ -61,11 +60,12 @@ export default function MidCTA() {
           ))}
         </div>
 
-        <Link href="/energiebelasting/aanvragen">
-          <Button variant="primary" size="md" className="group">
-            Vraag gratis scan aan
-            <i className="fa-solid fa-arrow-right ml-2 cta-arrow-bounce" />
-          </Button>
+        <Link
+          href="/energiebelasting/aanvragen"
+          className="group font-bold transition duration-300 rounded-lg inline-flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-primary shadow-lg px-6 py-3"
+        >
+          Vraag gratis scan aan
+          <i className="fa-solid fa-arrow-right ml-2 cta-arrow-bounce" />
         </Link>
         <p className="text-gray-400 text-sm mt-4">
           Gratis check • Geen verplichtingen

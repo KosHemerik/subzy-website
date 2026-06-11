@@ -184,7 +184,7 @@ export default function AanvraagForm() {
 
       setSubmitted(true);
     } catch {
-      setSubmitError("Er is iets misgegaan. Probeer het opnieuw of bel ons op 06 81 41 49 67.");
+      setSubmitError("Er is iets misgegaan. Probeer het opnieuw of bel ons op +31712032405.");
     } finally {
       setLoading(false);
     }

@@ -1,4 +1,4 @@
-export default function HowItWorksCards({ label, title, subtitle, steps, badge }) {
+export default function HowItWorksCards({ label, title, subtitle, steps, badge, cta }) {
   const cols = steps.length === 3 ? "md:grid-cols-3" : "md:grid-cols-2 lg:grid-cols-4";
 
   return (
@@ -55,6 +55,22 @@ export default function HowItWorksCards({ label, title, subtitle, steps, badge }
               <i className="fa-solid fa-shield-halved text-yellow-400" />
               {badge}
             </span>
+          </div>
+        )}
+
+        {/* CTA */}
+        {cta && (
+          <div className="text-center mt-10">
+            <a
+              href={cta.href}
+              className="inline-flex items-center font-bold transition duration-300 rounded-lg bg-yellow-400 hover:bg-yellow-500 text-primary shadow-lg px-6 py-3"
+            >
+              {cta.label}
+              <i className="fa-solid fa-arrow-right ml-2 cta-arrow-bounce" />
+            </a>
+            {cta.sub && (
+              <p className="text-gray-400 text-sm mt-3">{cta.sub}</p>
+            )}
           </div>
         )}
       </div>

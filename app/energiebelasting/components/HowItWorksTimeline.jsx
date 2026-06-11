@@ -28,6 +28,11 @@ export default function HowItWorksTimeline() {
       title="In 3 stappen naar uw teruggave"
       subtitle="Wij maken het proces zo makkelijk mogelijk. Geen ingewikkelde formulieren of verborgen verrassing."
       steps={steps}
+      cta={{
+        href: "/energiebelasting/aanvragen",
+        label: "Begin met uw gratis scan",
+        sub: "Binnen 2 werkdagen duidelijkheid",
+      }}
     />
   );
 }

@@ -33,8 +33,7 @@ export default function Footer() {
               <Image src="/subzy_logo_transparant_wit.png" alt="Subzy" width={120} height={40} priority />
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
-              Dé vertrouwde partner voor huiseigenaren. Wij maken het aanvragen
-              van subsidies en teruggaven simpel, snel en 100% zorgeloos.
+              Dé vertrouwde partner voor huiseigenaren. Wij maken het aanvragen van subsidies en teruggaven energiebelasting simpel, snel en 100% zorgeloos.
             </p>
           </div>
 

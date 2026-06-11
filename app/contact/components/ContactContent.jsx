@@ -18,7 +18,7 @@ export default function ContactContent() {
               </h2>
               <div className="flex items-center text-green-600 bg-green-50 px-3 py-1.5 rounded-full inline-flex text-sm font-medium">
                 <i className="fa-solid fa-clock mr-2" />
-                Wij reageren binnen 1 werkdag
+                Wij reageren binnen één werkdag
               </div>
             </div>
 

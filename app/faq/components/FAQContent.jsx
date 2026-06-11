@@ -303,8 +303,10 @@ function TrustBlock() {
 /**
  * Main FAQ Content Component with tabs and accordion
  */
-export default function FAQContent({ searchQuery = "" }) {
-  const [activeCategory, setActiveCategory] = useState("algemeen");
+export default function FAQContent({ searchQuery = "", initialCategory = "algemeen" }) {
+  const [activeCategory, setActiveCategory] = useState(
+    faqData[initialCategory] ? initialCategory : "algemeen"
+  );
   const [openIndex, setOpenIndex] = useState(null);
 
   // Filter questions based on search query

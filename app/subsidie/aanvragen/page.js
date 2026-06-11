@@ -91,10 +91,10 @@ export default function SubsidieAanvraagPage() {
                   <p>
                     Liever eerst bellen?{" "}
                     <a
-                      href="tel:0681414967"
+                      href="tel:+31712032405"
                       className="font-semibold text-primary hover:text-secondary transition"
                     >
-                      06 81 41 49 67
+                      +31712032405
                     </a>
                     <span className="text-gray-400"> — ma t/m vr 09:00–17:30</span>
                   </p>

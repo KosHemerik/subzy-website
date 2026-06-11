@@ -5,24 +5,28 @@ import { useState } from "react";
 
 const faqItems = [
   {
-    question: "Wat is de Teruggave Energiebelasting?",
-    answer: "De Teruggave Energiebelasting is een wettelijke regeling waarmee eigenaren van panden met meerdere woningen of WOZ-objecten achter één elektriciteitsaansluiting de te veel betaalde energiebelasting kunnen terugvorderen bij de Belastingdienst.",
-  },
-  {
-    question: "Hoe weet ik of ik in aanmerking kom?",
-    answer: "Als u meerdere woningen, appartementen of WOZ-objecten heeft die aangesloten zijn op één elektriciteitsaansluiting, komt u mogelijk in aanmerking. Vraag onze vrijblijvende scan aan en wij beoordelen het voor u.",
+    question: "Wat is teruggave energiebelasting precies?",
+    answer: "De heffingskorting op energiebelasting wordt in de praktijk vaak maar een keer per aansluiting verrekend, terwijl u er per zelfstandig WOZ-object recht op heeft. Daardoor betalen veel eigenaren structureel te veel.",
   },
   {
     question: "Hoeveel kan ik terugkrijgen?",
-    answer: "Het bedrag verschilt per jaar en per aansluiting. Gemiddeld loopt de teruggave per extra woning op tot enkele honderden euro's per jaar. Omdat u tot vijf jaar terug kunt vorderen, kan het totaalbedrag aanzienlijk oplopen. Wij berekenen het exacte bedrag voor u na de scan.",
+    answer: "In 2025 is de heffingskorting €635,19 inclusief btw per extra woning per jaar. Omdat u tot 5 jaar terug kunt corrigeren, kan dit oplopen tot ruim €3.000 per woning.",
   },
   {
-    question: "Wat kost het?",
-    answer: "Wij werken uitsluitend op basis van No cure, No pay. U betaalt alleen een percentage van de daadwerkelijk ontvangen teruggave. Als wij niets terugkrijgen, betaalt u niets.",
+    question: "Hoe ver terug kan ik energiebelasting terugvragen?",
+    answer: "U kunt het lopende jaar plus de 4 voorgaande kalenderjaren terugvragen.",
   },
   {
-    question: "Is dit legaal?",
-    answer: "Ja, de Teruggave Energiebelasting is een officiële wettelijke regeling van de Nederlandse overheid. Wij dienen de aanvraag namens u in bij de Belastingdienst via de daarvoor bestemde procedure.",
+    question: "Waarom krijg ik die korting niet automatisch?",
+    answer: "De energieleverancier ziet meestal maar één aansluiting (EAN) en past de korting daarom vaak maar één keer toe. De Belastingdienst corrigeert dit doorgaans alleen als u hier expliciet om verzoekt.",
+  },
+  {
+    question: "Wat kost de dienst van Subzy?",
+    answer: "Subzy werkt op basis van no cure, no pay. U betaalt 20% excl. btw over het bedrag dat wij daadwerkelijk voor u terugkrijgen.",
+  },
+  {
+    question: "Hoe lang duurt het voordat ik het geld ontvang?",
+    answer: "Gemiddeld duurt het circa 6 weken voordat u de teruggave ontvangt.",
   },
 ];
 
@@ -35,17 +39,21 @@ function FAQItem({ question, answer }) {
   return (
     <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
       <button
-        className="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none"
+        className="w-full px-6 py-5 text-left flex justify-between items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-inset"
         onClick={() => setIsOpen(!isOpen)}
       >
         <span className="font-semibold text-primary">{question}</span>
         <i className={`fa-solid fa-chevron-down text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`} />
       </button>
-      {isOpen && (
-        <div className="px-6 pb-5">
-          <p className="text-gray-600 text-sm">{answer}</p>
+      <div
+        className={`grid transition-all duration-300 ease-out ${
+          isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <p className="px-6 pb-5 text-gray-600 text-sm">{answer}</p>
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -72,14 +80,24 @@ export default function ServiceFAQ() {
           ))}
         </div>
 
-        {/* Link to full FAQ */}
-        <div className="mt-12 text-center">
-          <Link
-            href="/faq"
-            className="text-secondary font-medium hover:text-primary transition underline decoration-secondary underline-offset-4"
-          >
-            Bekijk alle veelgestelde vragen
-          </Link>
+        {/* Closing CTA */}
+        <div className="mt-10 pt-8 border-t border-gray-200 text-center">
+          <p className="text-gray-500 text-sm mb-4">Nog vragen? Of direct aan de slag?</p>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <Link
+              href="/energiebelasting/aanvragen"
+              className="inline-flex items-center font-semibold transition duration-300 rounded-lg bg-yellow-400 hover:bg-yellow-500 text-primary px-5 py-2.5 text-sm"
+            >
+              Vraag gratis scan aan
+              <i className="fa-solid fa-arrow-right ml-2" />
+            </Link>
+            <Link
+              href="/faq?category=energiebelasting"
+              className="text-secondary text-sm font-medium hover:text-primary transition underline decoration-secondary underline-offset-4"
+            >
+              Bekijk alle vragen
+            </Link>
+          </div>
         </div>
       </div>
     </section>

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Mission() {
   return (
@@ -22,6 +23,13 @@ export default function Mission() {
           <p className="text-gray-600 text-lg leading-relaxed">
             Wij weten precies welke aanvragen kans van slagen hebben, hoe het traject bij de overheid werkt en hoe we voorkomen dat uw aanvraag strandt op een gemist detail. Geen anoniem loket, geen standaardantwoorden, maar persoonlijke begeleiding van iemand die uw dossier door en door kent.
           </p>
+          <Link
+            href="/energiebelasting#hoe-het-werkt"
+            className="inline-flex items-center text-secondary font-semibold hover:text-primary transition gap-2"
+          >
+            Bekijk hoe we te werk gaan
+            <i className="fa-solid fa-arrow-right text-sm" />
+          </Link>
         </div>
       </div>
     </section>
