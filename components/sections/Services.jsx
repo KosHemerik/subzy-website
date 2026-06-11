@@ -35,7 +35,7 @@ const services = [
       { icon: "fa-solid fa-city", label: "VvE's" },
       { icon: "fa-solid fa-briefcase", label: "Bedrijven" },
     ],
-    href: "#",
+    href: "/subsidie",
     cta: "Bekijk of u in aanmerking komt",
   },
 ];
@@ -65,7 +65,7 @@ function ServiceCard({ badge, badgeColor, title, description, features, tags, hr
       <ul className="space-y-3 mb-6 flex-grow">
         {features.map((feature, index) => (
           <li key={index} className="flex items-start text-sm text-gray-700">
-            <i className="fa-solid fa-check text-green-500 mt-0.5 mr-3 text-xs" />
+            <i aria-hidden="true" className="fa-solid fa-check text-green-500 mt-0.5 mr-3 text-xs" />
             <span>
               {feature.text}
               <span className="font-semibold">{feature.highlight}</span>
@@ -79,7 +79,7 @@ function ServiceCard({ badge, badgeColor, title, description, features, tags, hr
       <div className="flex flex-wrap gap-2 mb-6">
         {tags.map((tag, index) => (
           <span key={index} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface rounded-full text-xs text-primary font-medium">
-            <i className={`${tag.icon} text-accent`} />
+            <i aria-hidden="true" className={`${tag.icon} text-accent`} />
             {tag.label}
           </span>
         ))}
@@ -91,7 +91,7 @@ function ServiceCard({ badge, badgeColor, title, description, features, tags, hr
         className="inline-flex items-center justify-center w-full bg-primary hover:bg-primary-hover text-white font-semibold text-sm px-5 py-3 rounded-xl transition-colors duration-200 group mt-auto"
       >
         {cta}
-        <i className="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform" />
+        <i aria-hidden="true" className="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform" />
       </Link>
     </div>
   );

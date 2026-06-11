@@ -5,13 +5,13 @@ export default function Mission() {
   return (
     <section className="py-16 w-full px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12">
-        <div className="lg:w-1/2">
+        <div className="lg:w-1/2 relative w-full h-[500px]">
           <Image
-            className="w-full h-[500px] object-cover rounded-2xl shadow-xl"
+            className="object-cover rounded-2xl shadow-xl"
             src="/warmte_pomp.jpg"
             alt="Warmtepomp bij een woning"
-            width={800}
-            height={500}
+            fill
+            sizes="(min-width: 1024px) 50vw, 100vw"
           />
         </div>
         <div className="lg:w-1/2 space-y-6">

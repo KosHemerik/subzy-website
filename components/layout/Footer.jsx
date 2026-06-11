@@ -30,7 +30,14 @@ export default function Footer() {
           {/* Company Info */}
           <div className="col-span-1">
             <Link href="/" className="flex items-center mb-6">
-              <Image src="/subzy_logo_transparant_wit.png" alt="Subzy" width={120} height={40} priority />
+              <Image
+                src="/subzy_logo_transparant_wit.png"
+                alt="Subzy"
+                width={120}
+                height={40}
+                style={{ width: "auto", height: "auto" }}
+                priority
+              />
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
               Dé vertrouwde partner voor huiseigenaren. Wij maken het aanvragen van subsidies en teruggaven energiebelasting simpel, snel en 100% zorgeloos.

@@ -89,6 +89,9 @@ export default function AanvraagForm() {
     if (name === "email" && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
       return "Voer een geldig e-mailadres in";
     }
+    if (name === "telefoon" && value && !/^[0-9\s\-+()]{10,}$/.test(value)) {
+      return "Voer een geldig telefoonnummer in";
+    }
     return "";
   };
 
@@ -168,7 +171,7 @@ export default function AanvraagForm() {
     } catch {
       setErrors((prev) => ({
         ...prev,
-        _form: "Er is iets misgegaan. Probeer het opnieuw of bel ons op +31712032405.",
+        _form: "Er is iets misgegaan. Probeer het opnieuw of bel ons op +31 71 203 24 05.",
       }));
     } finally {
       setLoading(false);
@@ -187,7 +190,7 @@ export default function AanvraagForm() {
       {/* Calculator result banner */}
       {calculatorIndicatie !== null && (
         <div className="bg-green-50 border-b border-green-100 px-6 py-3 flex items-center gap-3">
-          <i className="fa-solid fa-circle-check text-green-500 shrink-0" />
+          <i className="fa-solid fa-circle-check text-green-500 shrink-0" aria-hidden="true" />
           <p className="text-sm text-green-800">
             Op basis van uw berekening kunt u mogelijk{" "}
             <span className="font-bold">
@@ -200,7 +203,7 @@ export default function AanvraagForm() {
 
       {scanSlaagkans !== null && !Number.isNaN(scanSlaagkans) && (
         <div className="bg-blue-50 border-b border-blue-100 px-6 py-3 flex items-center gap-3">
-          <i className="fa-solid fa-chart-line text-secondary shrink-0" />
+          <i className="fa-solid fa-chart-line text-secondary shrink-0" aria-hidden="true" />
           <p className="text-sm text-blue-800">
             Uw pre-scan toonde een kans van <span className="font-bold">{scanSlaagkans}%</span>
             {scanKansLabel ? <> ({scanKansLabel})</> : null}. Rond uw aanvraag af voor de uitgebreide beoordeling.
@@ -221,7 +224,7 @@ export default function AanvraagForm() {
       {submitted ? (
         <div className="px-6 py-14 text-center">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
-            <i className="fa-solid fa-circle-check text-green-500 text-3xl" />
+            <i className="fa-solid fa-circle-check text-green-500 text-3xl" aria-hidden="true" />
           </div>
           <h3 className="text-xl font-bold text-primary mb-2">
             Aanvraag ontvangen!
@@ -238,74 +241,92 @@ export default function AanvraagForm() {
           {/* Voornaam + Achternaam */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>
+              <label htmlFor="voornaam" className={labelClass}>
                 Voornaam <span className="text-red-500">*</span>
               </label>
               <input
+                id="voornaam"
+                type="text"
                 name="voornaam"
                 value={form.voornaam}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 placeholder="Jan"
+                autoComplete="given-name"
                 className={inputClass("voornaam")}
+                aria-required="true"
+                aria-invalid={!!errors.voornaam}
               />
               {errors.voornaam && (
-                <p className="text-red-500 text-xs mt-1">{errors.voornaam}</p>
+                <p role="alert" className="text-red-500 text-xs mt-1">{errors.voornaam}</p>
               )}
             </div>
             <div>
-              <label className={labelClass}>
+              <label htmlFor="achternaam" className={labelClass}>
                 Achternaam <span className="text-red-500">*</span>
               </label>
               <input
+                id="achternaam"
+                type="text"
                 name="achternaam"
                 value={form.achternaam}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 placeholder="de Vries"
+                autoComplete="family-name"
                 className={inputClass("achternaam")}
+                aria-required="true"
+                aria-invalid={!!errors.achternaam}
               />
               {errors.achternaam && (
-                <p className="text-red-500 text-xs mt-1">{errors.achternaam}</p>
+                <p role="alert" className="text-red-500 text-xs mt-1">{errors.achternaam}</p>
               )}
             </div>
           </div>
 
           {/* E-mail */}
           <div>
-            <label className={labelClass}>
+            <label htmlFor="email" className={labelClass}>
               E-mailadres <span className="text-red-500">*</span>
             </label>
             <input
+              id="email"
               type="email"
               name="email"
               value={form.email}
               onChange={handleChange}
               onBlur={handleBlur}
               placeholder="jan@voorbeeld.nl"
+              autoComplete="email"
               className={inputClass("email")}
+              aria-required="true"
+              aria-invalid={!!errors.email}
             />
             {errors.email && (
-              <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+              <p role="alert" className="text-red-500 text-xs mt-1">{errors.email}</p>
             )}
           </div>
 
           {/* Telefoon */}
           <div>
-            <label className={labelClass}>
+            <label htmlFor="telefoon" className={labelClass}>
               Telefoonnummer <span className="text-red-500">*</span>
             </label>
             <input
+              id="telefoon"
               type="tel"
               name="telefoon"
               value={form.telefoon}
               onChange={handleChange}
               onBlur={handleBlur}
               placeholder="06 12 34 56 78"
+              autoComplete="tel"
               className={inputClass("telefoon")}
+              aria-required="true"
+              aria-invalid={!!errors.telefoon}
             />
             {errors.telefoon && (
-              <p className="text-red-500 text-xs mt-1">{errors.telefoon}</p>
+              <p role="alert" className="text-red-500 text-xs mt-1">{errors.telefoon}</p>
             )}
           </div>
 
@@ -316,35 +337,42 @@ export default function AanvraagForm() {
           {/* Postcode + Huisnummer */}
           <div className="grid grid-cols-[2fr_1fr] gap-4">
             <div>
-              <label className={labelClass}>
+              <label htmlFor="postcode" className={labelClass}>
                 Postcode <span className="text-red-500">*</span>
               </label>
               <input
+                id="postcode"
                 name="postcode"
                 value={form.postcode}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 placeholder="1234 AB"
+                autoComplete="postal-code"
                 className={inputClass("postcode")}
+                aria-required="true"
+                aria-invalid={!!errors.postcode}
               />
               {errors.postcode && (
-                <p className="text-red-500 text-xs mt-1">{errors.postcode}</p>
+                <p role="alert" className="text-red-500 text-xs mt-1">{errors.postcode}</p>
               )}
             </div>
             <div>
-              <label className={labelClass}>
+              <label htmlFor="huisnummer" className={labelClass}>
                 Huisnr. <span className="text-red-500">*</span>
               </label>
               <input
+                id="huisnummer"
                 name="huisnummer"
                 value={form.huisnummer}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 placeholder="12A"
                 className={inputClass("huisnummer")}
+                aria-required="true"
+                aria-invalid={!!errors.huisnummer}
               />
               {errors.huisnummer && (
-                <p className="text-red-500 text-xs mt-1">{errors.huisnummer}</p>
+                <p role="alert" className="text-red-500 text-xs mt-1">{errors.huisnummer}</p>
               )}
             </div>
           </div>
@@ -352,26 +380,30 @@ export default function AanvraagForm() {
           {/* Adres + Stad (auto-ingevuld) */}
           <div className="grid grid-cols-[2fr_1fr] gap-4">
             <div>
-              <label className={labelClass}>
+              <label htmlFor="adres" className={labelClass}>
                 Straatnaam <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <input
+                  id="adres"
                   name="adres"
                   value={form.adres}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   placeholder="Dorpsstraat"
+                  autoComplete="address-line1"
                   className={inputClass("adres")}
+                  aria-required="true"
+                  aria-invalid={!!errors.adres}
                 />
                 {lookupStatus === "loading" && (
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs">
-                    <i className="fa-solid fa-circle-notch fa-spin" />
+                    <i className="fa-solid fa-circle-notch fa-spin" aria-hidden="true" />
                   </span>
                 )}
                 {lookupStatus === "found" && (
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 text-xs">
-                    <i className="fa-solid fa-circle-check" />
+                    <i className="fa-solid fa-circle-check" aria-hidden="true" />
                   </span>
                 )}
               </div>
@@ -379,34 +411,39 @@ export default function AanvraagForm() {
                 <p className="text-orange-500 text-xs mt-1">Adres niet gevonden, vul handmatig in</p>
               )}
               {errors.adres && (
-                <p className="text-red-500 text-xs mt-1">{errors.adres}</p>
+                <p role="alert" className="text-red-500 text-xs mt-1">{errors.adres}</p>
               )}
             </div>
             <div>
-              <label className={labelClass}>
+              <label htmlFor="stad" className={labelClass}>
                 Stad <span className="text-red-500">*</span>
               </label>
               <input
+                id="stad"
                 name="stad"
                 value={form.stad}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 placeholder="Amsterdam"
+                autoComplete="address-level2"
                 className={inputClass("stad")}
+                aria-required="true"
+                aria-invalid={!!errors.stad}
               />
               {errors.stad && (
-                <p className="text-red-500 text-xs mt-1">{errors.stad}</p>
+                <p role="alert" className="text-red-500 text-xs mt-1">{errors.stad}</p>
               )}
             </div>
           </div>
 
           {/* Opmerkingen */}
           <div>
-            <label className={labelClass}>
+            <label htmlFor="opmerkingen" className={labelClass}>
               Eventuele opmerkingen{" "}
               <span className="text-gray-400 font-normal">(optioneel)</span>
             </label>
             <textarea
+              id="opmerkingen"
               name="opmerkingen"
               value={form.opmerkingen}
               onChange={handleChange}
@@ -424,24 +461,25 @@ export default function AanvraagForm() {
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <i className="fa-solid fa-circle-notch fa-spin" />
+                <i className="fa-solid fa-circle-notch fa-spin" aria-hidden="true" />
                 Versturen...
               </span>
             ) : (
               <>
                 Vraag gratis scan aan{" "}
-                <i className="fa-solid fa-arrow-right ml-2" />
+                <i className="fa-solid fa-arrow-right ml-2" aria-hidden="true" />
               </>
             )}
           </button>
 
           {errors._form && (
-            <p className="text-red-500 text-sm text-center">{errors._form}</p>
+            <p role="alert" className="text-red-500 text-sm text-center">{errors._form}</p>
           )}
 
           {/* Microcopy */}
           <p className="text-center text-xs text-gray-400">
-            🔒 Veilig verwerkt · Geen spam · Geen verplichtingen ·{" "}
+            <i className="fa-solid fa-lock mr-1" aria-hidden="true" />
+            Veilig verwerkt · Geen spam · Geen verplichtingen ·{" "}
             <a href="/privacy" className="underline hover:text-gray-600 transition">
               Privacybeleid
             </a>

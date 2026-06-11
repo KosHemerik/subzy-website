@@ -1,7 +1,4 @@
-"use client";
-
 import Link from "next/link";
-
 
 export default function Hero() {
   return (
@@ -29,16 +26,16 @@ export default function Hero() {
 
             {/* Pill badge */}
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-white text-sm px-4 py-2 rounded-full mb-6">
-              <span className="w-2 h-2 bg-green-400 rounded-full" />
+              <span aria-hidden="true" className="w-2 h-2 bg-green-400 rounded-full" />
               <span>Ruim 1.400+ aanvragen succesvol ingediend</span>
             </div>
 
             <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-3 text-white">
               Energiebelasting terugvragen of subsidie aanvragen?
             </h1>
-            <h2 className="text-2xl md:text-3xl font-bold text-secondary mb-6">
+            <p className="text-2xl md:text-3xl font-bold text-secondary mb-6">
               Wij regelen het volledig voor u.
-            </h2>
+            </p>
             <p className="text-lg text-gray-200 mb-8 leading-relaxed max-w-xl mx-auto lg:mx-0">
               Veel verhuurders, VvE&apos;s en particulieren betalen onnodig te veel energiebelasting of laten verduurzamingssubsidie liggen. Subzy regelt de teruggave of subsidie aanvraag volledig voor u, op basis van No Cure No Pay.
             </p>
@@ -49,13 +46,13 @@ export default function Hero() {
                 href="/energiebelasting"
                 className="inline-flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-primary font-bold px-7 py-3 rounded-lg transition duration-300 shadow-lg w-full sm:w-auto"
               >
-                Energiebelasting terugvragen <i className="fa-solid fa-arrow-right ml-2" />
+                Energiebelasting terugvragen <i aria-hidden="true" className="fa-solid fa-arrow-right ml-2" />
               </Link>
               <Link
                 href="/subsidie"
                 className="inline-flex items-center justify-center bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold px-7 py-3 rounded-lg transition duration-300 w-full sm:w-auto"
               >
-                Subsidie aanvragen <i className="fa-solid fa-arrow-right ml-2" />
+                Subsidie aanvragen <i aria-hidden="true" className="fa-solid fa-arrow-right ml-2" />
               </Link>
             </div>
 
@@ -69,7 +66,7 @@ export default function Hero() {
               <div className="bg-white rounded-2xl shadow-2xl p-8 pb-14 w-[320px]">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-9 h-9 bg-green-100 rounded-full flex items-center justify-center shrink-0">
-                    <i className="fa-solid fa-check text-green-500" />
+                    <i aria-hidden="true" className="fa-solid fa-check text-green-500" />
                   </div>
                   <span className="font-semibold text-primary">Teruggave geregeld</span>
                 </div>
@@ -78,18 +75,18 @@ export default function Hero() {
                   <span className="text-xs text-gray-400 uppercase tracking-widest">Ontvangen bedrag</span>
                   <div className="text-5xl font-bold text-primary mt-1">€2.350</div>
                   <span className="text-sm text-green-600 font-medium mt-1 block">
-                    <i className="fa-solid fa-circle-check mr-1" /> Succesvol uitbetaald
+                    <i aria-hidden="true" className="fa-solid fa-circle-check mr-1" /> Succesvol uitbetaald
                   </span>
                 </div>
 
                 <div className="border-t border-gray-100 pt-5">
-                  <div className="flex gap-1 mb-2">
+                  <div className="flex gap-1 mb-2" aria-hidden="true">
                     {[1, 2, 3, 4, 5].map((i) => (
                       <i key={i} className="fa-solid fa-star text-yellow-400 text-sm" />
                     ))}
                   </div>
                   <p className="text-sm text-gray-600 italic leading-relaxed">
-                    &ldquo;Snel alles geregeld. Subzy heeft ons €2.350 bespaard!&rdquo;
+                    &ldquo;Snel alles geregeld. Subzy heeft €2.350 voor ons teruggehaald!&rdquo;
                   </p>
                   <span className="text-xs text-gray-400 mt-3 block">— J. van den Berg, Leiden</span>
                 </div>

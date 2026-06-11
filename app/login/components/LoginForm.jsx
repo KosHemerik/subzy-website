@@ -16,6 +16,7 @@ export default function LoginForm() {
     password: "",
     rememberMe: false,
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const { login } = useAuth();
@@ -49,8 +50,8 @@ export default function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
-          <i className="fa-solid fa-circle-exclamation mr-2" />
+        <div role="alert" className="p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+          <i aria-hidden="true" className="fa-solid fa-circle-exclamation mr-2" />
           {error}
         </div>
       )}
@@ -65,15 +66,31 @@ export default function LoginForm() {
         required
       />
 
-      <Input
-        label="Wachtwoord"
-        type="password"
-        name="password"
-        value={formData.password}
-        onChange={handleChange}
-        placeholder="••••••••"
-        required
-      />
+      <div>
+        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+          Wachtwoord <span className="text-red-500">*</span>
+        </label>
+        <div className="relative">
+          <input
+            id="password"
+            type={showPassword ? "text" : "password"}
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="••••••••"
+            required
+            className="w-full border border-gray-300 rounded-lg px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent bg-gray-50"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            className="absolute inset-y-0 right-0 px-4 flex items-center text-gray-400 hover:text-gray-600 transition"
+            aria-label={showPassword ? "Wachtwoord verbergen" : "Wachtwoord tonen"}
+          >
+            <i aria-hidden="true" className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"}`} />
+          </button>
+        </div>
+      </div>
 
       <div className="flex items-center justify-between">
         <label className="flex items-center cursor-pointer">
@@ -104,12 +121,12 @@ export default function LoginForm() {
       >
         {isLoading ? (
           <>
-            <i className="fa-solid fa-spinner fa-spin mr-2" />
+            <i aria-hidden="true" className="fa-solid fa-spinner fa-spin mr-2" />
             Bezig met inloggen...
           </>
         ) : (
           <>
-            <i className="fa-solid fa-right-to-bracket mr-2" />
+            <i aria-hidden="true" className="fa-solid fa-right-to-bracket mr-2" />
             Inloggen
           </>
         )}

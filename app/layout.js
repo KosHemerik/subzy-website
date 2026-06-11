@@ -12,6 +12,21 @@ export const metadata = {
   title: "Subzy - Subsidies en Teruggaven voor Huiseigenaren",
   description: "Wij ontzorgen huiseigenaren volledig bij het terugvragen van energiebelasting en het aanvragen van duurzaamheidssubsidies.",
   keywords: ["subsidie", "energiebelasting", "teruggave", "ISDE", "duurzaamheid"],
+  openGraph: {
+    title: "Subzy - Subsidies en Teruggaven voor Huiseigenaren",
+    description:
+      "Wij ontzorgen huiseigenaren volledig bij het terugvragen van energiebelasting en het aanvragen van duurzaamheidssubsidies.",
+    url: "https://subzy.nl",
+    type: "website",
+    siteName: "Subzy",
+    locale: "nl_NL",
+  },
+  twitter: {
+    card: "summary",
+    title: "Subzy - Subsidies en Teruggaven voor Huiseigenaren",
+    description:
+      "Wij ontzorgen huiseigenaren volledig bij het terugvragen van energiebelasting en het aanvragen van duurzaamheidssubsidies.",
+  },
   icons: {
     icon: [
       { url: "/favicon/favicon.ico", sizes: "any" },

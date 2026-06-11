@@ -22,31 +22,36 @@ const faqs = [
   },
 ];
 
-/**
- * FAQ item with accordion functionality
- */
-function FAQItem({ question, answer, isOpen, onToggle }) {
+function FAQItem({ question, answer, isOpen, onToggle, itemId }) {
   return (
     <div className="bg-white border border-gray-200 rounded-[12px] overflow-hidden">
       <button
+        id={`btn-${itemId}`}
         onClick={onToggle}
-        className="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none"
+        aria-expanded={isOpen}
+        aria-controls={`panel-${itemId}`}
+        className="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary"
       >
         <span className="font-semibold text-primary">{question}</span>
-        <i className={`fa-solid fa-chevron-down text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <i
+          aria-hidden="true"
+          className={`fa-solid fa-chevron-down text-gray-400 transition-transform duration-200 shrink-0 ml-4 ${isOpen ? "rotate-180" : ""}`}
+        />
       </button>
-      {isOpen && (
+      <div
+        id={`panel-${itemId}`}
+        role="region"
+        aria-labelledby={`btn-${itemId}`}
+        className={`overflow-hidden transition-all duration-300 ${isOpen ? "max-h-[400px]" : "max-h-0"}`}
+      >
         <div className="px-6 pb-5">
           <p className="text-gray-600 text-sm">{answer}</p>
         </div>
-      )}
+      </div>
     </div>
   );
 }
 
-/**
- * FAQ section with accordion
- */
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState(null);
 
@@ -65,6 +70,7 @@ export default function FAQ() {
           {faqs.map((faq, index) => (
             <FAQItem
               key={faq.question}
+              itemId={`home-${index}`}
               question={faq.question}
               answer={faq.answer}
               isOpen={openIndex === index}

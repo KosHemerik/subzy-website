@@ -46,7 +46,7 @@ export default function TrustBar() {
               <div
                 className={`w-11 h-11 ${item.iconBg} rounded-xl flex items-center justify-center ${item.iconColor} shrink-0`}
               >
-                <i className={`${item.icon} text-lg`} />
+                <i aria-hidden="true" className={`${item.icon} text-lg`} />
               </div>
               <div>
                 <span className="font-semibold text-primary text-sm block leading-tight">

@@ -1,5 +1,6 @@
 "use client";
 
+import { isSupabaseConfigured, supabase } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 
@@ -14,62 +15,120 @@ export function AuthProvider({ children }) {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
+  const mapUser = (supabaseUser) => {
+    if (!supabaseUser) return null;
+
+    const metadata = supabaseUser.user_metadata || {};
+    const derivedName =
+      metadata.full_name ||
+      metadata.name ||
+      (supabaseUser.email ? supabaseUser.email.split("@")[0] : "Gebruiker");
+
+    return {
+      id: supabaseUser.id,
+      email: supabaseUser.email,
+      name: derivedName,
+      avatar:
+        metadata.avatar_url ||
+        metadata.picture ||
+        "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-4.jpg",
+      raw: supabaseUser,
+    };
+  };
+
   // Check for existing session on mount
   useEffect(() => {
-    checkAuth();
+    let isMounted = true;
+
+    const initAuth = async () => {
+      await checkAuth();
+      if (!isSupabaseConfigured) return;
+
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (!isMounted) return;
+        setUser(mapUser(session?.user ?? null));
+        setIsLoading(false);
+      });
+
+      return subscription;
+    };
+
+    let activeSubscription;
+    initAuth().then((subscription) => {
+      activeSubscription = subscription;
+    });
+
+    return () => {
+      isMounted = false;
+      activeSubscription?.unsubscribe();
+    };
   }, []);
 
-  const checkAuth = () => {
+  const checkAuth = async () => {
+    setIsLoading(true);
+
+    if (!isSupabaseConfigured) {
+      setUser(null);
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      // Check localStorage for auth token/user data
-      const storedUser = localStorage.getItem("subzy_user");
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      }
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
+
+      if (error) throw error;
+      setUser(mapUser(session?.user ?? null));
     } catch (error) {
       console.error("Auth check failed:", error);
+      setUser(null);
     } finally {
       setIsLoading(false);
     }
   };
 
   const login = async (email, password, rememberMe = false) => {
+    void rememberMe;
+
+    if (!isSupabaseConfigured) {
+      return {
+        success: false,
+        error:
+          "Supabase is niet geconfigureerd. Voeg NEXT_PUBLIC_SUPABASE_URL en NEXT_PUBLIC_SUPABASE_ANON_KEY toe.",
+      };
+    }
+
     setIsLoading(true);
     try {
-      // TODO: Replace with actual API call
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-      // Mock user data - replace with actual response
-      const userData = {
-        id: "1",
-        email,
-        name: "Jan Jansen",
-        avatar: "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-4.jpg",
-      };
-
-      setUser(userData);
-      
-      // Store in localStorage if rememberMe is checked
-      if (rememberMe) {
-        localStorage.setItem("subzy_user", JSON.stringify(userData));
-      } else {
-        sessionStorage.setItem("subzy_user", JSON.stringify(userData));
+      if (error) {
+        return { success: false, error: "Inloggen mislukt. Controleer uw gegevens." };
       }
+
+      setUser(mapUser(data?.user ?? null));
 
       return { success: true };
     } catch (error) {
       console.error("Login failed:", error);
-      return { success: false, error: error.message };
+      return { success: false, error: "Inloggen mislukt. Controleer uw gegevens." };
     } finally {
       setIsLoading(false);
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
     setUser(null);
-    localStorage.removeItem("subzy_user");
-    sessionStorage.removeItem("subzy_user");
+    if (isSupabaseConfigured) {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error("Logout failed:", error);
+      }
+    }
     router.push("/login");
   };
 

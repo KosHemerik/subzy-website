@@ -2,15 +2,76 @@ import { Footer, Header, TopBar } from "@/components/layout";
 import { Suspense } from "react";
 import AanvraagForm from "./components/AanvraagForm";
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://subzy.nl/energiebelasting/aanvragen",
+      url: "https://subzy.nl/energiebelasting/aanvragen",
+      name: "Energiebelasting Teruggave Aanvragen | Gratis Scan | Subzy",
+      description:
+        "Vraag gratis uw energiebelasting teruggave aan. Geen energienota nodig, geen verplichtingen. Subzy beoordeelt uw situatie binnen 2 werkdagen. No Cure No Pay.",
+      inLanguage: "nl-NL",
+      isPartOf: { "@id": "https://subzy.nl" },
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: "https://subzy.nl",
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Energiebelasting",
+          item: "https://subzy.nl/energiebelasting",
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: "Aanvragen",
+          item: "https://subzy.nl/energiebelasting/aanvragen",
+        },
+      ],
+    },
+  ],
+};
+
 export const metadata = {
   title: "Energiebelasting Teruggave Aanvragen | Gratis Scan | Subzy",
   description:
     "Vraag gratis uw energiebelasting teruggave aan. Geen energienota nodig, geen verplichtingen. Subzy beoordeelt uw situatie binnen 2 werkdagen. No Cure No Pay.",
+  alternates: {
+    canonical: "https://subzy.nl/energiebelasting/aanvragen",
+  },
+  openGraph: {
+    title: "Energiebelasting Teruggave Aanvragen | Gratis Scan | Subzy",
+    description:
+      "Vraag gratis uw energiebelasting teruggave aan. Geen energienota nodig, geen verplichtingen. No Cure No Pay.",
+    url: "https://subzy.nl/energiebelasting/aanvragen",
+    type: "website",
+    siteName: "Subzy",
+    locale: "nl_NL",
+  },
+  twitter: {
+    card: "summary",
+    title: "Energiebelasting Teruggave Aanvragen | Subzy",
+    description:
+      "Vraag gratis uw energiebelasting teruggave aan. No Cure No Pay.",
+  },
 };
 
 export default function AanvraagPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <TopBar />
       <Header />
       <main>
@@ -48,7 +109,7 @@ export default function AanvraagPage() {
         {/* Main content */}
         <section className="py-16 bg-white">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col-reverse md:grid md:grid-cols-[34%_66%] gap-12">
+            <div className="flex flex-col-reverse lg:grid lg:grid-cols-[40%_60%] gap-12">
               {/* Left column */}
               <div className="flex flex-col justify-start">
                 <h2 className="text-2xl font-bold text-primary mb-3">
@@ -109,7 +170,7 @@ export default function AanvraagPage() {
                     href="tel:+31712032405"
                     className="font-semibold text-primary hover:text-secondary transition"
                   >
-                    +31712032405
+                    +31 71 203 24 05
                   </a>
                   <span className="text-gray-400"> — ma t/m vr 09:00–17:30</span>
                 </div>

@@ -34,15 +34,16 @@ export default function FAQHero({ onSearch }) {
       </section>
 
       {/* Search bar below hero */}
-      <div className="bg-background px-4 py-8">
-        <div className="relative max-w-2xl mx-auto">
+      <div className="bg-surface px-4 pt-12 pb-4 sm:pb-5">
+        <div role="search" className="relative max-w-2xl mx-auto">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <i className="fa-solid fa-search text-gray-400" />
+            <i aria-hidden="true" className="fa-solid fa-magnifying-glass text-gray-400" />
           </div>
           <input
-            type="text"
+            type="search"
             value={searchQuery}
             onChange={handleSearch}
+            aria-label="Zoek in veelgestelde vragen"
             className="w-full pl-12 pr-4 py-4 rounded-xl shadow-sm border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-secondary text-gray-800"
             placeholder="Zoek op trefwoord (bijv. 'isolatie', 'termijn', 'kosten')..."
           />

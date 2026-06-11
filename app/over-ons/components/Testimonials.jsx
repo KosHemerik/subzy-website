@@ -38,9 +38,11 @@ const testimonials = [
 export default function Testimonials() {
   const listRef = useRef(null);
   const isAnimatingRef = useRef(false);
+  const logicalIndexRef = useRef(0);
   const baseCount = testimonials.length;
+  const START_COPY = 1;
   const loopedTestimonials = [...testimonials, ...testimonials, ...testimonials];
-  const SCROLL_DURATION = 420;
+  const SCROLL_DURATION = 520;
 
   const getCards = (container) => Array.from(container.querySelectorAll("[data-carousel-card]"));
 
@@ -54,76 +56,68 @@ export default function Testimonials() {
     container.style.scrollBehavior = prevBehavior;
   };
 
+  const toCenteredVirtualIndex = (logicalIndex) => {
+    const normalized = ((logicalIndex % baseCount) + baseCount) % baseCount;
+    return baseCount * START_COPY + normalized;
+  };
+
   useEffect(() => {
     const container = listRef.current;
     if (!container) return;
 
     const cards = getCards(container);
-    if (cards.length < baseCount * 2) return;
+    if (cards.length < baseCount * 3) return;
 
     requestAnimationFrame(() => {
-      jumpTo(container, getCenterTarget(container, cards[baseCount]));
+      logicalIndexRef.current = 0;
+      const startIndex = toCenteredVirtualIndex(logicalIndexRef.current);
+      jumpTo(container, getCenterTarget(container, cards[startIndex]));
     });
   }, [baseCount]);
 
   const smoothScrollTo = (container, target, onDone) => {
     isAnimatingRef.current = true;
     const start = container.scrollLeft;
+    const change = target - start;
     const startTime = performance.now();
 
-    const step = (now) => {
+    const animate = (now) => {
       const t = Math.min((now - startTime) / SCROLL_DURATION, 1);
       const eased = 1 - Math.pow(1 - t, 3);
-      container.scrollLeft = start + (target - start) * eased;
+      container.scrollLeft = start + change * eased;
 
       if (t < 1) {
-        requestAnimationFrame(step);
+        requestAnimationFrame(animate);
       } else {
         if (onDone) onDone();
         isAnimatingRef.current = false;
       }
     };
 
-    requestAnimationFrame(step);
-  };
-
-  const getClosestCardIndex = (container) => {
-    const cards = getCards(container);
-    if (cards.length === 0) return 0;
-
-    let closestIndex = 0;
-    let closestDistance = Infinity;
-
-    cards.forEach((card, index) => {
-      const distance = Math.abs(getCenterTarget(container, card) - container.scrollLeft);
-      if (distance < closestDistance) {
-        closestDistance = distance;
-        closestIndex = index;
-      }
-    });
-
-    return closestIndex;
+    requestAnimationFrame(animate);
   };
 
   const scrollByCards = (direction) => {
     if (!listRef.current || isAnimatingRef.current) return;
     const container = listRef.current;
     const cards = getCards(container);
-    if (cards.length === 0) return;
+    if (cards.length < baseCount * 3) return;
 
-    let currentIndex = getClosestCardIndex(container);
-    while (currentIndex < baseCount) currentIndex += baseCount;
-    while (currentIndex > baseCount * 2 - 1) currentIndex -= baseCount;
+    const delta = direction === "next" ? 1 : -1;
+    const currentLogicalIndex = logicalIndexRef.current;
+    const nextLogicalIndex = currentLogicalIndex + delta;
+    const currentVirtualIndex = toCenteredVirtualIndex(currentLogicalIndex);
+    const nextVirtualIndex = currentVirtualIndex + delta;
 
-    const nextIndex = currentIndex + (direction === "next" ? 1 : -1);
-    const target = getCenterTarget(container, cards[nextIndex]);
+    jumpTo(container, getCenterTarget(container, cards[currentVirtualIndex]));
+    const target = getCenterTarget(container, cards[nextVirtualIndex]);
 
     smoothScrollTo(container, target, () => {
-      if (nextIndex >= baseCount * 2) {
-        jumpTo(container, getCenterTarget(container, cards[nextIndex - baseCount]));
-      } else if (nextIndex < baseCount) {
-        jumpTo(container, getCenterTarget(container, cards[nextIndex + baseCount]));
-      }
+      logicalIndexRef.current = ((nextLogicalIndex % baseCount) + baseCount) % baseCount;
+      const resetIndex = toCenteredVirtualIndex(logicalIndexRef.current);
+      requestAnimationFrame(() => {
+        jumpTo(container, getCenterTarget(container, cards[resetIndex]));
+      });
     });
   };
 
@@ -157,14 +151,14 @@ export default function Testimonials() {
         <div className="relative">
           <div
             ref={listRef}
-            className="flex items-stretch gap-4 sm:gap-6 overflow-x-auto snap-x snap-mandatory overscroll-x-contain pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-            style={{ scrollPaddingInline: "18%" }}
+            className="flex items-stretch gap-6 sm:gap-8 overflow-x-hidden pb-2"
+            style={{ scrollPaddingInline: "22%" }}
           >
             {loopedTestimonials.map((testimonial, index) => (
               <div
                 key={`${testimonial.name}-${index}`}
                 data-carousel-card
-                className="flex-none w-[82%] sm:w-[72%] lg:w-[60%] min-h-[340px] snap-center bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-left relative flex flex-col"
+                className="flex-none w-[74%] sm:w-[64%] lg:w-[52%] min-h-[280px] snap-center bg-white p-5 rounded-2xl shadow-sm border border-gray-100 text-left relative flex flex-col"
               >
                 <i className="fa-solid fa-quote-right absolute top-5 right-5 text-3xl text-surface" />
                 <div className="flex text-yellow-400 mb-3">
@@ -174,7 +168,7 @@ export default function Testimonials() {
                   <i className="fa-solid fa-star" />
                   <i className="fa-solid fa-star" />
                 </div>
-                <p className="text-gray-600 italic text-base mb-5 flex-1">"{testimonial.text}"</p>
+                <p className="text-gray-600 italic text-[17px] mb-4 flex-1">"{testimonial.text}"</p>
                 <div className="flex items-center">
                   <div className="w-9 h-9 bg-primary text-white rounded-full flex items-center justify-center font-bold mr-3">
                     {testimonial.initial}

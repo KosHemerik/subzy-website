@@ -1,12 +1,11 @@
 import { Footer, Header, TopBar } from "@/components/layout";
 import {
-    Eligibility,
-    HowItWorksTimeline,
-    MidCTA,
-    ProblemAwareness,
-    ServiceFAQ,
-    ServiceHero,
-  TestimonialsCarousel,
+  Eligibility,
+  HowItWorksTimeline,
+  MidCTA,
+  ProblemAwareness,
+  ServiceFAQ,
+  ServiceHero,
 } from "./components";
 
 const BASE_URL = "https://subzy.nl";
@@ -90,7 +89,6 @@ export default function TeruggaveEnergiebelastingPage() {
         <HowItWorksTimeline />
         <Eligibility />
         <MidCTA />
-        <TestimonialsCarousel />
         <ServiceFAQ />
       </main>
       <Footer />

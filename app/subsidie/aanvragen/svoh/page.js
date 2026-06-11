@@ -13,11 +13,15 @@ export default function SvohAanvraagPage() {
     <>
       <TopBar />
       <Header />
-      <main>
+      <main className="relative isolate bg-[#eef1f6] overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 h-[320px] bg-[#eef1f6]"
+        />
         {/* Page header */}
-        <section className="hero-bg py-16 text-center curve-bottom overflow-hidden">
+        <section className="relative z-10 py-16 text-center curve-bottom overflow-hidden bg-[linear-gradient(180deg,#1B3A6B_0%,#244e8a_62%,#eef1f6_100%)]">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <p className="text-sm text-white/60 mb-2">SVOH subsidie aanvragen</p>
+            <p className="text-sm text-white/70 mb-2">SVOH subsidie aanvragen</p>
             <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4">
               Start uw SVOH-aanvraag
             </h1>
@@ -28,14 +32,14 @@ export default function SvohAanvraagPage() {
         </section>
 
         {/* Wizard */}
-        <section className="bg-[#eef1f6] min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+        <section className="relative z-10 -mt-10 bg-[#eef1f6] min-h-screen pt-16 pb-12 px-4 sm:px-6 lg:px-8">
           <Suspense fallback={<div className="text-center py-10 text-gray-400">Laden...</div>}>
             <SvohWizard regelingType="SVOH" />
           </Suspense>
         </section>
 
         {/* Trust row */}
-        <section className="py-10 bg-white border-t border-gray-100">
+        <section className="relative z-10 bg-[#eef1f6] border-t border-gray-200/70 py-10">
           <div className="max-w-3xl mx-auto px-4 flex flex-wrap justify-center gap-8 text-sm text-gray-600">
             <div className="flex items-center gap-2">
               <i className="fa-solid fa-shield-halved text-secondary" />

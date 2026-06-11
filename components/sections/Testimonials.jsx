@@ -27,20 +27,17 @@ const testimonials = [
   },
 ];
 
-/**
- * Testimonial card component
- */
 function TestimonialCard({ rating, text, name, service, initial, bgColor }) {
   return (
     <div className="bg-surface p-8 rounded-[12px] border border-surface">
       <StarRating rating={rating} className="text-sm mb-4" />
       <p className="text-gray-700 italic mb-6">"{text}"</p>
       <div className="flex items-center">
-        <div className={`w-10 h-10 ${bgColor} text-white rounded-full flex items-center justify-center font-bold mr-3`}>
+        <div className={`w-10 h-10 ${bgColor} text-white rounded-full flex items-center justify-center font-bold mr-3`} aria-hidden="true">
           {initial}
         </div>
         <div>
-          <h4 className="font-bold text-primary text-sm">{name}</h4>
+          <p className="font-bold text-primary text-sm">{name}</p>
           <span className="text-xs text-gray-500">{service}</span>
         </div>
       </div>
@@ -48,12 +45,9 @@ function TestimonialCard({ rating, text, name, service, initial, bgColor }) {
   );
 }
 
-/**
- * Testimonials section
- */
 export default function Testimonials() {
   return (
-    <section className="py-20 bg-white max-w-[1440px] mx-auto">
+    <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-end mb-12">
           <div>
