@@ -1,4 +1,5 @@
 import { Logo, StarRating } from "@/components/ui";
+import { Suspense } from "react";
 import ActivateAccountForm from "./ActivateAccountForm";
 
 export default function ActivateAccountHero() {
@@ -44,7 +45,16 @@ export default function ActivateAccountHero() {
                 <p className="text-gray-500 mt-2">Maak uw account actief en log in</p>
               </div>
 
-              <ActivateAccountForm />
+              <Suspense
+                fallback={
+                  <div className="text-center py-4">
+                    <i className="fa-solid fa-spinner fa-spin text-2xl text-secondary mb-3" />
+                    <p className="text-sm text-gray-600">Pagina laden...</p>
+                  </div>
+                }
+              >
+                <ActivateAccountForm />
+              </Suspense>
             </div>
           </div>
         </div>
