@@ -1,5 +1,5 @@
-import { Logo, StarRating } from "@/components/ui";
 import { COMPANY_INFO } from "@/lib/constants";
+import TopBarRating from "./TopBarRating";
 
 /**
  * Top Bar with contact info and rating
@@ -16,7 +16,7 @@ export default function TopBar() {
           <i className="fa-solid fa-envelope mr-2" /> {COMPANY_INFO.email.display}
         </a>
       </div>
-      <StarRating rating={COMPANY_INFO.rating} showValue />
+      <TopBarRating />
       </div>
     </div>
   );

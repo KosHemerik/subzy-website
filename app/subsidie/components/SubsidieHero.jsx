@@ -16,20 +16,32 @@ export default function SubsidieHero() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         <div className="max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center justify-center bg-white/10 rounded-full px-4 py-1.5 mb-6 border border-white/20">
+          <div
+            className="hero-enter inline-flex items-center justify-center bg-white/10 rounded-full px-4 py-1.5 mb-6 border border-white/20"
+            style={{ animationDelay: "0.05s" }}
+          >
             <i className="fa-solid fa-leaf text-secondary mr-2" />
             <span className="text-white text-sm font-medium">Duurzaamheidssubsidie</span>
           </div>
 
-          <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight mb-6">
+          <h1
+            className="hero-enter text-4xl lg:text-5xl font-bold text-white leading-tight mb-6"
+            style={{ animationDelay: "0.15s" }}
+          >
             Subsidie voor uw warmtepomp, isolatie of zonneboiler?{" "}<span className="text-white">Wij regelen de aanvraag volledig voor u.</span>
           </h1>
 
-          <p className="text-lg text-gray-200 mb-10 leading-relaxed">
+          <p
+            className="hero-enter text-lg text-gray-200 mb-10 leading-relaxed"
+            style={{ animationDelay: "0.25s" }}
+          >
             Wij bepalen welke subsidieregeling voor u geldt en regelen de volledige duurzaamheidssubsidie aanvraag voor u. No Cure No Pay, geen gedoe.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div
+            className="hero-enter flex flex-col sm:flex-row items-center justify-center gap-4"
+            style={{ animationDelay: "0.35s" }}
+          >
             <Link
               href="/subsidie/aanvragen/isde"
               className="inline-flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-primary font-bold px-7 py-3 rounded-lg transition duration-300 shadow-lg text-base w-full sm:w-auto"
@@ -44,7 +56,10 @@ export default function SubsidieHero() {
             </button>
           </div>
 
-          <div className="mt-10 flex flex-wrap justify-center items-center gap-6 text-sm text-gray-300">
+          <div
+            className="hero-enter mt-10 flex flex-wrap justify-center items-center gap-6 text-sm text-gray-300"
+            style={{ animationDelay: "0.45s" }}
+          >
             <div className="flex items-center">
               <i className="fa-solid fa-shield-halved text-secondary mr-2" />
               No Cure No Pay

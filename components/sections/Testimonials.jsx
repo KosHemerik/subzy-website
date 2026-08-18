@@ -47,9 +47,9 @@ function TestimonialCard({ rating, text, name, service, initial, bgColor }) {
 
 export default function Testimonials() {
   return (
-    <section className="py-20 bg-white">
+    <section className="py-16 md:py-20 lg:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12">
+        <div className="animate-reveal flex flex-col md:flex-row justify-between items-end mb-12">
           <div>
             <h2 className="text-4xl font-bold text-primary mb-4">
               Wat onze klanten zeggen
@@ -66,7 +66,7 @@ export default function Testimonials() {
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="animate-reveal-grid grid grid-cols-1 md:grid-cols-3 gap-6">
           {testimonials.map((testimonial) => (
             <TestimonialCard key={testimonial.name} {...testimonial} />
           ))}

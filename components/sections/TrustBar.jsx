@@ -33,7 +33,7 @@ export default function TrustBar() {
   return (
     <section className="bg-white py-8 border-b border-gray-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-y-6">
+        <div className="animate-reveal-grid grid grid-cols-2 md:grid-cols-4 gap-y-6">
           {trustItems.map((item, index) => (
             <div
               key={item.label}

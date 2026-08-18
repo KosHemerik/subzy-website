@@ -63,10 +63,10 @@ function FAQItem({ question, answer }) {
  */
 export default function ServiceFAQ() {
   return (
-    <section id="faq" className="py-20 bg-background w-full">
+    <section id="faq" className="py-16 md:py-20 lg:py-24 bg-background w-full">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-12">
+        <div className="animate-reveal text-center mb-12">
           <h2 className="text-3xl font-bold text-primary mb-4">Veelgestelde vragen</h2>
           <p className="text-gray-600">
             Alles wat u moet weten over de teruggave energiebelasting.
@@ -74,7 +74,7 @@ export default function ServiceFAQ() {
         </div>
 
         {/* FAQ Items */}
-        <div className="space-y-4">
+        <div className="animate-reveal-grid space-y-4">
           {faqItems.map((item, index) => (
             <FAQItem key={index} question={item.question} answer={item.answer} />
           ))}

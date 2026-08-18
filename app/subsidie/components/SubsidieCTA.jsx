@@ -2,8 +2,8 @@ import Link from "next/link";
 
 export default function SubsidieCTA() {
   return (
-    <section className="py-20 bg-primary text-white w-full">
-      <div className="max-w-3xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+    <section className="py-16 md:py-20 lg:py-24 bg-primary text-white w-full">
+      <div className="animate-reveal max-w-3xl mx-auto text-center px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl md:text-4xl font-bold mb-4">
           Laat geen subsidie liggen
         </h2>

@@ -18,7 +18,7 @@ const navItems = [
  */
 export default function DashboardHeader() {
   return (
-    <nav className="bg-white sticky top-0 z-50 shadow-sm w-full">
+    <nav className="sticky top-0 z-50 w-full border-b border-white/70 bg-white/90 backdrop-blur-md shadow-[0_8px_30px_rgba(27,58,107,0.08)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
           {/* Logo */}
@@ -30,7 +30,7 @@ export default function DashboardHeader() {
               <Link
                 key={item.label}
                 href={item.href}
-                className="text-gray-600 hover:text-secondary font-medium transition"
+                className="text-gray-600 hover:text-primary font-medium transition"
               >
                 {item.label}
               </Link>
@@ -39,7 +39,7 @@ export default function DashboardHeader() {
 
           {/* Dashboard Button */}
           <div className="hidden lg:flex items-center">
-            <span className="bg-secondary text-white px-6 py-2.5 rounded-lg font-semibold shadow-md shadow-secondary/30">
+            <span className="bg-[linear-gradient(135deg,#2D6BE4_0%,#1B3A6B_100%)] text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg shadow-secondary/30">
               Klantportaal Dashboard
             </span>
           </div>

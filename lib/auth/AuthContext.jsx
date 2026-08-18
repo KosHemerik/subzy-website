@@ -12,8 +12,29 @@ const AuthContext = createContext(null);
  */
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [owner, setOwner] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+
+  const fetchOwner = async (userId) => {
+    if (!userId) { setOwner(null); return null; }
+    const { data, error } = await supabase
+      .from("owners")
+      .select("id, portal_status, displayName, firstName, lastName, emailAddress")
+      .eq("portal_user_id", userId)
+      .maybeSingle();
+    if (error || !data || data.portal_status !== "active") {
+      setOwner(null);
+      return null;
+    }
+    const normalizedOwner = {
+      ...data,
+      name: data.displayName || [data.firstName, data.lastName].filter(Boolean).join(" ") || null,
+      email: data.emailAddress || null,
+    };
+    setOwner(normalizedOwner);
+    return normalizedOwner;
+  };
 
   const mapUser = (supabaseUser) => {
     if (!supabaseUser) return null;
@@ -46,9 +67,15 @@ export function AuthProvider({ children }) {
 
       const {
         data: { subscription },
-      } = supabase.auth.onAuthStateChange((_event, session) => {
+      } = supabase.auth.onAuthStateChange(async (_event, session) => {
         if (!isMounted) return;
-        setUser(mapUser(session?.user ?? null));
+        const supabaseUser = session?.user ?? null;
+        setUser(mapUser(supabaseUser));
+        if (supabaseUser) {
+          await fetchOwner(supabaseUser.id);
+        } else {
+          setOwner(null);
+        }
         setIsLoading(false);
       });
 
@@ -82,10 +109,17 @@ export function AuthProvider({ children }) {
       } = await supabase.auth.getSession();
 
       if (error) throw error;
-      setUser(mapUser(session?.user ?? null));
+      const supabaseUser = session?.user ?? null;
+      setUser(mapUser(supabaseUser));
+      if (supabaseUser) {
+        await fetchOwner(supabaseUser.id);
+      } else {
+        setOwner(null);
+      }
     } catch (error) {
       console.error("Auth check failed:", error);
       setUser(null);
+      setOwner(null);
     } finally {
       setIsLoading(false);
     }
@@ -110,6 +144,17 @@ export function AuthProvider({ children }) {
         return { success: false, error: "Inloggen mislukt. Controleer uw gegevens." };
       }
 
+      const ownerData = await fetchOwner(data.user.id);
+
+      if (!ownerData) {
+        await supabase.auth.signOut();
+        setOwner(null);
+        return {
+          success: false,
+          error: "Uw account heeft geen actief gekoppeld dossier. Neem contact op met ondersteuning.",
+        };
+      }
+
       setUser(mapUser(data?.user ?? null));
 
       return { success: true };
@@ -123,6 +168,7 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     setUser(null);
+    setOwner(null);
     if (isSupabaseConfigured) {
       const { error } = await supabase.auth.signOut();
       if (error) {
@@ -134,8 +180,9 @@ export function AuthProvider({ children }) {
 
   const value = {
     user,
+    owner,
     isLoading,
-    isAuthenticated: !!user,
+    isAuthenticated: !!user && !!owner,
     login,
     logout,
     checkAuth,

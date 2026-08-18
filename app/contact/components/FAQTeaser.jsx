@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function FAQTeaser() {
   return (
-    <section className="py-16 bg-surface px-4 sm:px-6 lg:px-8">
+    <section className="py-12 md:py-16 lg:py-20 bg-surface px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto text-center">
         <h2 className="text-2xl font-bold text-primary mb-4">
           Misschien staat uw vraag er al tussen

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
 import { Button, Input } from "@/components/ui";
+import Link from "next/link";
+import { useState } from "react";
 
 /**
  * Forgot Password Form Component
@@ -12,19 +12,31 @@ export default function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     setIsLoading(true);
-    
-    // TODO: Implement actual password reset logic
-    console.log("Password reset request for:", email);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+
+    try {
+      const response = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || "Er ging iets mis. Probeer het later opnieuw.");
+      }
+
       setIsSubmitted(true);
-    }, 1500);
+    } catch (err) {
+      setError(err.message || "Er ging iets mis. Probeer het later opnieuw.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (isSubmitted) {
@@ -71,6 +83,13 @@ export default function ForgotPasswordForm() {
           Voer uw e-mailadres in en wij sturen u een link om uw wachtwoord te resetten.
         </p>
       </div>
+
+      {error && (
+        <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+          <i className="fa-solid fa-circle-exclamation mr-2" />
+          {error}
+        </div>
+      )}
 
       <Input
         label="E-mailadres"

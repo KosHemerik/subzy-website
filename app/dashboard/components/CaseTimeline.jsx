@@ -41,51 +41,26 @@ export default function CaseTimeline({ caseData }) {
     }
   };
 
-  const getStatusBadge = (status) => {
-    const badges = {
-      "waiting-documents": {
-        bg: "bg-orange-100",
-        text: "text-orange-700",
-        border: "border-orange-200",
-        label: "Wacht op documenten",
-      },
-      "in-progress": {
-        bg: "bg-blue-100",
-        text: "text-blue-700",
-        border: "border-blue-200",
-        label: "In behandeling",
-      },
-      "completed": {
-        bg: "bg-green-100",
-        text: "text-green-700",
-        border: "border-green-200",
-        label: "Afgerond",
-      },
-    };
-    return badges[status] || badges["in-progress"];
-  };
-
-  const badge = getStatusBadge(caseData.status);
+  const typeMeta = caseData.requestTypeMeta || { label: "Aanvraag", icon: "fa-circle", accent: "text-secondary", badge: "bg-blue-100 text-secondary border-blue-200" };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div className="bg-[linear-gradient(180deg,rgba(255,255,255,0.94)_0%,rgba(235,242,255,0.98)_100%)] backdrop-blur-sm rounded-2xl shadow-[0_12px_40px_rgba(27,58,107,0.07)] border border-blue-100/60 overflow-hidden">
       {/* Header */}
-      <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+      <div className="p-6 border-b border-blue-100/60 flex justify-between items-start gap-4 bg-[linear-gradient(135deg,rgba(45,107,228,0.08)_0%,rgba(27,58,107,0.05)_100%)]">
         <div>
           <h3 className="font-bold text-lg text-primary">{caseData.title}</h3>
-          <p className="text-sm text-gray-500">Dossiernr: {caseData.caseNumber}</p>
+          <p className="text-sm text-gray-500">{caseData.periodLabel || "Periode onbekend"}</p>
         </div>
-        <span
-          className={`px-3 py-1 rounded-full text-xs font-semibold ${badge.bg} ${badge.text} border ${badge.border}`}
-        >
-          {badge.label}
+        <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold ${typeMeta.badge}`}>
+          <i className={`fa-solid ${typeMeta.icon} ${typeMeta.accent}`} />
+          {typeMeta.label}
         </span>
       </div>
 
       {/* Timeline */}
       <div className="p-6">
         <div className="relative">
-          <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200" />
+          <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-secondary/40 via-primary/20 to-blue-200" />
           <ul className="space-y-6 relative">
             {caseData.steps.map((step, index) => {
               const styles = getStepStyles(step.status);
@@ -122,7 +97,7 @@ export default function CaseTimeline({ caseData }) {
                       </p>
                     )}
                     {step.action && (
-                      <button className="text-sm bg-secondary text-white px-4 py-1.5 rounded hover:bg-accent transition shadow-sm">
+                      <button className="text-sm bg-[linear-gradient(135deg,#2D6BE4_0%,#1B3A6B_100%)] text-white px-4 py-1.5 rounded-lg hover:shadow-lg hover:shadow-secondary/20 transition shadow-sm">
                         {step.action}
                       </button>
                     )}

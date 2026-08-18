@@ -191,7 +191,7 @@ export default function SubsidiesFilter() {
   const cards = subsidyCards[activeTab] || [];
 
   return (
-    <section id="subsidies" className="py-20 bg-white w-full">
+    <section id="subsidies" className="py-16 md:py-20 lg:py-24 bg-white w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-center mb-12">
           <div className="inline-flex bg-background rounded-full p-1.5 shadow-sm border border-blue-50">

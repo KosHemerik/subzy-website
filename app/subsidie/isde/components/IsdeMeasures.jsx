@@ -76,7 +76,7 @@ const measures = [
 
 export default function IsdeMeasures() {
   return (
-    <section id="maatregelen" className="py-20 bg-background w-full">
+    <section id="maatregelen" className="py-16 md:py-20 lg:py-24 bg-background w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
           <span className="text-accent text-xs font-semibold tracking-widest uppercase block mb-3">

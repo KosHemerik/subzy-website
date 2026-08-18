@@ -456,24 +456,35 @@ export default function ServiceHero() {
 
           {/* Left — text */}
           <div>
-            <div className="inline-flex items-center bg-white/10 rounded-full px-4 py-1.5 mb-6 border border-white/20">
+            <div
+              className="hero-enter inline-flex items-center bg-white/10 rounded-full px-4 py-1.5 mb-6 border border-white/20"
+            >
               <i className="fa-solid fa-bolt text-yellow-400 mr-2" />
               <span className="text-white text-sm font-medium">Terugvragen tot 5 jaar terug</span>
             </div>
 
-            <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight mb-6">
+            <h1
+              className="hero-enter text-4xl lg:text-5xl font-bold text-white leading-tight mb-6"
+              style={{ animationDelay: "0.15s" }}
+            >
               <span className="inline-block whitespace-nowrap" style={{ wordSpacing: "-0.08em" }}>
                 Energiebelasting terugvragen?
               </span>{" "}
               Veel woningeigenaren betalen onnodig te veel.
             </h1>
 
-            <p className="text-lg text-gray-200 mb-10 leading-relaxed">
+            <p
+              className="hero-enter text-lg text-gray-200 mb-10 leading-relaxed"
+              style={{ animationDelay: "0.25s" }}
+            >
               Woont u in een appartementencomplex of heeft u meerdere woningen achter één elektriciteitsaansluiting?
               Grote kans dat u te veel energiebelasting betaalt. Vul uw adres in en zie direct uw kans.
             </p>
 
-            <div className="flex flex-wrap gap-6 text-sm text-gray-300">
+            <div
+              className="hero-enter flex flex-wrap gap-6 text-sm text-gray-300"
+              style={{ animationDelay: "0.35s" }}
+            >
               <div className="flex items-center">
                 <i className="fa-solid fa-shield-halved text-secondary mr-2" />
                 No Cure No Pay
@@ -490,7 +501,16 @@ export default function ServiceHero() {
           </div>
 
           {/* Right — address checker card */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 max-w-md w-full lg:ml-auto">
+          <div className="relative max-w-md w-full lg:ml-auto z-10">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -right-4 -top-4 hidden lg:block h-56 w-56 rounded-full bg-secondary/15 blur-2xl"
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute right-6 top-10 hidden lg:block h-24 w-24 rounded-full bg-white/10 blur-xl"
+            />
+            <div className="relative z-10 bg-white rounded-2xl shadow-xl p-6">
             <h2 className="text-lg font-bold text-primary mb-1">Gratis pre-scan, zie direct uw kans</h2>
             <p className="text-xs text-gray-500 mb-5">Vul hier uw adres in · Geen registratie nodig</p>
 
@@ -620,6 +640,7 @@ export default function ServiceHero() {
                 </p>
               </div>
             )}
+            </div>
           </div>
 
         </div>

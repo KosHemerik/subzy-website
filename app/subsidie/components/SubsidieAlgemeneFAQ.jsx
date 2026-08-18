@@ -58,10 +58,10 @@ export default function SubsidieAlgemeneFAQ() {
   const [openIndex, setOpenIndex] = useState(0);
 
   return (
-    <section className="py-20 bg-gray-50 w-full">
+    <section className="py-16 md:py-20 lg:py-24 bg-gray-50 w-full">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="animate-reveal text-center mb-12">
           <div className="inline-flex items-center justify-center mb-4">
             <span className="text-[#2d4fd6] text-sm font-semibold tracking-wide uppercase">
               ❓ Veelgestelde vragen
@@ -79,7 +79,7 @@ export default function SubsidieAlgemeneFAQ() {
         </div>
 
         {/* Accordion */}
-        <div className="space-y-3">
+        <div className="animate-reveal-grid space-y-3">
           {faqItems.map((item, index) => (
             <FAQItem
               key={index}

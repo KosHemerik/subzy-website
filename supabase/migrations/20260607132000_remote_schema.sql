@@ -525,6 +525,8 @@ CREATE TABLE IF NOT EXISTS "public"."owners" (
     "invoiceIdentifier" "text",
     "companyName" "text",
     "noVat" boolean,
+    "portal_status" "text",
+    "portal_user_id" "uuid",
     CONSTRAINT "owners_pricingTypeSvohIsde_check" CHECK (("pricingTypeSvohIsde" = ANY (ARRAY['percentage'::"text", 'fixed'::"text", NULL::"text"])))
 );
 
@@ -1087,6 +1089,12 @@ CREATE POLICY "Addresses: staff/admin full access" ON "public"."addresses" USING
 
 
 
+CREATE POLICY "Addresses: portal users can view own" ON "public"."addresses" FOR SELECT USING (("ownerId" IN ( SELECT "owners"."id"
+    FROM "public"."owners"
+    WHERE (("owners"."portal_user_id" = "auth"."uid"()) OR ("owners"."created_by" = "auth"."uid"())))));
+
+
+
 CREATE POLICY "Addresses: users can delete own" ON "public"."addresses" FOR DELETE USING (("created_by" = "auth"."uid"()));
 
 
@@ -1239,6 +1247,10 @@ CREATE POLICY "Owners: staff/admin full access" ON "public"."owners" USING (("pu
 
 
 
+CREATE POLICY "Owners: portal users can view own" ON "public"."owners" FOR SELECT USING (("portal_user_id" = "auth"."uid"()));
+
+
+
 CREATE POLICY "Owners: users can delete own" ON "public"."owners" FOR DELETE USING (("created_by" = "auth"."uid"()));
 
 
@@ -1287,6 +1299,16 @@ CREATE POLICY "RequestDocuments: staff/admin full access" ON "public"."requestDo
 
 
 
+CREATE POLICY "RequestDocuments: portal users can view own" ON "public"."requestDocuments" FOR SELECT USING (("requestId" IN ( SELECT "requests"."id"
+        FROM "public"."requests"
+    WHERE ("requests"."addressId" IN ( SELECT "addresses"."id"
+                            FROM "public"."addresses"
+                         WHERE ("addresses"."ownerId" IN ( SELECT "owners"."id"
+                                                 FROM "public"."owners"
+                                                WHERE (("owners"."portal_user_id" = "auth"."uid"()) OR ("owners"."created_by" = "auth"."uid"())))))))));
+
+
+
 CREATE POLICY "RequestDocuments: users can delete own" ON "public"."requestDocuments" FOR DELETE USING (("created_by" = "auth"."uid"()));
 
 
@@ -1304,6 +1326,14 @@ CREATE POLICY "RequestDocuments: users can view own" ON "public"."requestDocumen
 
 
 CREATE POLICY "Requests: staff/admin full access" ON "public"."requests" USING (("public"."get_user_role"("auth"."uid"()) = ANY (ARRAY['staff'::"public"."app_role", 'admin'::"public"."app_role"]))) WITH CHECK (("public"."get_user_role"("auth"."uid"()) = ANY (ARRAY['staff'::"public"."app_role", 'admin'::"public"."app_role"])));
+
+
+
+CREATE POLICY "Requests: portal users can view own" ON "public"."requests" FOR SELECT USING (("addressId" IN ( SELECT "addresses"."id"
+        FROM "public"."addresses"
+    WHERE ("addresses"."ownerId" IN ( SELECT "owners"."id"
+                            FROM "public"."owners"
+                         WHERE (("owners"."portal_user_id" = "auth"."uid"()) OR ("owners"."created_by" = "auth"."uid"())))))));
 
 
 

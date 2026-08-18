@@ -22,16 +22,16 @@ const values = [
  */
 export default function CoreValues() {
   return (
-    <section className="py-16 bg-background w-full px-4 sm:px-6 lg:px-8">
+    <section className="py-12 md:py-16 lg:py-20 bg-background w-full px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
+        <div className="animate-reveal text-center mb-12">
           <h2 className="text-3xl font-bold text-primary mb-4">Onze kernwaarden</h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
             Dit zijn de principes die elk dossier, elk contact en elke aanvraag bepalen.
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="animate-reveal-grid grid grid-cols-1 md:grid-cols-3 gap-8">
           {values.map((value) => (
             <div 
               key={value.title}

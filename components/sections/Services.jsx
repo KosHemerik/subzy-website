@@ -1,4 +1,5 @@
 import Link from "next/link";
+import StatsCounter from "./StatsCounter";
 
 const services = [
   {
@@ -40,11 +41,6 @@ const services = [
   },
 ];
 
-const stats = [
-  { value: "€360K+", label: "Teruggevraagd voor klanten" },
-  { value: "1.400+", label: "Succesvolle aanvragen" },
-  { value: "Ruim 8 jaar", label: "Ervaring in energiebelasting & subsidie" },
-];
 
 function ServiceCard({ badge, badgeColor, title, description, features, tags, href, cta }) {
   return (
@@ -99,10 +95,10 @@ function ServiceCard({ badge, badgeColor, title, description, features, tags, hr
 
 export default function Services() {
   return (
-    <section className="py-20 bg-background">
+    <section className="py-16 md:py-20 lg:py-24 bg-background">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="animate-reveal text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
             Haal terug waar u recht op heeft
           </h2>
@@ -112,24 +108,14 @@ export default function Services() {
         </div>
 
         {/* Service Cards */}
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="animate-reveal-grid grid md:grid-cols-2 gap-8">
           {services.map((service) => (
             <ServiceCard key={service.title} {...service} />
           ))}
         </div>
 
-        {/* Stats */}
-        <div className="mt-16 text-center">
-          <p className="text-sm text-gray-400 mb-6">Waarom klanten ons vertrouwen</p>
-          <div className="flex flex-wrap justify-center gap-8 md:gap-16">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-accent mb-1">{stat.value}</div>
-                <div className="text-sm text-gray-500">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* Animated stats */}
+        <StatsCounter />
       </div>
     </section>
   );

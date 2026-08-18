@@ -120,10 +120,14 @@ export default function ActivateAccountForm() {
       const { error: updateError } = await supabase.auth.updateUser({ password });
       if (updateError) throw updateError;
 
+      // Sign out so the owner is required to sign in fresh; this guarantees
+      // last_sign_in_at updates and the portal_status auto-activate trigger fires.
+      await supabase.auth.signOut();
+
       setStatus("success");
       setTimeout(() => {
-        router.replace("/dashboard");
-      }, 1000);
+        router.replace("/login");
+      }, 1500);
     } catch (err) {
       setError(err?.message || "Wachtwoord instellen mislukt. Probeer het opnieuw.");
     } finally {
@@ -166,7 +170,7 @@ export default function ActivateAccountForm() {
         </div>
         <div>
           <h3 className="text-xl font-bold text-primary mb-2">Gelukt</h3>
-          <p className="text-gray-600 text-sm">Uw wachtwoord is ingesteld. U wordt doorgestuurd naar uw dashboard.</p>
+          <p className="text-gray-600 text-sm">Uw wachtwoord is ingesteld. U wordt doorgestuurd naar de inlogpagina.</p>
         </div>
       </div>
     );

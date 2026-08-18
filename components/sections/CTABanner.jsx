@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function CTABanner() {
   return (
-    <section className="bg-white py-16 px-4">
+    <section className="bg-white py-12 md:py-16 lg:py-20 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="relative bg-primary rounded-2xl px-10 py-14 text-white overflow-hidden shadow-[0_20px_60px_-10px_rgba(27,58,107,0.5)]">
           {/* Dot grid overlay */}
@@ -17,7 +17,7 @@ export default function CTABanner() {
           <div className="absolute -left-16 -top-16 w-64 h-64 bg-secondary/20 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute -right-16 -bottom-16 w-64 h-64 bg-accent/20 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 text-center">
+          <div className="animate-reveal relative z-10 text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Haal alles terug waar u recht op heeft
             </h2>

@@ -21,10 +21,10 @@ export default function Eligibility() {
   ];
 
   return (
-    <section id="eligibility" className="py-20 bg-background w-full">
+    <section id="eligibility" className="py-16 md:py-20 lg:py-24 bg-background w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="animate-reveal text-center mb-16">
           <span className="text-gray-500 text-sm font-semibold tracking-wide uppercase mb-3 block">
             VOOR WIE IS DIT?
           </span>
@@ -38,7 +38,7 @@ export default function Eligibility() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           {/* Image */}
-          <div>
+          <div className="animate-reveal-left">
             <img
               src="/apartments.jpg"
               alt="Appartementencomplex – teruggave energiebelasting voor VvE en verhuurders"
@@ -47,7 +47,7 @@ export default function Eligibility() {
           </div>
 
           {/* Eligibility Items */}
-          <div className="space-y-6">
+          <div className="animate-reveal-right space-y-6">
             {eligibilityItems.map((item, index) => (
               <div key={index} className="flex bg-white p-5 rounded-xl shadow-sm">
                 <div className="flex-shrink-0 mt-1">

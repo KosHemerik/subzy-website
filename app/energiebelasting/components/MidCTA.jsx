@@ -34,9 +34,9 @@ export default function MidCTA() {
   ];
 
   return (
-    <section id="mid-cta" className="py-16 bg-white w-full">
+    <section id="mid-cta" className="py-12 md:py-16 lg:py-20 bg-white w-full">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="inline-flex items-center bg-background text-primary text-sm font-medium px-4 py-1.5 rounded-full mb-4">
+        <div className="animate-reveal inline-flex items-center bg-background text-primary text-sm font-medium px-4 py-1.5 rounded-full mb-4">
           <i className="fa-solid fa-star mr-2" />
           Onze voordelen
         </div>
@@ -48,7 +48,7 @@ export default function MidCTA() {
         </p>
 
         {/* Trust indicators */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+        <div className="animate-reveal-grid grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
           {trustItems.map((item, index) => (
             <div key={index} className="flex flex-col items-center group">
               <div className="w-12 h-12 bg-surface rounded-full flex items-center justify-center mb-3 text-accent transition-transform duration-300 group-hover:scale-110">

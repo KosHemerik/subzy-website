@@ -84,7 +84,9 @@ export default function TeruggaveEnergiebelastingPage() {
       <TopBar />
       <Header />
       <main className="bg-white">
-        <ServiceHero />
+        <div className="bg-background">
+          <ServiceHero />
+        </div>
         <ProblemAwareness />
         <HowItWorksTimeline />
         <Eligibility />

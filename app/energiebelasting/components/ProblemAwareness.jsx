@@ -7,23 +7,23 @@
 export default function ProblemAwareness() {
   const stats = [
     {
-      value: "2 dagen",
-      description: "En u weet waar u aan toe bent",
+      value: "1.400+",
+      description: "aanvragen ingediend",
     },
     {
-      value: "€1.867",
-      description: "Gemiddelde teruggave per klant",
+      value: "€360K+",
+      description: "teruggegeven aan klanten",
     },
     {
-      value: "0% risico",
-      description: "Alleen betalen bij resultaat",
+      value: "8 jaar",
+      description: "ervaring in de sector",
     },
   ];
 
   return (
-    <section id="problem" className="-mt-16 pt-32 pb-20 bg-background w-full">
+    <section id="problem" className="p-16 lg:p-24 md:p-20 bg-background w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="animate-reveal max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-primary mb-6">
             U laat waarschijnlijk al jaren geld liggen
           </h2>
@@ -33,7 +33,7 @@ export default function ProblemAwareness() {
         </div>
 
         <div className="mt-10 max-w-4xl mx-auto">
-          <div className="flex flex-col sm:flex-row justify-center items-center text-center gap-8 sm:gap-6 text-gray-700">
+          <div className="animate-reveal-grid flex flex-col sm:flex-row justify-center items-center text-center gap-8 sm:gap-6 text-gray-700">
             {stats.map((stat, index) => (
               <div key={index} className="flex items-center justify-center">
                 <div className="flex flex-col items-center justify-center px-2 sm:px-0 min-w-[180px]">

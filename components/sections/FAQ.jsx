@@ -56,7 +56,7 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState(null);
 
   return (
-    <section className="py-20 bg-background">
+    <section className="py-16 md:py-20 lg:py-24 bg-background">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-primary mb-4">
@@ -66,7 +66,7 @@ export default function FAQ() {
             Staat uw vraag er niet tussen? Neem dan contact met ons op.
           </p>
         </div>
-        <div className="space-y-4">
+        <div className="animate-reveal-grid space-y-4">
           {faqs.map((faq, index) => (
             <FAQItem
               key={faq.question}

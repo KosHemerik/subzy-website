@@ -7,7 +7,7 @@ import { Button } from "@/components/ui";
  */
 export default function ContactCTA() {
   return (
-    <section className="py-16 bg-primary text-white text-center px-4">
+    <section className="py-12 md:py-16 lg:py-20 bg-primary text-white text-center px-4">
       <div className="max-w-3xl mx-auto">
         <h2 className="text-3xl font-bold mb-4">
           Staat uw vraag er niet tussen?

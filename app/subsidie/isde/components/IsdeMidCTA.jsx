@@ -25,7 +25,7 @@ const benefits = [
 
 export default function IsdeMidCTA() {
   return (
-    <section className="py-16 bg-background w-full">
+    <section className="py-12 md:py-16 lg:py-20 bg-background w-full">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="inline-flex items-center bg-white text-primary text-sm font-medium px-4 py-1.5 rounded-full mb-4 border border-gray-200">
           <i className="fa-solid fa-star text-yellow-400 mr-2" />

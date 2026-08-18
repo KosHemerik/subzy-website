@@ -64,7 +64,7 @@ function FAQItem({ question, answer }) {
 
 export default function IsdeFAQ() {
   return (
-    <section id="faq" className="py-20 bg-white w-full">
+    <section id="faq" className="py-16 md:py-20 lg:py-24 bg-white w-full">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-primary mb-4">Veelgestelde vragen over ISDE</h2>

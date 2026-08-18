@@ -3,9 +3,9 @@ import Link from "next/link";
 
 export default function Mission() {
   return (
-    <section className="py-16 w-full px-4 sm:px-6 lg:px-8">
+    <section className="py-12 md:py-16 lg:py-20 w-full px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12">
-        <div className="lg:w-1/2 relative w-full h-[500px]">
+        <div className="animate-reveal-left lg:w-1/2 relative w-full h-[500px]">
           <Image
             className="object-cover rounded-2xl shadow-xl"
             src="/warmte_pomp.jpg"
@@ -14,7 +14,7 @@ export default function Mission() {
             sizes="(min-width: 1024px) 50vw, 100vw"
           />
         </div>
-        <div className="lg:w-1/2 space-y-6">
+        <div className="animate-reveal-right lg:w-1/2 space-y-6">
           <h2 className="text-3xl font-bold text-primary">Uw specialist in energiebelasting en duurzaamheidssubsidies</h2>
           <div className="w-20 h-1 bg-accent rounded" />
           <p className="text-gray-600 text-lg leading-relaxed">

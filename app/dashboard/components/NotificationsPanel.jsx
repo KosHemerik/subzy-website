@@ -45,7 +45,7 @@ export default function NotificationsPanel({ notifications }) {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sticky top-6">
+    <div className="bg-[linear-gradient(180deg,rgba(255,255,255,0.92)_0%,rgba(235,242,255,0.98)_100%)] backdrop-blur-sm rounded-2xl shadow-[0_12px_40px_rgba(27,58,107,0.07)] border border-blue-100/60 p-6 sticky top-6">
       <div className="flex justify-between items-center mb-6">
         <h3 className="font-bold text-lg text-primary">Recente Notificaties</h3>
         <Link
@@ -65,8 +65,8 @@ export default function NotificationsPanel({ notifications }) {
               key={notification.id}
               className={`flex items-start space-x-3 p-3 rounded-lg transition ${
                 notification.highlight
-                  ? "bg-surface border border-blue-100"
-                  : "hover:bg-gray-50 border border-transparent"
+                  ? "bg-[linear-gradient(135deg,rgba(45,107,228,0.14)_0%,rgba(27,58,107,0.08)_100%)] border border-blue-100"
+                  : "hover:bg-blue-50/70 border border-transparent"
               }`}
             >
               <div className={`flex-shrink-0 mt-0.5 ${iconData.color}`}>

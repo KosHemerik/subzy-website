@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npx playwright@latest screenshot --browser chromium http://localhost:3000 /tmp/homepage-fixed.png --viewport-size 1440,900 --timeout 15000)",
       "Bash(curl -s http://localhost:3000)",
-      "Bash(npx playwright@latest screenshot --browser chromium http://localhost:3000 /tmp/homepage-a11y.png --full-page --viewport-size 1440,900 --timeout 15000)"
+      "Bash(npx playwright@latest screenshot --browser chromium http://localhost:3000 /tmp/homepage-a11y.png --full-page --viewport-size 1440,900 --timeout 15000)",
+      "Bash(npm run *)"
     ]
   }
 }
