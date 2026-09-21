@@ -6,10 +6,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const sidebarItems = [
-  { label: "Overzicht",    href: "/dashboard",             icon: "fa-chart-line"      },
-  { label: "Mijn Dossiers", href: "/dashboard/dossiers",   icon: "fa-folder-open"     },
-  { label: "Mijn Profiel", href: "/dashboard/profiel",     icon: "fa-circle-user"     },
-  { label: "Documenten",   href: "/dashboard/documenten",  icon: "fa-file-arrow-up"   },
+  { label: "Overzicht",     href: "/dashboard",           icon: "fa-chart-line"  },
+  { label: "Mijn Dossiers", href: "/dashboard/dossiers",  icon: "fa-folder-open" },
+  { label: "Mijn Profiel",  href: "/dashboard/profiel",   icon: "fa-circle-user" },
 ];
 
 /**

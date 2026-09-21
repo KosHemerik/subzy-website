@@ -202,11 +202,17 @@ export async function GET(req, context) {
     const dispositionParam = req.nextUrl.searchParams.get("disposition");
     const contentDisposition = dispositionParam === "attachment" ? "attachment" : "inline";
 
+    // Strip anything that could break out of the quoted filename or inject an
+    // extra header. Also provide an RFC 5987 filename* for non-ASCII names.
+    const rawName = String(document.name || "document");
+    const asciiName = rawName.replace(/[^\w.\- ]+/g, "_").slice(0, 200) || "document";
+    const encodedName = encodeURIComponent(rawName).slice(0, 200);
+
     return new Response(buffer, {
       status: 200,
       headers: {
         "Content-Type": fileData.type || "application/octet-stream",
-        "Content-Disposition": `${contentDisposition}; filename="${document.name || "document"}"`,
+        "Content-Disposition": `${contentDisposition}; filename="${asciiName}"; filename*=UTF-8''${encodedName}`,
         "Cache-Control": "no-store",
       },
     });

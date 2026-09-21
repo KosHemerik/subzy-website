@@ -3,6 +3,7 @@
 import { useAuth } from "@/lib/auth";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
+import NotificationsBell from "../../components/NotificationsBell";
 
 function InfoRow({ label, value }) {
   return (
@@ -81,14 +82,14 @@ export default function OwnerProfile() {
   return (
     <main className="flex-grow p-4 sm:p-8 w-full overflow-y-auto relative bg-[linear-gradient(180deg,rgba(255,255,255,0.42)_0%,rgba(255,255,255,0.18)_100%)] backdrop-blur-sm">
       {/* Header */}
-      <div className="mb-8">
-        <p className="inline-flex items-center rounded-full border border-blue-100 bg-blue-50/90 px-3 py-1 text-xs font-semibold text-secondary shadow-sm mb-3">
-          Klantportaal
-        </p>
-        <h1 className="text-2xl sm:text-3xl font-bold text-primary tracking-tight">
-          Mijn Profiel
-        </h1>
-        <p className="text-gray-600 mt-1">Uw persoonlijke en contactgegevens.</p>
+      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-primary tracking-tight">
+            Mijn Profiel
+          </h1>
+          <p className="text-gray-600 mt-1">Uw persoonlijke en contactgegevens.</p>
+        </div>
+        <NotificationsBell />
       </div>
 
       {loading ? (

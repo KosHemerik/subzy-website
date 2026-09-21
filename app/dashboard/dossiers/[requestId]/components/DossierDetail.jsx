@@ -1,40 +1,30 @@
 "use client";
 
 import { useAuth } from "@/lib/auth";
+import { formatEuro } from "@/lib/portal/currency";
+import { getDocumentCategoriesForRequestType, getDocumentCategoryLabel } from "@/lib/portal/documentCategories";
+import { getRequestTypeMeta, getStatusMeta } from "@/lib/portal/requestMeta";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase/client";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import Breadcrumb from "../../../components/Breadcrumb";
+import ConfirmDialog from "../../../components/ConfirmDialog";
+import NotificationsBell from "../../../components/NotificationsBell";
 
-const DOCUMENT_CATEGORIES = [
-  {
-    key: "energienota",
-    label: "Energienota",
-    description: "De jaarafrekening van uw energieleverancier.",
-  },
-  {
-    key: "woz_aanslag",
-    label: "WOZ-aanslag",
-    description: "De WOZ-aanslag van uw gemeente.",
-  },
-  {
-    key: "aanvraag",
-    label: "Aanvraag",
-    description: "Het ingediende aanvraagdocument voor dit dossier.",
-  },
-  {
-    key: "bevestiging",
-    label: "Bevestiging",
-    description: "De bevestiging van een ingediende aanvraag.",
-  },
-  {
-    key: "overige_documenten",
-    label: "Overige documenten",
-    description: "Aanvullende documenten die niet in een vaste categorie vallen.",
-  },
-];
+const UPLOAD_BUCKET = "request-documents";
 
-const READ_ONLY_CATEGORIES = new Set(["aanvraag", "bevestiging"]);
+function sanitizeFileName(name) {
+  const trimmed = String(name || "document").trim();
+  const lastDot = trimmed.lastIndexOf(".");
+  const rawBase = lastDot > 0 ? trimmed.slice(0, lastDot) : trimmed;
+  const rawExt = lastDot > 0 ? trimmed.slice(lastDot + 1) : "";
+  // Sanitize base én extensie — de extensie belandt in de storage-key en
+  // (via requestDocuments.name) in de Content-Disposition-header, dus daar
+  // mogen geen "/", quotes of andere stuurtekens in blijven staan.
+  const base = rawBase.replace(/[^a-zA-Z0-9-_]+/g, "_").slice(0, 120) || "document";
+  const ext = rawExt.replace(/[^a-zA-Z0-9]+/g, "").slice(0, 12);
+  return ext ? `${base}.${ext}` : base;
+}
 
 function formatDate(value) {
   if (!value) return "Onbekend";
@@ -74,56 +64,20 @@ function formatPeriod(startDate, endDate) {
   return "Onbekend";
 }
 
-function parseAmount(value) {
-  if (value === null || value === undefined || value === "") return null;
-  if (typeof value === "number") return Number.isFinite(value) ? value : null;
-
-  let text = String(value).trim();
-  if (!text) return null;
-
-  text = text.replace(/\s/g, "").replace(/[^\d.,-]/g, "");
-  if (!text) return null;
-
-  const hasComma = text.includes(",");
-  const hasDot = text.includes(".");
-
-  if (hasComma && hasDot) {
-    const lastComma = text.lastIndexOf(",");
-    const lastDot = text.lastIndexOf(".");
-    if (lastComma > lastDot) {
-      text = text.replace(/\./g, "").replace(",", ".");
-    } else {
-      text = text.replace(/,/g, "");
-    }
-  } else if (hasComma) {
-    text = text.replace(/\./g, "").replace(",", ".");
-  }
-
-  const parsed = Number(text);
-  return Number.isFinite(parsed) ? parsed : null;
-}
-
-function formatEuro(value) {
-  const parsed = parseAmount(value);
-  if (parsed === null) return "-";
-  return new Intl.NumberFormat("nl-NL", {
-    style: "currency",
-    currency: "EUR",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(parsed);
-}
-
 function normalizeCategory(value) {
-  if (!value) return "overige_documenten";
-  const normalized = String(value).toLowerCase().trim().replace(/\s+/g, "_");
+  if (!value) return "overig";
+  const normalized = String(value).toLowerCase().trim().replace(/\s+/g, "-");
 
   if (normalized.includes("energie")) return "energienota";
-  if (normalized.includes("woz")) return "woz_aanslag";
+  if (normalized.includes("woz")) return "woz-aanslag";
   if (normalized.includes("aanvraag")) return "aanvraag";
   if (normalized.includes("bevest")) return "bevestiging";
-  if (normalized.includes("volmacht")) return "overige_documenten";
-  if (normalized.includes("overig")) return "overige_documenten";
+  if (normalized.includes("factuur")) return "factuur";
+  if (normalized.includes("offerte")) return "offerte";
+  if (normalized.includes("betaling")) return "betalingsbewijs";
+  if (normalized.includes("foto")) return "fotos";
+  if (normalized.includes("volmacht")) return "overig";
+  if (normalized.includes("overig")) return "overig";
 
   return normalized;
 }
@@ -235,13 +189,6 @@ async function fetchPortalDocument(documentId, disposition) {
   return response.blob();
 }
 
-function getOwnerTypeLabel(requestType) {
-  if (requestType === 1) return "Energiebelasting";
-  if (requestType === 2) return "Subsidie";
-  if (requestType === 3) return "SVOH";
-  return "Onbekend";
-}
-
 export default function DossierDetail() {
   const { owner: authOwner, isLoading: authLoading } = useAuth();
   const params = useParams();
@@ -252,8 +199,14 @@ export default function DossierDetail() {
   const [request, setRequest] = useState(null);
   const [address, setAddress] = useState(null);
   const [documents, setDocuments] = useState([]);
+  const [documentRequests, setDocumentRequests] = useState([]);
   const [activeTab, setActiveTab] = useState("algemeen");
   const [busyActionDocumentId, setBusyActionDocumentId] = useState(null);
+  const [uploadingCategory, setUploadingCategory] = useState(null);
+  const [dragOverCategory, setDragOverCategory] = useState(null);
+  const [uploadError, setUploadError] = useState("");
+  const [pendingDelete, setPendingDelete] = useState(null);
+  const [deleteError, setDeleteError] = useState("");
 
   const handlePreviewDocument = async (doc) => {
     try {
@@ -298,6 +251,120 @@ export default function DossierDetail() {
           ? `${downloadError.message}\n${typeof downloadError.details === "string" ? downloadError.details : JSON.stringify(downloadError.details, null, 2)}`
           : downloadError.message || "Downloaden mislukt."
       );
+    } finally {
+      setBusyActionDocumentId(null);
+    }
+  };
+
+  // Herlaadt alleen documenten + documentverzoeken (na upload/verwijderen),
+  // zonder de rest van het dossier opnieuw op te halen.
+  const refreshDocuments = async (numericRequestId) => {
+    const [{ data: documentData, error: docsError }, { data: requestReqData, error: reqError }] =
+      await Promise.all([
+        supabase
+          .from("requestDocuments")
+          .select("id, name, category, created_at, storagePath, sizeBytes, mimeType, created_by")
+          .eq("requestId", numericRequestId)
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("request_document_requests")
+          .select("id, category, requested_at, fulfilled_at, cancelled_at")
+          .eq("request_id", numericRequestId)
+          .is("fulfilled_at", null)
+          .is("cancelled_at", null),
+      ]);
+
+    if (docsError) throw docsError;
+    if (reqError) throw reqError;
+
+    setDocuments(documentData || []);
+    setDocumentRequests(requestReqData || []);
+  };
+
+  const handleUploadDocument = async (categoryConfig, file) => {
+    if (!file || !request?.id) return;
+    setUploadError("");
+    setUploadingCategory(categoryConfig.id);
+
+    let insertedId = null;
+    try {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+      if (userError || !user) throw new Error("U bent niet ingelogd.");
+
+      const safeName = sanitizeFileName(file.name);
+
+      const { data: docRecord, error: insertError } = await supabase
+        .from("requestDocuments")
+        .insert({
+          requestId: request.id,
+          name: safeName,
+          category: categoryConfig.id,
+          storagePath: null,
+          mimeType: file.type || "application/octet-stream",
+          sizeBytes: file.size,
+          created_by: user.id,
+        })
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+      insertedId = docRecord.id;
+
+      const storagePath = `${request.id}/${docRecord.id}_${safeName}`;
+      const { error: uploadStorageError } = await supabase.storage
+        .from(UPLOAD_BUCKET)
+        .upload(storagePath, file, {
+          contentType: file.type || "application/octet-stream",
+          upsert: true,
+        });
+
+      if (uploadStorageError) throw uploadStorageError;
+
+      const { error: updateError } = await supabase
+        .from("requestDocuments")
+        .update({ storagePath })
+        .eq("id", docRecord.id);
+
+      if (updateError) throw updateError;
+
+      await refreshDocuments(request.id);
+    } catch (err) {
+      if (insertedId) {
+        await supabase.from("requestDocuments").delete().eq("id", insertedId);
+      }
+      setUploadError(err.message || "Upload mislukt. Probeer het opnieuw.");
+    } finally {
+      setUploadingCategory(null);
+      setDragOverCategory(null);
+    }
+  };
+
+  const requestDeleteDocument = (doc) => {
+    setDeleteError("");
+    setPendingDelete(doc);
+  };
+
+  const confirmDeleteDocument = async () => {
+    const doc = pendingDelete;
+    if (!doc) return;
+
+    setDeleteError("");
+    setBusyActionDocumentId(doc.id);
+    try {
+      const { data, error } = await supabase.rpc("soft_delete_request_document", {
+        p_document_id: doc.id,
+      });
+
+      if (error) throw error;
+      if (!data?.ok) throw new Error(data?.reason || "Verwijderen is niet toegestaan.");
+
+      await refreshDocuments(request.id);
+      setPendingDelete(null);
+    } catch (err) {
+      setDeleteError(err.message || "Verwijderen mislukt. Probeer het opnieuw.");
     } finally {
       setBusyActionDocumentId(null);
     }
@@ -359,18 +426,10 @@ export default function DossierDetail() {
 
         if (addressError) throw addressError;
 
-        const { data: documentData, error: docsError } = await supabase
-          .from("requestDocuments")
-          .select("id, name, category, created_at, storagePath, sizeBytes, mimeType")
-          .eq("requestId", requestData.id)
-          .order("created_at", { ascending: false });
-
-        if (docsError) throw docsError;
-
         if (!isMounted) return;
         setRequest(requestData);
         setAddress(addressData || null);
-        setDocuments(documentData || []);
+        await refreshDocuments(requestData.id);
       } catch (loadError) {
         if (!isMounted) return;
         setError(loadError.message || "Dossierdetails konden niet worden geladen.");
@@ -410,22 +469,27 @@ export default function DossierDetail() {
     }, {});
   }, [documents]);
 
+  // Welke categorieën getoond worden hangt af van het type aanvraag
+  // (Energiebelasting vs. SVOH/ISDE) — zie lib/portal/documentCategories.js.
+  const documentCategories = useMemo(
+    () => getDocumentCategoriesForRequestType(request?.requestType),
+    [request?.requestType]
+  );
+
   return (
     <main className="flex-grow p-4 sm:p-8 w-full overflow-y-auto relative bg-[linear-gradient(180deg,rgba(255,255,255,0.42)_0%,rgba(255,255,255,0.18)_100%)] backdrop-blur-sm">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <p className="inline-flex items-center rounded-full border border-blue-100 bg-blue-50/90 px-3 py-1 text-xs font-semibold text-secondary shadow-sm mb-3">
-            Dossierdetails
-          </p>
-          <h1 className="text-2xl sm:text-3xl font-bold text-primary tracking-tight">{addressTitle}</h1>
-          <p className="mt-1 text-sm font-semibold text-gray-500">{kenmerk}</p>
+      <div className="mb-6">
+        <div className="mb-4 flex items-start justify-between gap-3">
+          <Breadcrumb
+            pages={[
+              { name: "Mijn Dossiers", href: "/dashboard/dossiers" },
+              { name: addressTitle },
+            ]}
+          />
+          <NotificationsBell />
         </div>
-        <Link
-          href="/dashboard/dossiers"
-          className="inline-flex items-center justify-center rounded-xl border border-blue-100 bg-white/80 px-4 py-2 text-sm font-semibold text-primary shadow-sm hover:bg-blue-50 transition"
-        >
-          Terug naar dossiers
-        </Link>
+        <h1 className="text-2xl sm:text-3xl font-bold text-primary tracking-tight">{addressTitle}</h1>
+        <p className="mt-1 text-sm font-semibold text-gray-500">{kenmerk}</p>
       </div>
 
       {loading ? (
@@ -451,7 +515,7 @@ export default function DossierDetail() {
                     : "text-gray-500 hover:bg-blue-50/70 hover:text-secondary"
                 }`}
               >
-                <i className="fa-regular fa-circle-info mr-2" /> Algemeen
+                <i className="fa-solid fa-clipboard-list mr-2" /> Algemeen
               </button>
               <button
                 type="button"
@@ -467,6 +531,35 @@ export default function DossierDetail() {
             </div>
           </div>
 
+          {documentRequests.length > 0 && (
+            <div className="rounded-2xl border border-orange-200 bg-orange-50/90 p-5 shadow-sm">
+              <div className="flex items-start gap-3">
+                <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-orange-100 text-orange-600">
+                  <i className="fa-solid fa-triangle-exclamation" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-bold text-orange-900">
+                    Actie vereist: lever nog {documentRequests.length === 1 ? "dit document" : "deze documenten"} aan
+                  </p>
+                  <p className="mt-1 text-sm text-orange-800">
+                    {documentRequests
+                      .map((docRequest) => getDocumentCategoryLabel(docRequest.category))
+                      .join(", ")}
+                  </p>
+                  {activeTab !== "bestanden" && (
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab("bestanden")}
+                      className="mt-3 inline-flex items-center gap-2 rounded-lg bg-orange-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-orange-600"
+                    >
+                      <i className="fa-solid fa-file-arrow-up" /> Naar Bestanden
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {activeTab === "algemeen" ? (
             <div>
               <section className="rounded-2xl border border-blue-100/60 bg-white/85 p-6 shadow-sm">
@@ -478,11 +571,15 @@ export default function DossierDetail() {
                   </div>
                   <div>
                     <dt className="text-gray-500">Type</dt>
-                    <dd className="mt-1 font-semibold text-primary">{getOwnerTypeLabel(request.requestType)}</dd>
+                    <dd className="mt-1 font-semibold text-primary">{getRequestTypeMeta(request.requestType).label}</dd>
                   </div>
                   <div>
                     <dt className="text-gray-500">Status</dt>
-                    <dd className="mt-1 font-semibold text-primary">{request.status || "Open"}</dd>
+                    <dd className="mt-1">
+                      <span className={`inline-flex rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-wide ${getStatusMeta(request.status).pill}`}>
+                        {getStatusMeta(request.status).label}
+                      </span>
+                    </dd>
                   </div>
                   <div>
                     <dt className="text-gray-500">Aangemaakt op</dt>
@@ -519,20 +616,84 @@ export default function DossierDetail() {
               <h2 className="text-lg font-bold text-primary">Documenten en Bestanden</h2>
               <p className="mt-1 text-sm text-gray-500">Upload of download uw dossierdocumenten per categorie.</p>
 
+              {uploadError && (
+                <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                  {uploadError}
+                </div>
+              )}
+
               <div className="mt-6 space-y-6">
-                {DOCUMENT_CATEGORIES.map((category) => {
-                  const categoryDocs = documentsByCategory[category.key] || [];
-                  const isReadOnly = READ_ONLY_CATEGORIES.has(category.key);
+                {documentCategories.map((category) => {
+                  const categoryDocs = documentsByCategory[category.id] || [];
+                  const isReadOnly = Boolean(category.readOnly);
+                  const isUploading = uploadingCategory === category.id;
+                  const isDragOver = dragOverCategory === category.id;
+                  const openRequest = documentRequests.find(
+                    (docRequest) => docRequest.category === category.id
+                  );
+                  const inputId = `upload-${category.id}`;
 
                   return (
-                    <div key={category.key} className="rounded-xl border border-blue-100/70 bg-white/75 p-4">
-                      <h3 className="text-sm font-semibold text-primary">{category.label}</h3>
+                    <div
+                      key={category.id}
+                      className={`rounded-xl border p-4 transition ${
+                        openRequest
+                          ? "border-orange-200 bg-orange-50/40"
+                          : "border-blue-100/70 bg-white/75"
+                      }`}
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <h3 className="text-sm font-semibold text-primary">{category.label}</h3>
+                        {openRequest && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-orange-100 px-2.5 py-1 text-xs font-semibold text-orange-700">
+                            <i className="fa-solid fa-circle-exclamation" />
+                            Gevraagd op {formatDate(openRequest.requested_at)}
+                          </span>
+                        )}
+                      </div>
                       <p className="mt-1 text-xs text-gray-500">{category.description}</p>
 
                       {!isReadOnly ? (
-                        <div className="mt-3 rounded-xl border border-dashed border-blue-200 bg-blue-50/30 p-4 text-center text-sm text-gray-400">
-                          Klik of sleep om te uploaden
-                        </div>
+                        <label
+                          htmlFor={inputId}
+                          onDragOver={(event) => {
+                            event.preventDefault();
+                            setDragOverCategory(category.id);
+                          }}
+                          onDragLeave={() => setDragOverCategory(null)}
+                          onDrop={(event) => {
+                            event.preventDefault();
+                            const file = event.dataTransfer.files?.[0];
+                            if (file) handleUploadDocument(category, file);
+                          }}
+                          className={`mt-3 flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed p-4 text-center text-sm transition ${
+                            isDragOver
+                              ? "border-secondary bg-blue-50"
+                              : "border-blue-200 bg-blue-50/30 hover:bg-blue-50/60"
+                          } ${isUploading ? "pointer-events-none opacity-60" : ""}`}
+                        >
+                          {isUploading ? (
+                            <span className="flex items-center gap-2 text-secondary">
+                              <i className="fa-solid fa-spinner fa-spin" /> Uploaden...
+                            </span>
+                          ) : (
+                            <span className="text-gray-400">
+                              <i className="fa-solid fa-cloud-arrow-up mr-2 text-secondary" />
+                              Klik of sleep om te uploaden
+                            </span>
+                          )}
+                          <input
+                            id={inputId}
+                            type="file"
+                            className="hidden"
+                            disabled={isUploading}
+                            onChange={(event) => {
+                              const file = event.target.files?.[0];
+                              if (file) handleUploadDocument(category, file);
+                              event.target.value = "";
+                            }}
+                          />
+                        </label>
                       ) : categoryDocs.length === 0 ? (
                         <p className="mt-3 text-xs text-gray-500">
                           Deze documenten worden door Subzy toegevoegd en zijn alleen te downloaden.
@@ -584,6 +745,21 @@ export default function DossierDetail() {
                                     <i className="fa-solid fa-download text-xs" />
                                   </span>
                                 )}
+                                {!isReadOnly && (
+                                  <button
+                                    type="button"
+                                    onClick={() => requestDeleteDocument(doc)}
+                                    disabled={busyActionDocumentId === doc.id}
+                                    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-red-200 text-red-500 hover:bg-red-50"
+                                    title="Verwijderen"
+                                  >
+                                    {busyActionDocumentId === doc.id ? (
+                                      <i className="fa-solid fa-spinner fa-spin text-xs" />
+                                    ) : (
+                                      <i className="fa-solid fa-trash text-xs" />
+                                    )}
+                                  </button>
+                                )}
                               </div>
                             </li>
                           ))}
@@ -597,6 +773,28 @@ export default function DossierDetail() {
           )}
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!pendingDelete}
+        title="Document verwijderen"
+        description={
+          <>
+            Weet u zeker dat u{" "}
+            <span className="font-semibold text-primary">
+              {pendingDelete?.name || "dit document"}
+            </span>{" "}
+            wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+          </>
+        }
+        confirmLabel="Verwijderen"
+        busy={!!pendingDelete && busyActionDocumentId === pendingDelete.id}
+        error={deleteError}
+        onConfirm={confirmDeleteDocument}
+        onClose={() => {
+          setPendingDelete(null);
+          setDeleteError("");
+        }}
+      />
     </main>
   );
 }

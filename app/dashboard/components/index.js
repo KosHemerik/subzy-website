@@ -1,7 +1,10 @@
+export { default as Breadcrumb } from "./Breadcrumb";
 export { default as CaseTimeline } from "./CaseTimeline";
+export { default as ConfirmDialog } from "./ConfirmDialog";
 export { default as DashboardContent } from "./DashboardContent";
-export { default as DashboardFooter } from "./DashboardFooter";
 export { default as DashboardHeader } from "./DashboardHeader";
 export { default as DashboardOverviewCards } from "./DashboardOverviewCards";
 export { default as DashboardSidebar } from "./DashboardSidebar";
+export { default as NotificationsBell } from "./NotificationsBell";
 export { default as NotificationsPanel } from "./NotificationsPanel";
+export { default as StatusBreakdown } from "./StatusBreakdown";

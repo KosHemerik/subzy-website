@@ -1,7 +1,6 @@
-import { 
-  DashboardSidebar, 
-  DashboardFooter, 
-  DashboardContent 
+import {
+  DashboardSidebar,
+  DashboardContent
 } from "./components";
 import DashboardProtection from "./DashboardProtection";
 
@@ -27,7 +26,6 @@ export default function DashboardPage() {
           <DashboardSidebar />
           <DashboardContent />
         </div>
-        <DashboardFooter />
       </div>
     </DashboardProtection>
   );

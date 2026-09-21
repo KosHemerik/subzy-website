@@ -67,16 +67,29 @@ export function AuthProvider({ children }) {
 
       const {
         data: { subscription },
-      } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      } = supabase.auth.onAuthStateChange((_event, session) => {
+        // IMPORTANT: this callback must stay synchronous. The GoTrue client
+        // holds an internal lock while notifying listeners, so awaiting
+        // other supabase.auth.* calls (updateUser, signOut, ...) directly
+        // inside here — or even awaiting them from code that fires right
+        // after this listener runs — can deadlock waiting for that lock to
+        // release. Deferring the async work with setTimeout lets the
+        // triggering call (e.g. updateUser/signOut in ActivateAccountForm)
+        // finish first. See: https://supabase.com/docs/reference/javascript/auth-onauthstatechange
         if (!isMounted) return;
         const supabaseUser = session?.user ?? null;
-        setUser(mapUser(supabaseUser));
-        if (supabaseUser) {
-          await fetchOwner(supabaseUser.id);
-        } else {
-          setOwner(null);
-        }
-        setIsLoading(false);
+        setTimeout(() => {
+          if (!isMounted) return;
+          setUser(mapUser(supabaseUser));
+          if (supabaseUser) {
+            fetchOwner(supabaseUser.id).finally(() => {
+              if (isMounted) setIsLoading(false);
+            });
+          } else {
+            setOwner(null);
+            setIsLoading(false);
+          }
+        }, 0);
       });
 
       return subscription;

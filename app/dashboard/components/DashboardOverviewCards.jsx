@@ -1,47 +1,62 @@
 /**
  * Dashboard Overview Cards Component
- * Displays statistics cards at top of dashboard
+ * Toont kerncijfers voor de eigenaar bovenaan het dashboard.
  */
-export default function DashboardOverviewCards({ stats }) {
-  const cards = [
-    {
-      label: "Actieve dossiers",
-      value: stats?.activeDossiers ?? 2,
-      icon: "fa-folder-tree",
-      accent: "from-blue-50 to-sky-50",
-      textColor: "text-secondary",
-    },
-    {
-      label: "Te uploaden documenten",
-      value: stats?.pendingDocuments ?? 3,
-      icon: "fa-file-circle-exclamation",
-      accent: "from-orange-50 to-amber-50",
-      textColor: "text-orange-500",
-    },
-    {
-      label: "Nieuwe berichten",
-      value: stats?.newMessages ?? 1,
-      icon: "fa-envelope-open-text",
-      accent: "from-green-50 to-emerald-50",
-      textColor: "text-green-500",
-    },
-  ];
+const CARD_META = [
+  {
+    key: "activeDossiers",
+    label: "Actieve dossiers",
+    icon: "fa-folder-tree",
+    iconBg: "from-secondary to-primary",
+    fallback: 0,
+  },
+  {
+    key: "completedRequests",
+    label: "Afgeronde aanvragen",
+    icon: "fa-circle-check",
+    iconBg: "from-emerald-400 to-green-600",
+    fallback: 0,
+  },
+  {
+    key: "totalReclaimedLabel",
+    label: "Teruggevraagd bedrag",
+    icon: "fa-sack-dollar",
+    iconBg: "from-primary to-primary-dark",
+    fallback: "€ 0,00",
+  },
+  {
+    key: "pendingDocuments",
+    label: "Te uploaden documenten",
+    icon: "fa-file-circle-exclamation",
+    iconBg: "from-amber-400 to-orange-500",
+    fallback: 0,
+  },
+];
 
+export default function DashboardOverviewCards({ stats, loading = false }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      {cards.map((card) => (
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {CARD_META.map((card) => (
         <div
-          key={card.label}
-          className="bg-[linear-gradient(180deg,rgba(255,255,255,0.92)_0%,rgba(235,242,255,0.98)_100%)] backdrop-blur-sm p-6 rounded-2xl shadow-[0_12px_40px_rgba(27,58,107,0.07)] border border-blue-100/60 flex items-center space-x-4"
+          key={card.key}
+          className="flex items-center gap-4 rounded-2xl border border-blue-100/70 bg-white/90 p-5 shadow-[0_4px_20px_-2px_rgba(27,58,107,0.06)]"
         >
           <div
-            className={`w-12 h-12 rounded-xl bg-gradient-to-br ${card.accent} ${card.textColor} flex items-center justify-center text-xl ring-1 ring-white/80`}
+            className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${card.iconBg} text-white shadow-sm`}
           >
-            <i className={`fa-solid ${card.icon}`} />
+            <i className={`fa-solid ${card.icon} text-lg`} />
           </div>
-          <div>
-            <p className="text-sm text-gray-500 font-medium">{card.label}</p>
-            <p className="text-2xl font-bold text-primary tracking-tight">{card.value}</p>
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+              {card.label}
+            </p>
+            {loading ? (
+              <span className="mt-1.5 block h-6 w-14 animate-pulse rounded bg-blue-100/80" />
+            ) : (
+              <p className="mt-1 truncate text-xl font-bold tracking-tight text-primary">
+                {stats?.[card.key] ?? card.fallback}
+              </p>
+            )}
           </div>
         </div>
       ))}

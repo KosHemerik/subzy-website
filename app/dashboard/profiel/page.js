@@ -1,5 +1,5 @@
 import DashboardProtection from "../DashboardProtection";
-import { DashboardFooter, DashboardSidebar } from "../components";
+import { DashboardSidebar } from "../components";
 import OwnerProfile from "./components/OwnerProfile";
 
 export const metadata = {
@@ -20,7 +20,6 @@ export default function ProfielPage() {
           <DashboardSidebar />
           <OwnerProfile />
         </div>
-        <DashboardFooter />
       </div>
     </DashboardProtection>
   );

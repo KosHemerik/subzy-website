@@ -1,54 +1,24 @@
 "use client";
 
 import { useAuth } from "@/lib/auth";
+import {
+  getRequestTypeMeta,
+  getStatusKey,
+  getStatusMeta,
+  isCompletedStatus,
+  STATUS_ORDER,
+} from "@/lib/portal/requestMeta";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase/client";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import NotificationsBell from "../../components/NotificationsBell";
 
-const statusMeta = {
-  nieuw: {
-    label: "Nieuw",
-    pill: "bg-blue-100 text-blue-700 border-blue-200",
-    tone: "from-blue-50 to-sky-50",
-  },
-  in_behandeling: {
-    label: "In behandeling",
-    pill: "bg-amber-100 text-amber-700 border-amber-200",
-    tone: "from-amber-50 to-orange-50",
-  },
-  completed: {
-    label: "Afgerond",
-    pill: "bg-green-100 text-green-700 border-green-200",
-    tone: "from-green-50 to-emerald-50",
-  },
-  afgerond: {
-    label: "Afgerond",
-    pill: "bg-green-100 text-green-700 border-green-200",
-    tone: "from-green-50 to-emerald-50",
-  },
-  waiting: {
-    label: "Wachten",
-    pill: "bg-orange-100 text-orange-700 border-orange-200",
-    tone: "from-orange-50 to-amber-50",
-  },
-  default: {
-    label: "Open",
-    pill: "bg-slate-100 text-slate-700 border-slate-200",
-    tone: "from-slate-50 to-blue-50",
-  },
-};
-
-const requestTypeMeta = {
-  1: { label: "Energiebelasting", icon: "fa-bolt", accent: "text-secondary" },
-  2: { label: "Subsidie", icon: "fa-solar-panel", accent: "text-orange-500" },
-  3: { label: "SVOH", icon: "fa-building-columns", accent: "text-green-500" },
-};
-
-function getStatusKey(value) {
-  if (!value) return "default";
-  return String(value).toLowerCase().replace(/\s+/g, "_");
-}
+const SORT_COLUMNS = [
+  { key: "kenmerk", label: "Kenmerk" },
+  { key: "type", label: "Type" },
+  { key: "status", label: "Status" },
+  { key: "adres", label: "Adres" },
+];
 
 function formatDate(value) {
   if (!value) return "Onbekend";
@@ -61,33 +31,6 @@ function formatDate(value) {
   }).format(date);
 }
 
-function formatPeriodDate(value) {
-  if (!value) return null;
-
-  const asText = String(value).trim();
-  const directDateMatch = asText.match(/^(\d{4}-\d{2}-\d{2})/);
-  if (directDateMatch) {
-    return directDateMatch[1];
-  }
-
-  const date = new Date(asText);
-  if (Number.isNaN(date.getTime())) {
-    return null;
-  }
-
-  return date.toISOString().slice(0, 10);
-}
-
-function formatPeriod(startDate, endDate) {
-  const start = formatPeriodDate(startDate);
-  const end = formatPeriodDate(endDate);
-
-  if (start && end) return `${start} - ${end}`;
-  if (start) return `${start} -`;
-  if (end) return `- ${end}`;
-  return "Onbekend";
-}
-
 export default function DossiersOverview() {
   const { user, owner: authOwner, isLoading: authLoading } = useAuth();
   const router = useRouter();
@@ -95,8 +38,17 @@ export default function DossiersOverview() {
   const [requests, setRequests] = useState([]);
   const [requestDocumentCounts, setRequestDocumentCounts] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
+  const [sort, setSort] = useState({ key: "created_at", dir: "desc" });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const handleSort = (key) => {
+    setSort((current) =>
+      current.key === key
+        ? { key, dir: current.dir === "asc" ? "desc" : "asc" }
+        : { key, dir: "asc" },
+    );
+  };
 
   const ownerName = useMemo(() => {
     if (!authOwner) return user?.name || "Gebruiker";
@@ -203,10 +155,9 @@ export default function DossiersOverview() {
   }, [authLoading, authOwner?.id, user?.id]);
 
   const summary = useMemo(() => {
-    const openCount = requests.filter((request) => {
-      const statusKey = getStatusKey(request.status);
-      return !["completed", "afgerond"].includes(statusKey);
-    }).length;
+    const openCount = requests.filter(
+      (request) => !isCompletedStatus(request.status),
+    ).length;
 
     return {
       total: requests.length,
@@ -251,14 +202,46 @@ export default function DossiersOverview() {
     return [streetLine, cityLine].filter(Boolean).join(", ") || `Adres #${address.id}`;
   };
 
+  const sortedRequests = useMemo(() => {
+    const sortValue = (request) => {
+      switch (sort.key) {
+        case "kenmerk":
+          return String(request.reference || `Dossier #${request.id}`).toLowerCase();
+        case "type":
+          return Number(request.requestType) || 0;
+        case "status": {
+          const index = STATUS_ORDER.indexOf(getStatusKey(request.status));
+          return index === -1 ? STATUS_ORDER.length : index;
+        }
+        case "adres":
+          return formatAddress(addressById[request.addressId]).toLowerCase();
+        default:
+          return new Date(request.created_at).getTime() || 0;
+      }
+    };
+
+    const rows = [...filteredRequests];
+    rows.sort((a, b) => {
+      const va = sortValue(a);
+      const vb = sortValue(b);
+      let cmp =
+        typeof va === "number" && typeof vb === "number"
+          ? va - vb
+          : String(va).localeCompare(String(vb), "nl");
+      // Gelijk? Dan altijd nieuwste dossier eerst als stabiele tiebreaker.
+      if (cmp === 0) {
+        return (new Date(b.created_at).getTime() || 0) - (new Date(a.created_at).getTime() || 0);
+      }
+      return sort.dir === "asc" ? cmp : -cmp;
+    });
+    return rows;
+  }, [filteredRequests, sort, addressById]);
+
   return (
     <main className="flex-grow p-4 sm:p-8 w-full overflow-y-auto relative bg-[linear-gradient(180deg,rgba(255,255,255,0.42)_0%,rgba(255,255,255,0.18)_100%)] backdrop-blur-sm">
       <div className="flex flex-col gap-6 mb-8">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="inline-flex items-center rounded-full border border-blue-100 bg-blue-50/90 px-3 py-1 text-xs font-semibold text-secondary shadow-sm mb-3">
-              Mijn Dossiers
-            </p>
             <h1 className="text-2xl sm:text-3xl font-bold text-primary tracking-tight">
               Dossieroverzicht
             </h1>
@@ -266,12 +249,7 @@ export default function DossiersOverview() {
               Alle dossiers gekoppeld aan {ownerName} worden hier verzameld in één overzicht.
             </p>
           </div>
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center justify-center rounded-xl border border-blue-100 bg-white/80 px-4 py-2 text-sm font-semibold text-primary shadow-sm hover:bg-blue-50 transition"
-          >
-            Terug naar dashboard
-          </Link>
+          <NotificationsBell />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -311,57 +289,84 @@ export default function DossiersOverview() {
           </div>
         </div>
       ) : (
-        <div className="flex flex-col gap-4">
-          <div className="rounded-2xl border border-blue-100/60 bg-white/75 p-4 shadow-[0_10px_30px_rgba(27,58,107,0.06)]">
-            <label htmlFor="dossier-search" className="mb-2 block text-xs font-semibold uppercase tracking-wide text-gray-500">
-              Zoek op adres of kenmerk
-            </label>
-            <div className="relative">
-              <i className="fa-solid fa-magnifying-glass pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+        <div className="overflow-hidden rounded-3xl border border-blue-100/60 bg-white shadow-[0_12px_40px_rgba(27,58,107,0.07)]">
+          <div className="flex flex-col gap-3 border-b border-blue-100/60 bg-slate-50 px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+            <p className="text-sm text-gray-500">
+              <span className="font-semibold text-primary">{filteredRequests.length}</span> van{" "}
+              {requests.length} {requests.length === 1 ? "dossier" : "dossiers"}
+            </p>
+            <div className="relative w-full sm:w-72">
+              <i className="fa-solid fa-magnifying-glass pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400" />
               <input
                 id="dossier-search"
-                type="text"
+                type="search"
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
-                placeholder="Bijv. Driftstraat, Nieuwsteeg of 811137661..."
-                className="w-full rounded-xl border border-blue-100 bg-white px-10 py-2.5 text-sm text-primary outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20"
+                placeholder="Zoek op adres of kenmerk…"
+                aria-label="Zoek op adres of kenmerk"
+                className="w-full rounded-xl border border-blue-100 bg-white px-9 py-2 text-sm text-primary outline-none transition focus:border-secondary focus:ring-2 focus:ring-secondary/20"
               />
             </div>
-            <p className="mt-2 text-xs text-gray-500">
-              {filteredRequests.length} van {requests.length} dossiers zichtbaar
-            </p>
           </div>
 
           {filteredRequests.length === 0 ? (
-            <div className="rounded-3xl border border-blue-100/60 bg-[linear-gradient(180deg,rgba(255,255,255,0.94)_0%,rgba(235,242,255,0.98)_100%)] p-8 text-center shadow-[0_12px_40px_rgba(27,58,107,0.07)]">
-              <p className="text-lg font-bold text-primary">Geen dossiers gevonden voor deze zoekopdracht</p>
-              <p className="mt-2 text-sm text-gray-600">Probeer een ander adres of kenmerk.</p>
+            <div className="px-6 py-14 text-center">
+              <p className="text-sm font-semibold text-primary">
+                Geen dossiers gevonden voor “{searchTerm}”.
+              </p>
+              <button
+                type="button"
+                onClick={() => setSearchTerm("")}
+                className="mt-2 text-sm font-medium text-secondary transition hover:text-accent"
+              >
+                Zoekopdracht wissen
+              </button>
             </div>
           ) : (
-            <div className="overflow-hidden rounded-3xl border border-blue-100/60 bg-[linear-gradient(180deg,rgba(255,255,255,0.96)_0%,rgba(235,242,255,0.98)_100%)] shadow-[0_12px_40px_rgba(27,58,107,0.07)]">
-              <div className="overflow-x-auto">
-                <table className="min-w-[980px] w-full text-left">
-                  <thead className="bg-white/70 border-b border-blue-100/70">
-                    <tr className="text-xs uppercase tracking-wide text-gray-500">
-                      <th className="px-6 py-4 font-semibold">Kenmerk</th>
-                      <th className="px-4 py-4 font-semibold">Type</th>
-                      <th className="px-4 py-4 font-semibold">Status</th>
-                      <th className="px-4 py-4 font-semibold">Adres</th>
-                      <th className="px-4 py-4 font-semibold">Periode</th>
+            <div className="overflow-x-auto bg-white">
+                <table className="min-w-[640px] w-full text-left">
+                  <thead className="bg-slate-50 border-b border-blue-100">
+                    <tr className="text-xs text-gray-500">
+                      {SORT_COLUMNS.map((column, index) => {
+                        const active = sort.key === column.key;
+                        return (
+                          <th
+                            key={column.key}
+                            aria-sort={active ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}
+                            className={`${index === 0 ? "px-6" : "px-4"} py-3.5 font-semibold`}
+                          >
+                            <button
+                              type="button"
+                              onClick={() => handleSort(column.key)}
+                              className="inline-flex items-center gap-1.5 rounded-sm px-0.5 uppercase tracking-wide outline-none transition-colors hover:text-primary focus-visible:ring-2 focus-visible:ring-secondary/50"
+                            >
+                              {column.label}
+                              <i
+                                aria-hidden="true"
+                                className={`fa-solid w-2.5 text-center text-[10px] ${
+                                  active
+                                    ? sort.dir === "asc"
+                                      ? "fa-sort-up text-secondary"
+                                      : "fa-sort-down text-secondary"
+                                    : "fa-sort text-gray-300"
+                                }`}
+                              />
+                            </button>
+                          </th>
+                        );
+                      })}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-blue-100/60">
-                    {filteredRequests.map((request) => {
-                      const requestMeta = requestTypeMeta[request.requestType] || requestTypeMeta[1];
-                      const statusKey = getStatusKey(request.status);
-                      const activeStatus = statusMeta[statusKey] || statusMeta.default;
+                  <tbody className="[&_tr:last-child]:border-b-0">
+                    {sortedRequests.map((request) => {
+                      const requestMeta = getRequestTypeMeta(request.requestType);
+                      const activeStatus = getStatusMeta(request.status);
                       const dossierLabel = request.reference || `Dossier #${request.id}`;
-                      const periodLabel = formatPeriod(request.startDate, request.endDate);
 
                       return (
                         <tr
                           key={request.id}
-                          className="bg-white/30 hover:bg-blue-50/50 transition cursor-pointer"
+                          className="border-b border-blue-100/70 bg-white hover:bg-blue-50/60 transition-colors cursor-pointer"
                           role="link"
                           tabIndex={0}
                           onClick={() => router.push(`/dashboard/dossiers/${request.id}`)}
@@ -383,20 +388,18 @@ export default function DossiersOverview() {
                             </span>
                           </td>
                           <td className="px-4 py-4 align-top">
-                            <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${activeStatus.pill}`}>
+                            <span className={`inline-flex rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-wide ${activeStatus.pill}`}>
                               {activeStatus.label}
                             </span>
                           </td>
                           <td className="px-4 py-4 align-top text-sm text-gray-700">
                             {formatAddress(addressById[request.addressId])}
                           </td>
-                          <td className="px-4 py-4 align-top text-sm font-medium text-primary whitespace-nowrap">{periodLabel}</td>
                         </tr>
                       );
                     })}
                   </tbody>
                 </table>
-              </div>
             </div>
           )}
         </div>

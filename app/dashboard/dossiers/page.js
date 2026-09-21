@@ -1,6 +1,6 @@
 import DossiersOverview from "./components/DossiersOverview";
 import DashboardProtection from "../DashboardProtection";
-import { DashboardSidebar, DashboardFooter } from "../components";
+import { DashboardSidebar } from "../components";
 
 export const metadata = {
   title: "Mijn Dossiers - Subzy Klantportaal",
@@ -20,7 +20,6 @@ export default function DossiersPage() {
           <DashboardSidebar />
           <DossiersOverview />
         </div>
-        <DashboardFooter />
       </div>
     </DashboardProtection>
   );

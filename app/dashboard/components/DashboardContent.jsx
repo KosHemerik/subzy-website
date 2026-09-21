@@ -5,24 +5,16 @@
  * Main content area of the dashboard overview page — loads real data.
  */
 import { useAuth } from "@/lib/auth";
+import { formatEuro, parseAmount } from "@/lib/portal/currency";
+import { fetchPortalNotifications } from "@/lib/portal/notifications";
+import { getRequestTypeMeta, isCompletedStatus } from "@/lib/portal/requestMeta";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import CaseTimeline from "./CaseTimeline";
 import DashboardOverviewCards from "./DashboardOverviewCards";
+import NotificationsBell from "./NotificationsBell";
 import NotificationsPanel from "./NotificationsPanel";
-
-const REQUEST_TYPE_LABEL = {
-  1: "Energiebelasting",
-  2: "SVOH",
-  3: "ISDE",
-};
-
-const requestTypeMeta = {
-  1: { label: "Energiebelasting", icon: "fa-bolt", accent: "text-secondary", badge: "bg-blue-100 text-secondary border-blue-200" },
-  2: { label: "Subsidie", icon: "fa-solar-panel", accent: "text-orange-500", badge: "bg-orange-100 text-orange-700 border-orange-200" },
-  3: { label: "SVOH", icon: "fa-building-columns", accent: "text-green-500", badge: "bg-green-100 text-green-700 border-green-200" },
-};
 
 function formatAddress(address) {
   if (!address) return "Onbekend adres";
@@ -54,20 +46,35 @@ function buildTimelineSteps(request) {
     { type: "completed",  title: "Afgerond",               status: "pending"   },
   ];
 
-  const order = ["concept", "ingediend", "bevestigd", "ontvangen", "afgerond"];
-  const idx   = order.findIndex((s) => status.includes(s));
+  // Admin-status -> laatst voltooide klantstap. Meerdere interne statussen
+  // kunnen op dezelfde klantvriendelijke stap uitkomen (bv. Bevestigd en
+  // Ontvangen tonen allebei als "bijna klaar, Afgerond in behandeling") —
+  // expliciete mapping i.p.v. positioneel raden, zodat een nieuwe interne
+  // status (zoals "Controle") de tijdlijn niet stilletjes laat
+  // verschuiven.
+  const STATUS_STEP_INDEX = {
+    concept: 0,
+    controle: 1,
+    ingediend: 2,
+    bevestigd: 3,
+    ontvangen: 3,
+    afgerond: 4,
+  };
+
+  const idx = STATUS_STEP_INDEX[status] ?? 0;
 
   return steps.map((step, i) => ({
     ...step,
-    status: i <= Math.max(idx, 0) ? "completed" : i === Math.max(idx, 0) + 1 ? "current" : "pending",
+    status: i <= idx ? "completed" : i === idx + 1 ? "current" : "pending",
   }));
 }
 
 export default function DashboardContent() {
   const { user, owner } = useAuth();
-  const [requests, setRequests]   = useState([]);
-  const [stats, setStats]         = useState(null);
-  const [loading, setLoading]     = useState(true);
+  const [recentRequests, setRecentRequests] = useState([]);
+  const [stats, setStats]                   = useState(null);
+  const [notifications, setNotifications]    = useState([]);
+  const [loading, setLoading]               = useState(true);
 
   useEffect(() => {
     if (!user?.id || !isSupabaseConfigured) { setLoading(false); return; }
@@ -86,22 +93,31 @@ export default function DashboardContent() {
         if (addressIds.length > 0) {
           const { data } = await supabase
             .from("requests")
-            .select("id, status, requestType, reference, created_at, startDate, endDate, addressId(street, houseNumber, addition)")
+            .select("id, status, requestType, reference, requestAmount, created_at, startDate, endDate, addressId(street, houseNumber, addition)")
             .in("addressId", addressIds)
-            .order("created_at", { ascending: false })
-            .limit(5);
+            .order("created_at", { ascending: false });
           requestRows = data || [];
         }
 
-        const openRequests = requestRows.filter((r) => {
-          const statusKey = (r.status || "").toLowerCase();
-          return !["afgerond", "completed", "voltooid"].includes(statusKey);
+        const openRequests = requestRows.filter((r) => !isCompletedStatus(r.status));
+        const completedRequests = requestRows.filter((r) => isCompletedStatus(r.status));
+
+        const totalReclaimed = requestRows.reduce(
+          (sum, r) => sum + (parseAmount(r.requestAmount) || 0),
+          0,
+        );
+
+        // 2. Openstaande documentverzoeken -> "actie vereist"-notificaties
+        const documentNotifications = await fetchPortalNotifications(owner?.id);
+
+        setRecentRequests(openRequests.slice(0, 5));
+        setStats({
+          activeDossiers: openRequests.length,
+          completedRequests: completedRequests.length,
+          totalReclaimedLabel: formatEuro(totalReclaimed, { fallback: "€ 0,00" }),
+          pendingDocuments: documentNotifications.length,
         });
-
-        const active = openRequests.length;
-
-        setRequests(openRequests);
-        setStats({ activeDossiers: active, pendingDocuments: 0, newMessages: 0 });
+        setNotifications(documentNotifications);
       } finally {
         setLoading(false);
       }
@@ -112,12 +128,9 @@ export default function DashboardContent() {
 
   return (
     <main className="flex-grow p-4 sm:p-8 w-full overflow-y-auto relative bg-[linear-gradient(180deg,rgba(255,255,255,0.42)_0%,rgba(255,255,255,0.18)_100%)] backdrop-blur-sm">
-      {/* Dashboard Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+      {/* Header */}
+      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="inline-flex items-center rounded-full border border-blue-100 bg-blue-50/90 px-3 py-1 text-xs font-semibold text-secondary shadow-sm mb-3">
-            Klantportaal
-          </p>
           <h1 className="text-2xl sm:text-3xl font-bold text-primary tracking-tight">
             Welkom terug, {ownerName}
           </h1>
@@ -125,51 +138,58 @@ export default function DashboardContent() {
             Bekijk de status van uw lopende aanvragen en documenten.
           </p>
         </div>
-        <Link
-          href="/dashboard/dossiers"
-          className="bg-[linear-gradient(135deg,#2D6BE4_0%,#1B3A6B_100%)] text-white px-4 py-2 rounded-xl hover:shadow-lg hover:shadow-secondary/20 transition flex items-center border border-blue-100/40"
-        >
-          <i className="fa-solid fa-folder-open mr-2" /> Alle dossiers
-        </Link>
+        <NotificationsBell />
       </div>
 
-      {/* Overview Cards */}
-      <DashboardOverviewCards stats={stats} />
+      <div className="space-y-8">
+        {/* Kerncijfers */}
+        <DashboardOverviewCards stats={stats} loading={loading} />
 
-      {/* Main Grid: Timelines & Notifications */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
-          {loading ? (
-            <div className="text-center py-12 text-gray-400">
-              <i className="fa-solid fa-spinner fa-spin text-3xl mb-3" />
-              <p>Dossiers laden…</p>
+        {/* Recente dossiers + notificaties */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-bold text-primary">Recente dossiers</h2>
+              <Link
+                href="/dashboard/dossiers"
+                className="text-sm font-semibold text-secondary transition hover:text-accent"
+              >
+                Alle dossiers
+              </Link>
             </div>
-          ) : requests.length === 0 ? (
-            <div className="rounded-2xl border border-blue-100/60 bg-white/80 p-8 text-center text-gray-500">
-              <i className="fa-solid fa-folder-open text-3xl mb-3 text-blue-200" />
-              <p>Nog geen dossiers gevonden.</p>
-            </div>
-          ) : (
-            requests.map((req) => {
-              const address = req.addressId || {};
-              const typeMeta = requestTypeMeta[req.requestType] || { label: REQUEST_TYPE_LABEL[req.requestType] || "Aanvraag", icon: "fa-circle", accent: "text-secondary", badge: "bg-blue-100 text-secondary border-blue-200" };
-              const caseData = {
-                id:          req.id,
-                title:       formatAddress(address),
-                periodLabel: formatPeriodLabel(req.startDate, req.endDate),
-                caseNumber:  req.reference || `#${req.id}`,
-                status:      req.status,
-                requestType: req.requestType,
-                requestTypeMeta: typeMeta,
-                steps:       buildTimelineSteps(req),
-              };
-              return <CaseTimeline key={req.id} caseData={caseData} />;
-            })
-          )}
-        </div>
 
-        <div className="lg:col-span-1">
-          <NotificationsPanel />
+            {loading ? (
+              <div className="rounded-2xl border border-blue-100/70 bg-white/90 py-12 text-center text-gray-400">
+                <i className="fa-solid fa-spinner fa-spin text-3xl mb-3" />
+                <p>Dossiers laden…</p>
+              </div>
+            ) : recentRequests.length === 0 ? (
+              <div className="rounded-2xl border border-blue-100/70 bg-white/90 p-8 text-center text-gray-500">
+                <i className="fa-solid fa-folder-open text-3xl mb-3 text-blue-200" />
+                <p>Geen lopende dossiers.</p>
+              </div>
+            ) : (
+              recentRequests.map((req) => {
+                const address = req.addressId || {};
+                const typeMeta = getRequestTypeMeta(req.requestType);
+                const caseData = {
+                  id:          req.id,
+                  title:       formatAddress(address),
+                  periodLabel: formatPeriodLabel(req.startDate, req.endDate),
+                  caseNumber:  req.reference || `#${req.id}`,
+                  status:      req.status,
+                  requestType: req.requestType,
+                  requestTypeMeta: typeMeta,
+                  steps:       buildTimelineSteps(req),
+                };
+                return <CaseTimeline key={req.id} caseData={caseData} />;
+              })
+            )}
+          </div>
+
+          <div className="lg:col-span-1">
+            <NotificationsPanel notifications={notifications} />
+          </div>
         </div>
       </div>
     </main>

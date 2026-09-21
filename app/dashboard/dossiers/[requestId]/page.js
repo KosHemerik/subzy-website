@@ -1,5 +1,5 @@
 import DashboardProtection from "../../DashboardProtection";
-import { DashboardFooter, DashboardSidebar } from "../../components";
+import { DashboardSidebar } from "../../components";
 import DossierDetail from "./components/DossierDetail";
 
 export const metadata = {
@@ -20,7 +20,6 @@ export default function DossierDetailPage() {
           <DashboardSidebar />
           <DossierDetail />
         </div>
-        <DashboardFooter />
       </div>
     </DashboardProtection>
   );

@@ -13,6 +13,7 @@ export default function ResetPasswordForm() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -194,30 +195,50 @@ export default function ResetPasswordForm() {
         <label htmlFor="new-password" className="block text-sm font-medium text-gray-700 mb-1">
           Nieuw wachtwoord <span className="text-red-500">*</span>
         </label>
-        <input
-          id="new-password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent bg-gray-50"
-          placeholder="Minimaal 8 tekens"
-        />
+        <div className="relative">
+          <input
+            id="new-password"
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="w-full border border-gray-300 rounded-lg px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent bg-gray-50"
+            placeholder="Minimaal 8 tekens"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            className="absolute inset-y-0 right-0 px-4 flex items-center text-gray-400 hover:text-gray-600 transition"
+            aria-label={showPassword ? "Wachtwoord verbergen" : "Wachtwoord tonen"}
+          >
+            <i aria-hidden="true" className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"}`} />
+          </button>
+        </div>
       </div>
 
       <div>
         <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 mb-1">
           Herhaal wachtwoord <span className="text-red-500">*</span>
         </label>
-        <input
-          id="confirm-password"
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-          className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent bg-gray-50"
-          placeholder="Herhaal uw wachtwoord"
-        />
+        <div className="relative">
+          <input
+            id="confirm-password"
+            type={showPassword ? "text" : "password"}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            className="w-full border border-gray-300 rounded-lg px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent bg-gray-50"
+            placeholder="Herhaal uw wachtwoord"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            className="absolute inset-y-0 right-0 px-4 flex items-center text-gray-400 hover:text-gray-600 transition"
+            aria-label={showPassword ? "Wachtwoord verbergen" : "Wachtwoord tonen"}
+          >
+            <i aria-hidden="true" className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"}`} />
+          </button>
+        </div>
       </div>
 
       <Button type="submit" variant="secondary" size="lg" className="w-full" disabled={isSubmitting}>

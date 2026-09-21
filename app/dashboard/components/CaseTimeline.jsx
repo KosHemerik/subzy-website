@@ -44,12 +44,15 @@ export default function CaseTimeline({ caseData }) {
   const typeMeta = caseData.requestTypeMeta || { label: "Aanvraag", icon: "fa-circle", accent: "text-secondary", badge: "bg-blue-100 text-secondary border-blue-200" };
 
   return (
-    <div className="bg-[linear-gradient(180deg,rgba(255,255,255,0.94)_0%,rgba(235,242,255,0.98)_100%)] backdrop-blur-sm rounded-2xl shadow-[0_12px_40px_rgba(27,58,107,0.07)] border border-blue-100/60 overflow-hidden">
+    <div className="rounded-2xl border border-blue-100/70 bg-white/90 shadow-[0_4px_20px_-2px_rgba(27,58,107,0.06)] overflow-hidden">
       {/* Header */}
-      <div className="p-6 border-b border-blue-100/60 flex justify-between items-start gap-4 bg-[linear-gradient(135deg,rgba(45,107,228,0.08)_0%,rgba(27,58,107,0.05)_100%)]">
+      <div className="p-6 border-b border-blue-100/60 flex justify-between items-start gap-4 bg-[linear-gradient(135deg,rgba(45,107,228,0.06)_0%,rgba(27,58,107,0.03)_100%)]">
         <div>
           <h3 className="font-bold text-lg text-primary">{caseData.title}</h3>
-          <p className="text-sm text-gray-500">{caseData.periodLabel || "Periode onbekend"}</p>
+          <p className="text-sm text-gray-500">
+            {caseData.caseNumber ? `${caseData.caseNumber} · ` : ""}
+            {caseData.periodLabel || "Periode onbekend"}
+          </p>
         </div>
         <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold ${typeMeta.badge}`}>
           <i className={`fa-solid ${typeMeta.icon} ${typeMeta.accent}`} />
