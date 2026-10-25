@@ -168,12 +168,12 @@ export const faqData = {
       {
         question: "Wat kost jullie dienstverlening?",
         answer:
-          "Voor de teruggave energiebelasting werken we op basis van No Cure, No Pay: we rekenen 20% excl. BTW over het bedrag dat daadwerkelijk aan u wordt uitgekeerd. Voor ISDE-subsidies rekenen we 10% excl. BTW over de ontvangen subsidie. Wordt er niets uitgekeerd? Dan betaalt u ook niets.",
+          "Voor de teruggave energiebelasting werken we op basis van No Cure, No Pay: we rekenen 20% excl. BTW over het bedrag dat daadwerkelijk aan u wordt uitgekeerd. Voor subsidieaanvragen (ISDE en SVOH) rekenen we een vast tarief van € 79 incl. btw, plus € 15 incl. btw per extra maatregel. Wordt er niets uitgekeerd of toegekend? Dan betaalt u ook niets.",
       },
       {
         question: "Zijn er vooraf kosten verbonden?",
         answer:
-          "Nee, bij No Cure No Pay betaalt u alleen achteraf als de aanvraag succesvol is. U loopt dus geen financieel risico. Voor ISDE-subsidies met vast tarief betaalt u pas na het indienen van de aanvraag.",
+          "Nee, bij No Cure No Pay betaalt u alleen achteraf als de aanvraag succesvol is. U loopt dus geen financieel risico. Ook het vaste tarief voor subsidieaanvragen betaalt u alleen als de subsidie wordt toegekend.",
       },
       {
         question: "Hoe wordt de betaling afgehandeld?",

@@ -1,4 +1,4 @@
-import { StarRating } from "@/components/ui";
+import { StarRating, RatingValue } from "@/components/ui";
 import { COMPANY_INFO } from "@/lib/constants";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,8 +7,10 @@ const footerLinks = {
   diensten: [
     { label: "Teruggave energiebelasting", href: "/energiebelasting" },
     { label: "Duurzaamheidssubsidies", href: "/subsidie" },
-    { label: "ISDE subsidie", href: "/subsidie/isde" },
-    { label: "SVOH subsidie", href: "/subsidie/svoh" },
+    { label: "Warmtepomp subsidie", href: "/subsidie/warmtepomp" },
+    // Tijdelijk uit
+    // { label: "ISDE subsidie", href: "/subsidie/isde" },
+    // { label: "SVOH subsidie", href: "/subsidie/svoh" },
   ],
   handig: [
     { label: "Over ons", href: "/over-ons" },
@@ -105,8 +107,8 @@ export default function Footer() {
           <p>© {new Date().getFullYear()} Subzy. Alle rechten voorbehouden.</p>
           <div className="flex items-center space-x-2 mt-4 md:mt-0">
             <span>Beoordeeld met</span>
-            <StarRating rating={COMPANY_INFO.rating} className="text-xs" />
-            <span>({COMPANY_INFO.rating}/5)</span>
+            <StarRating className="text-xs" />
+            <span>(<RatingValue />/5)</span>
           </div>
         </div>
       </div>

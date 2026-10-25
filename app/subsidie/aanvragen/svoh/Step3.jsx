@@ -104,7 +104,8 @@ function BsnField({ value, onChange, error }) {
   );
 }
 
-function BedrijfForm({ data, dispatch, errors }) {
+// zakelijk (ISDE): no 250-employees question and no correspondence address
+function BedrijfForm({ data, dispatch, errors, zakelijk }) {
   const upd = (field, value) => dispatch({ type: "UPDATE_BEDRIJF", payload: { [field]: value } });
   return (
     <div className="space-y-5">
@@ -112,7 +113,9 @@ function BedrijfForm({ data, dispatch, errors }) {
       <InputField label="KvK-nummer" required value={data.kvk_nummer} onChange={(e) => upd("kvk_nummer", e.target.value)} placeholder="12345678" error={errors.kvk_nummer} />
       <InputField label="Bedrijfsnaam" required value={data.bedrijfsnaam} onChange={(e) => upd("bedrijfsnaam", e.target.value)} placeholder="Mijn BV" error={errors.bedrijfsnaam} />
       <IbanField value={data.iban} onChange={(v) => upd("iban", v)} error={errors.iban} />
-      <RadioGroup label="Werken er meer dan 250 mensen in uw organisatie?" required value={data.meer_dan_250} onChange={(v) => upd("meer_dan_250", v)} options={[{ value: "ja", label: "Ja" }, { value: "nee", label: "Nee" }]} error={errors.meer_dan_250} />
+      {!zakelijk && (
+        <RadioGroup label="Werken er meer dan 250 mensen in uw organisatie?" required value={data.meer_dan_250} onChange={(v) => upd("meer_dan_250", v)} options={[{ value: "ja", label: "Ja" }, { value: "nee", label: "Nee" }]} error={errors.meer_dan_250} />
+      )}
       <hr className="border-gray-100" />
       <SectionLabel>Contactpersoon</SectionLabel>
       <InputField label="Voorletters" required value={data.voorletters} onChange={(e) => upd("voorletters", e.target.value)} placeholder="J.A." error={errors.voorletters} />
@@ -121,12 +124,16 @@ function BedrijfForm({ data, dispatch, errors }) {
       <RadioGroup label="Geslacht" required value={data.geslacht} onChange={(v) => upd("geslacht", v)} options={[{ value: "man", label: "Man" }, { value: "vrouw", label: "Vrouw" }, { value: "anders", label: "Anders" }]} error={errors.geslacht} />
       <InputField label="Telefoonnummer" required type="tel" value={data.telefoon} onChange={(e) => upd("telefoon", e.target.value)} placeholder="06 12 34 56 78" error={errors.telefoon} />
       <InputField label="E-mailadres" required type="email" value={data.email} onChange={(e) => upd("email", e.target.value)} placeholder="info@bedrijf.nl" error={errors.email} />
-      <hr className="border-gray-100" />
-      <SectionLabel>Correspondentieadres</SectionLabel>
-      <SmartAddressInput
-        value={data.correspondentieadres}
-        onChange={(v) => dispatch({ type: "UPDATE_BEDRIJF", payload: { correspondentieadres: { ...data.correspondentieadres, ...v } } })}
-      />
+      {!zakelijk && (
+        <>
+          <hr className="border-gray-100" />
+          <SectionLabel>Correspondentieadres</SectionLabel>
+          <SmartAddressInput
+            value={data.correspondentieadres}
+            onChange={(v) => dispatch({ type: "UPDATE_BEDRIJF", payload: { correspondentieadres: { ...data.correspondentieadres, ...v } } })}
+          />
+        </>
+      )}
     </div>
   );
 }
@@ -136,9 +143,10 @@ function ParticulierForm({ data, dispatch, errors }) {
   return (
     <div className="space-y-5">
       <SectionLabel>Uw gegevens</SectionLabel>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_2fr] gap-4">
         <InputField label="Voornaam" required value={data.voornaam} onChange={(e) => upd("voornaam", e.target.value)} placeholder="Jan" error={errors.voornaam} />
-        <InputField label="Achternaam" required value={data.achternaam} onChange={(e) => upd("achternaam", e.target.value)} placeholder="de Vries" error={errors.achternaam} />
+        <InputField label="Tussenvoegsel" value={data.tussenvoegsel ?? ""} onChange={(e) => upd("tussenvoegsel", e.target.value)} placeholder="de" />
+        <InputField label="Achternaam" required value={data.achternaam} onChange={(e) => upd("achternaam", e.target.value)} placeholder="Vries" error={errors.achternaam} />
       </div>
       <RadioGroup label="Geslacht" required value={data.geslacht} onChange={(v) => upd("geslacht", v)} options={[{ value: "man", label: "Man" }, { value: "vrouw", label: "Vrouw" }, { value: "anders", label: "Anders" }]} error={errors.geslacht} />
       <BsnField value={data.bsn} onChange={(v) => upd("bsn", v)} error={errors.bsn} />
@@ -165,9 +173,10 @@ function IsdeParticulierForm({ data, dispatch, errors }) {
   return (
     <div className="space-y-5">
       <SectionLabel>Uw gegevens</SectionLabel>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_2fr] gap-4">
         <InputField label="Voornaam" required value={data.voornaam} onChange={(e) => upd("voornaam", e.target.value)} placeholder="Jan" error={errors.voornaam} />
-        <InputField label="Achternaam" required value={data.achternaam} onChange={(e) => upd("achternaam", e.target.value)} placeholder="de Vries" error={errors.achternaam} />
+        <InputField label="Tussenvoegsel" value={data.tussenvoegsel ?? ""} onChange={(e) => upd("tussenvoegsel", e.target.value)} placeholder="de" />
+        <InputField label="Achternaam" required value={data.achternaam} onChange={(e) => upd("achternaam", e.target.value)} placeholder="Vries" error={errors.achternaam} />
       </div>
       <RadioGroup label="Geslacht" required value={data.geslacht} onChange={(v) => upd("geslacht", v)} options={[{ value: "man", label: "Man" }, { value: "vrouw", label: "Vrouw" }, { value: "anders", label: "Anders" }]} error={errors.geslacht} />
       <BsnField value={data.bsn} onChange={(v) => upd("bsn", v)} error={errors.bsn} />
@@ -175,8 +184,8 @@ function IsdeParticulierForm({ data, dispatch, errors }) {
       <InputField label="Telefoonnummer" required type="tel" value={data.telefoon} onChange={(e) => upd("telefoon", e.target.value)} placeholder="06 12 34 56 78" error={errors.telefoon} />
       <InputField label="E-mailadres" required type="email" value={data.email} onChange={(e) => upd("email", e.target.value)} placeholder="jan@voorbeeld.nl" error={errors.email} />
       <hr className="border-gray-100" />
-      <SectionLabel>Adres van de woning</SectionLabel>
-      <p className="text-xs text-gray-400 -mt-3">Op welk adres zijn de maatregelen uitgevoerd?</p>
+      <SectionLabel>Uw adres</SectionLabel>
+      <p className="text-xs text-gray-400 -mt-3">Uw woon- of correspondentieadres. Het adres van de woning vult u per maatregel in.</p>
       <SmartAddressInput
         value={data.woonadres}
         onChange={(v) => dispatch({ type: "UPDATE_PARTICULIER", payload: { woonadres: { ...data.woonadres, ...v } } })}
@@ -188,29 +197,41 @@ function IsdeParticulierForm({ data, dispatch, errors }) {
 export default function Step3({ state, dispatch, regelingType }) {
   const { aanvrager_type, bedrijf, particulier } = state;
   const isIsde = regelingType === "ISDE";
-  const [errors, setErrors] = useState({});
+  const zakelijk = isIsde && state.doelgroep === "zakelijk";
+  const [showErrors, setShowErrors] = useState(false);
   const [typeError, setTypeError] = useState("");
 
-  const handleNext = () => {
-    if (!isIsde && !aanvrager_type) { setTypeError("Selecteer bedrijf of particulier om verder te gaan."); return; }
-    setTypeError("");
+  // Derived from the current data, so errors update on every change once shown
+  const validate = () => {
     const newErrors = {};
-    const source = isIsde ? particulier : (aanvrager_type === "bedrijf" ? bedrijf : particulier);
-    const required = isIsde ? PARTICULIER_REQUIRED : (aanvrager_type === "bedrijf" ? BEDRIJF_REQUIRED : PARTICULIER_REQUIRED);
+    if (!aanvrager_type) return newErrors;
+    const source = aanvrager_type === "bedrijf" ? bedrijf : particulier;
+    const required = aanvrager_type === "bedrijf"
+      ? BEDRIJF_REQUIRED.filter((f) => !(zakelijk && f === "meer_dan_250"))
+      : PARTICULIER_REQUIRED;
     required.forEach((f) => { if (!source[f]?.toString().trim()) newErrors[f] = "Dit veld is verplicht"; });
     if (source.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(source.email)) newErrors.email = "Voer een geldig e-mailadres in";
-    if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
+    return newErrors;
+  };
+  const errors = showErrors ? validate() : {};
+
+  const handleNext = () => {
+    if (!aanvrager_type) { setTypeError("Selecteer bedrijf of particulier om verder te gaan."); return; }
+    setTypeError("");
+    if (Object.keys(validate()).length > 0) { setShowErrors(true); return; }
     dispatch({ type: "NEXT_STEP" });
   };
 
-  // ISDE: always show particulier form directly, no type selector
+  // ISDE: the doelgroep from the link decides the form, no type selector
   if (isIsde) {
     return (
       <div>
         <h2 className="text-xl font-bold text-primary mb-1">Uw gegevens</h2>
         <p className="text-gray-500 text-sm mb-6">Vul uw contactgegevens in. Wij gebruiken deze uitsluitend voor uw subsidieaanvraag.</p>
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-5">
-          <IsdeParticulierForm data={particulier} dispatch={dispatch} errors={errors} />
+          {aanvrager_type === "bedrijf"
+            ? <BedrijfForm data={bedrijf} dispatch={dispatch} errors={errors} zakelijk={zakelijk} />
+            : <IsdeParticulierForm data={particulier} dispatch={dispatch} errors={errors} />}
         </div>
         <NavigationButtons step={3} onPrev={() => dispatch({ type: "PREV_STEP" })} onNext={handleNext} />
       </div>

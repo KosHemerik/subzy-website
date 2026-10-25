@@ -467,7 +467,7 @@ export default function AanvraagForm() {
 
         {/* Microcopy */}
         <p className="text-center text-xs text-gray-400">
-          🔒 Veilig verwerkt · Geen verplichtingen · Honorarium 20% excl. BTW — alleen bij succes
+          🔒 Veilig verwerkt · Geen verplichtingen · € 79 incl. btw + € 15 per extra maatregel — alleen bij succes
         </p>
       </div>
     </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { COMPANY_INFO } from "@/lib/constants";
+import { useGoogleRating } from "@/components/providers";
 import { useMemo, useState } from "react";
 import { faqCategories, faqData } from "../faqData";
 
@@ -57,6 +57,8 @@ function CategoryTab({ category, isActive, onClick }) {
 }
 
 function TrustBlock() {
+  const { rating } = useGoogleRating();
+
   return (
     <div className="mt-8 bg-gray-50 p-6 rounded-2xl border border-gray-200 shadow-sm">
       <div className="flex items-center justify-center mb-4" aria-hidden="true">
@@ -66,7 +68,7 @@ function TrustBlock() {
           ))}
         </div>
       </div>
-      <p className="text-center font-bold text-primary text-3xl leading-none mb-1">{COMPANY_INFO.rating}/5</p>
+      <p className="text-center font-bold text-primary text-3xl leading-none mb-1">{rating}/5</p>
       <p className="text-center text-sm text-gray-600 mb-4">Klantreviews</p>
       <hr className="border-gray-200 mb-4" />
       <div className="flex items-center text-sm text-gray-700 mb-2">

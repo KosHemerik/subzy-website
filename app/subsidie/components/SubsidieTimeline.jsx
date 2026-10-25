@@ -5,7 +5,7 @@ const steps = [
     icon: "fa-solid fa-clipboard-check",
     title: "Vul de gratis subsidiescan in",
     description:
-      "Selecteer uw maatregelen en upload uw factuur, betaalbewijs en foto — onze scan leidt u in enkele minuten door het proces.",
+      "Selecteer uw maatregelen en zie direct een indicatie van uw subsidie. Upload daarna uw factuur, betaalbewijs en foto — in enkele minuten klaar.",
   },
   {
     icon: "fa-solid fa-circle-check",
@@ -35,6 +35,7 @@ export default function SubsidieTimeline() {
       subtitle="U vult de scan in en uploadt uw documenten. Daarna hoeft u niets meer te doen."
       steps={steps}
       badge="No Cure No Pay — u betaalt alleen bij succes"
+      bgColor="bg-gray-50"
     />
   );
 }

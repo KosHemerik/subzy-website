@@ -8,8 +8,10 @@ import { useEffect, useRef, useState } from "react";
 //   label    – string, default "Adres van de woning"
 //   value    – { postcode, huisnummer, toevoeging, straat, plaats }
 //   onChange – (value) => void
+//   required – boolean, shows an asterisk after the label
+//   error    – string, shown below the fields; empty required fields get a red border
 
-export function SmartAddressInput({ label = "Adres van de woning", value = {}, onChange }) {
+export function SmartAddressInput({ label = "Adres van de woning", value = {}, onChange, required, error }) {
   const [loading, setLoading] = useState(false);
   const [autoFilled, setAutoFilled] = useState(false);
   const [manualOverride, setManualOverride] = useState(false);
@@ -71,8 +73,10 @@ export function SmartAddressInput({ label = "Adres van de woning", value = {}, o
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value.postcode, value.huisnummer]);
 
-  const inputCls = (extra = "") =>
-    `w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#3b5bf6] transition ${extra}`;
+  const inputCls = (field) =>
+    `w-full border rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-secondary transition ${
+      error && field && !(value[field] ?? "").toString().trim() ? "border-red-400" : "border-gray-200"
+    }`;
 
   const readonlyCls =
     "w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-[#f0f4ff] text-gray-700 focus:outline-none cursor-default select-none";
@@ -81,7 +85,11 @@ export function SmartAddressInput({ label = "Adres van de woning", value = {}, o
 
   return (
     <div className="space-y-3">
-      {label && <p className="text-sm font-medium text-gray-700">{label}</p>}
+      {label && (
+        <p className="text-sm font-medium text-gray-700">
+          {label} {required && <span className="text-red-500">*</span>}
+        </p>
+      )}
 
       {/* Row 1: Postcode + Huisnummer + Toevoeging */}
       <div className="grid grid-cols-[2fr_1.2fr_1fr] gap-2">
@@ -94,7 +102,7 @@ export function SmartAddressInput({ label = "Adres van de woning", value = {}, o
             upd("postcode", e.target.value);
           }}
           placeholder="Postcode"
-          className={inputCls()}
+          className={inputCls("postcode")}
         />
         <input
           value={value.huisnummer ?? ""}
@@ -105,7 +113,7 @@ export function SmartAddressInput({ label = "Adres van de woning", value = {}, o
             upd("huisnummer", e.target.value);
           }}
           placeholder="Huisnr."
-          className={inputCls()}
+          className={inputCls("huisnummer")}
         />
         <input
           value={value.toevoeging ?? ""}
@@ -124,13 +132,13 @@ export function SmartAddressInput({ label = "Adres van de woning", value = {}, o
             value={value.straat ?? ""}
             onChange={(e) => upd("straat", e.target.value)}
             placeholder="Straatnaam"
-            className={inputCls()}
+            className={inputCls("straat")}
           />
         )}
         {loading && (
           <Loader2
             size={15}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#3b5bf6] animate-spin"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary animate-spin"
           />
         )}
       </div>
@@ -147,10 +155,12 @@ export function SmartAddressInput({ label = "Adres van de woning", value = {}, o
             value={value.plaats ?? ""}
             onChange={(e) => upd("plaats", e.target.value)}
             placeholder="Plaatsnaam"
-            className={inputCls()}
+            className={inputCls("plaats")}
           />
         )}
       </div>
+
+      {error && <p className="text-red-500 text-xs">{error}</p>}
 
       {/* Status messages */}
       {lookupFailed && (

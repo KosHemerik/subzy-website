@@ -1,4 +1,6 @@
-import { StarRating } from "@/components/ui";
+import { StarRating, RatingValue } from "@/components/ui";
+import GoogleReviewCard from "@/components/sections/GoogleReviewCard";
+import { getGoogleRating, getGoogleReviews } from "@/lib/googleRating";
 
 const testimonials = [
   {
@@ -45,7 +47,11 @@ function TestimonialCard({ rating, text, name, service, initial, bgColor }) {
   );
 }
 
-export default function Testimonials() {
+export default async function Testimonials() {
+  // Real Google reviews when available (need a full row of 3), otherwise the static fallback.
+  const [googleReviews, { mapsUrl }] = await Promise.all([getGoogleReviews({ limit: 3 }), getGoogleRating()]);
+  const reviews = googleReviews.length >= 3 ? googleReviews : [];
+
   return (
     <section className="py-16 md:py-20 lg:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -59,18 +65,34 @@ export default function Testimonials() {
             </p>
           </div>
           <div className="mt-6 md:mt-0 flex items-center bg-gray-50 px-6 py-3 rounded-[12px]">
-            <span className="text-3xl font-bold text-primary mr-3">4.8</span>
+            <span className="text-3xl font-bold text-primary mr-3"><RatingValue /></span>
             <div>
-              <StarRating rating={4.8} className="text-sm mb-1" />
+              <StarRating className="text-sm mb-1" />
               <span className="text-xs text-gray-500">Klantreviews</span>
             </div>
           </div>
         </div>
         <div className="animate-reveal-grid grid grid-cols-1 md:grid-cols-3 gap-6">
-          {testimonials.map((testimonial) => (
-            <TestimonialCard key={testimonial.name} {...testimonial} />
-          ))}
+          {reviews.length > 0
+            ? reviews.map((review) => (
+                <GoogleReviewCard key={review.id} review={review} className="bg-surface border-surface" />
+              ))
+            : testimonials.map((testimonial) => (
+                <TestimonialCard key={testimonial.name} {...testimonial} />
+              ))}
         </div>
+        {reviews.length > 0 && (
+          <div className="text-center mt-8">
+            <a
+              href={mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-medium text-secondary hover:underline"
+            >
+              Bekijk alle reviews op Google <i className="fa-solid fa-arrow-right ml-1" aria-hidden="true" />
+            </a>
+          </div>
+        )}
       </div>
     </section>
   );

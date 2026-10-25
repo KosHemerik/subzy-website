@@ -1,11 +1,19 @@
 import { Footer, Header, TopBar } from "@/components/layout";
+import { redirect } from "next/navigation";
 
 export const metadata = {
   title: "SVOH Subsidie | Subzy",
   description: "Deze pagina wordt binnenkort bijgewerkt.",
 };
 
-export default function SvohPage() {
+// Tijdelijk uit: bezoekers gaan naar het subsidie-overzicht. Terugzetten door
+// SvohPage weer als default te exporteren.
+export default function Page() {
+  redirect("/subsidie");
+}
+
+// eslint-disable-next-line no-unused-vars
+function SvohPage() {
   return (
     <>
       <TopBar />

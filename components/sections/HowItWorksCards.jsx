@@ -1,8 +1,8 @@
-export default function HowItWorksCards({ label, title, subtitle, steps, badge, cta }) {
+export default function HowItWorksCards({ label, title, subtitle, steps, badge, cta, bgColor = "bg-white" }) {
   const cols = steps.length === 3 ? "md:grid-cols-3" : "md:grid-cols-2 lg:grid-cols-4";
 
   return (
-    <section id="hoe-het-werkt" className="py-16 md:py-20 lg:py-24 bg-white w-full">
+    <section id="hoe-het-werkt" className={`py-16 md:py-20 lg:py-24 ${bgColor} w-full`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="animate-reveal text-center mb-12">

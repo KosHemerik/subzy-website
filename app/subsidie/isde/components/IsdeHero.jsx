@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { RatingValue } from "@/components/ui";
 
 export default function IsdeHero() {
   const measures = [
@@ -42,18 +43,18 @@ export default function IsdeHero() {
                 No Cure No Pay
               </div>
               <div className="flex items-center">
-                <i className="fa-solid fa-clock text-secondary mr-2" />
-                Binnen 2 werkdagen duidelijkheid
+                <i className="fa-solid fa-bolt text-secondary mr-2" />
+                Direct een indicatie
               </div>
               <div className="flex items-center">
                 <i className="fa-solid fa-star text-yellow-400 mr-2" />
-                4.8/5 Klantbeoordeling
+                <RatingValue />/5 Klantbeoordeling
               </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
-                href="/subsidie/aanvragen/isde"
+                href="/subsidie#subsidies"
                 className="inline-flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-primary font-bold px-7 py-3 rounded-xl transition duration-200 shadow-lg"
               >
                 Start gratis subsidiecheck <i className="fa-solid fa-arrow-right ml-2" />
@@ -97,9 +98,9 @@ export default function IsdeHero() {
               </p>
             </div>
 
-            <Link href="/subsidie/aanvragen/isde">
+            <Link href="/subsidie#subsidies">
               <button className="w-full mt-4 py-3 bg-yellow-400 hover:bg-yellow-500 text-primary font-bold rounded-xl transition-all duration-200 shadow-md hover:shadow-lg">
-                Bereken mijn subsidie <i className="fa-solid fa-arrow-right ml-2 text-sm" />
+                Start mijn aanvraag <i className="fa-solid fa-arrow-right ml-2 text-sm" />
               </button>
             </Link>
             <p className="text-center text-xs text-gray-400 mt-2">

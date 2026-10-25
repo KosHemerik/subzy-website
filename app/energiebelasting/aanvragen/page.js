@@ -1,6 +1,7 @@
 import { Footer, Header, TopBar } from "@/components/layout";
 import { Suspense } from "react";
 import AanvraagForm from "./components/AanvraagForm";
+import { RatingValue } from "@/components/ui";
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -100,7 +101,7 @@ export default function AanvraagPage() {
               </div>
               <div className="flex items-center gap-2">
                 <i className="fa-solid fa-star text-yellow-400" />
-                <span>4.8/5 beoordeling</span>
+                <span><RatingValue />/5 beoordeling</span>
               </div>
             </div>
           </div>

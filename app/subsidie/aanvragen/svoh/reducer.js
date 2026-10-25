@@ -18,6 +18,9 @@ export const initialState = {
   // Step 2 — details keyed by measure id
   details: {},
 
+  // Doelgroep from the link the user came in with: 'particulier' | 'vve' | 'zakelijk' | 'verhuurder'
+  doelgroep: "",
+
   // Step 3 — aanvrager type + contact
   aanvrager_type: "", // 'bedrijf' | 'particulier'
 
@@ -39,6 +42,7 @@ export const initialState = {
   // Particulier fields
   particulier: {
     voornaam: "",
+    tussenvoegsel: "",
     achternaam: "",
     geslacht: "",
     bsn: "",
@@ -57,11 +61,8 @@ export const initialState = {
 
   // Step 5 — verklaringen
   verklaringen: {
-    gegevens_waarheid: false,
-    woningen_bezit: false,
-    geen_dubbele_subsidie: false,
-    akkoord_voorwaarden: false,
-    machtiging_subzy: false,
+    verklaring: false,
+    akkoord_machtiging: false,
   },
 
   // Meta
@@ -157,11 +158,15 @@ export function reducer(state, action) {
           docFiles: rf,
         };
       } else {
+        const detail = defaultDetail(isdeType);
+        // Particulier: all measures are in the own home, so start from an address already entered
+        const bekendAdres = state.doelgroep === "particulier" ? eersteIsdeAdres(state) : null;
+        if (bekendAdres && detail.woningen) detail.woningen = [{ ...bekendAdres }];
         return {
           ...state,
           isde_maatregelen: [...state.isde_maatregelen, isdeType],
           measures: [...state.measures, { id: measureId, type: isdeType }],
-          details: { ...state.details, [measureId]: defaultDetail(isdeType) },
+          details: { ...state.details, [measureId]: detail },
         };
       }
     }
@@ -222,14 +227,19 @@ export function reducer(state, action) {
       const { id, listKey, index, field, value } = action.payload;
       const current = state.details[id] ?? {};
       const list = [...(current[listKey] ?? [])];
+      const vorige = list[index];
       list[index] = field === null ? value : { ...list[index], [field]: value };
-      return {
+      const next = {
         ...state,
         details: {
           ...state.details,
           [id]: { ...current, [listKey]: list },
         },
       };
+      if (state.doelgroep === "particulier" && listKey === "woningen" && id.startsWith("isde-")) {
+        return syncIsdeAdres(next, id, vorige, list[index]);
+      }
+      return next;
     }
 
     case "REMOVE_SUB_ITEM": {
@@ -246,6 +256,9 @@ export function reducer(state, action) {
     }
 
     // Step 3
+    case "SET_DOELGROEP":
+      return { ...state, doelgroep: action.payload };
+
     case "SET_AANVRAGER_TYPE":
       return { ...state, aanvrager_type: action.payload };
 
@@ -298,6 +311,14 @@ export function reducer(state, action) {
           },
         },
       };
+    }
+
+    // payload: { measureId, category }
+    case "CLEAR_DOC_CATEGORY": {
+      const { measureId, category } = action.payload;
+      if (!state.docFiles[measureId]?.[category]) return state;
+      const { [category]: _c, ...rest } = state.docFiles[measureId];
+      return { ...state, docFiles: { ...state.docFiles, [measureId]: rest } };
     }
 
     // Step 5 — verklaringen
@@ -368,6 +389,13 @@ export function defaultDetail(type) {
         uitvoeringsdatum: { dag: "", maand: "", jaar: "" },
         woningen: [defaultAdres()],
       };
+    case "warmtenet":
+      return {
+        warmtebedrijf: "",
+        aansluitdatum: { dag: "", maand: "", jaar: "" },
+        verklaring_geen_eerdere_subsidie: false,
+        woningen: [defaultAdres()],
+      };
     default:
       return {};
   }
@@ -377,10 +405,79 @@ export function defaultAdres() {
   return { postcode: "", huisnummer: "", toevoeging: "", straat: "", plaats: "" };
 }
 
+// ─── ISDE particulier: one home for every measure ─────────────────────────────
+const ADRES_VELDEN = ["postcode", "huisnummer", "toevoeging", "straat", "plaats"];
+
+const isLeegAdres = (a) => ADRES_VELDEN.every((k) => !(a?.[k] ?? "").toString().trim());
+const zelfdeAdres = (a, b) => ADRES_VELDEN.every((k) => (a?.[k] ?? "") === (b?.[k] ?? ""));
+
+function eersteIsdeAdres(state) {
+  for (const m of state.measures) {
+    const adres = state.details[m.id]?.woningen?.[0];
+    if (!isLeegAdres(adres)) return adres;
+  }
+  return null;
+}
+
+// Copies an address edit to the other measures and to "Uw adres", but only where that
+// address is still empty or still equal to the old value — anything the user changed
+// separately stays untouched.
+function syncIsdeAdres(state, bronId, vorige, nieuw) {
+  const volgt = (adres) => isLeegAdres(adres) || zelfdeAdres(adres, vorige);
+  const details = { ...state.details };
+
+  state.measures.forEach((m) => {
+    if (m.id === bronId) return;
+    const woningen = details[m.id]?.woningen;
+    if (!woningen?.length || !volgt(woningen[0])) return;
+    details[m.id] = { ...details[m.id], woningen: [{ ...woningen[0], ...pick(nieuw) }, ...woningen.slice(1)] };
+  });
+
+  const woonadres = state.particulier.woonadres;
+  const particulier = volgt(woonadres)
+    ? { ...state.particulier, woonadres: { ...woonadres, ...pick(nieuw) } }
+    : state.particulier;
+
+  return { ...state, details, particulier };
+}
+
+const pick = (adres) => Object.fromEntries(ADRES_VELDEN.map((k) => [k, adres?.[k] ?? ""]));
+
 // Immutable nested set helper
 function setIn(obj, [key, ...rest], value) {
   if (rest.length === 0) return { ...obj, [key]: value };
   return { ...obj, [key]: setIn(obj[key] ?? {}, rest, value) };
+}
+
+// ─── Subsidiebedrag per jaar ──────────────────────────────────────────────────
+// Elke RVO-meldcodelijst staat in de tabel met zijn eigen geldig_vanaf. Het bedrag komt uit
+// de nieuwste lijst die in het aanschafjaar is ingegaan; zonder lijst voor dat jaar is het onbekend.
+export function bedragVoorJaar(products, maatregelType, meldcode, jaar) {
+  const match = products
+    .filter(
+      (p) =>
+        p.maatregel_type === maatregelType &&
+        p.meldcode === meldcode &&
+        p.geldigVanaf?.startsWith(`${jaar}-`)
+    )
+    .sort((a, b) => b.geldigVanaf.localeCompare(a.geldigVanaf))[0];
+
+  return match
+    ? { subsidiebedrag: match.subsidiebedrag, bedrag_onbekend: false }
+    : { subsidiebedrag: 0, bedrag_onbekend: true };
+}
+
+// ─── ISDE maatregelen per doelgroep ───────────────────────────────────────────
+const ISDE_MEASURE_TYPES = ["warmtepomp", "isolatie", "ventilatie", "zonneboiler", "warmtenet", "elektrisch"];
+const ISDE_ZAKELIJK_MEASURE_TYPES = ["warmtepomp", "zonneboiler"];
+
+export function isdeMaatregelenVoor(doelgroep) {
+  return doelgroep === "zakelijk" ? ISDE_ZAKELIJK_MEASURE_TYPES : ISDE_MEASURE_TYPES;
+}
+
+// ISDE zakelijk: a lucht-water warmtepomp needs a jaarnota instead of the aardgas question
+export function isLuchtWater(detail) {
+  return detail?.selectedProduct?.categorie === "Lucht-Water";
 }
 
 // ─── Price map ────────────────────────────────────────────────────────────────
@@ -388,16 +485,18 @@ export const MEASURE_PRICES = {
   warmtepomp: 2400,
   isolatie: 1200,
   zonneboiler: 900,
-  elektrisch: 450,
-  ventilatie: 600,
+  elektrisch: 400,
+  ventilatie: 400,
+  warmtenet: 3775,
 };
 
 export const MEASURE_RANGES = {
-  warmtepomp: { min: 1800, max: 3200, label: "Gem. €1.800 – €3.200 subsidie" },
-  isolatie:   { min: 800,  max: 2400, label: "Gem. €800 – €2.400 subsidie — afhankelijk van type en m²" },
-  zonneboiler:{ min: 700,  max: 1200, label: "Gem. €700 – €1.200 subsidie" },
-  elektrisch: { min: 300,  max: 600,  label: "Gem. €300 – €600 subsidie" },
-  ventilatie: { min: 400,  max: 800,  label: "Gem. €400 – €800 subsidie" },
+  warmtepomp: { min: 1800, max: 3200, label: "Ca. €1.800 – €3.200 subsidie" },
+  isolatie:   { min: 800,  max: 2400, label: "Ca. €800 – €2.400 subsidie — afhankelijk van type en m²" },
+  zonneboiler:{ min: 700,  max: 1200, label: "Ca. €700 – €1.200 subsidie" },
+  elektrisch: { min: 400,  max: 400,  label: "Vast bedrag van €400 subsidie" },
+  ventilatie: { min: 400,  max: 400,  label: "Vast bedrag van €400 subsidie" },
+  warmtenet:  { min: 3775, max: 3775, label: "Vast bedrag van €3.775 subsidie" },
 };
 
 export const MEASURE_META = {
@@ -409,7 +508,7 @@ export const MEASURE_META = {
   isolatie: {
     icon: "fa-solid fa-house-chimney-window",
     label: "Isolatie",
-    subtitle: "Dak, gevel, vloer, spouwmuur of glas — bedrag afhankelijk van type en m²",
+    subtitle: "Dak, gevel, vloer, spouwmuur of glas",
   },
   zonneboiler: {
     icon: "fa-solid fa-droplet",
@@ -424,6 +523,11 @@ export const MEASURE_META = {
   ventilatie: {
     icon: "fa-solid fa-wind",
     label: "Ventilatiesysteem",
-    subtitle: "WTW of CO₂-gestuurd ventilatiesysteem",
+    subtitle: "Alleen in combinatie met isolatie",
+  },
+  warmtenet: {
+    icon: "fa-solid fa-city",
+    label: "Aansluiting warmtenet",
+    subtitle: "Aansluiting op een warmtedistributienet",
   },
 };

@@ -1,3 +1,5 @@
+import { RatingValue } from "@/components/ui";
+
 const trustItems = [
   {
     icon: "fa-solid fa-shield-halved",
@@ -22,7 +24,7 @@ const trustItems = [
   },
   {
     icon: "fa-solid fa-star",
-    label: "4.8/5 beoordeling",
+    label: <><RatingValue />/5 beoordeling</>,
     subtitle: "Klantreviews",
     iconBg: "bg-yellow-50",
     iconColor: "text-yellow-400",
@@ -36,7 +38,7 @@ export default function TrustBar() {
         <div className="animate-reveal-grid grid grid-cols-2 md:grid-cols-4 gap-y-6">
           {trustItems.map((item, index) => (
             <div
-              key={item.label}
+              key={item.icon}
               className={`flex items-center gap-4 px-8 ${
                 index < trustItems.length - 1
                   ? "md:border-r md:border-gray-100"

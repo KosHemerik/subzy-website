@@ -5,7 +5,7 @@ const steps = [
     icon: "fa-solid fa-magnifying-glass-chart",
     title: "1. Gratis subsidiecheck",
     description:
-      "Vul uw gegevens in via onze wizard. Wij beoordelen binnen 2 werkdagen of u in aanmerking komt voor ISDE en welk bedrag u kunt verwachten. Geen verplichtingen, geen kosten.",
+      "Vul uw gegevens in via onze wizard. U ziet direct of u in aanmerking komt voor ISDE en welk bedrag u kunt verwachten. Geen verplichtingen, geen kosten.",
   },
   {
     icon: "fa-regular fa-file-lines",
@@ -17,7 +17,7 @@ const steps = [
     icon: "fa-solid fa-money-bill-transfer",
     title: "3. Subsidie ontvangen",
     description:
-      "Na goedkeuring door RVO ontvangt u de subsidie rechtstreeks op uw rekening. Dit gebeurt doorgaans binnen enkele weken na indiening. U betaalt ons alleen een percentage bij een succesvolle uitkering.",
+      "Na goedkeuring door RVO ontvangt u de subsidie rechtstreeks op uw rekening. Dit gebeurt doorgaans binnen enkele weken na indiening. U betaalt ons alleen bij succes: een vast tarief van € 79, plus € 15 per extra maatregel.",
   },
 ];
 

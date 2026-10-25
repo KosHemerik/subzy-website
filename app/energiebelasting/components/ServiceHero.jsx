@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { RatingValue } from "@/components/ui";
 
 const PDOK_FREE_URL = "https://api.pdok.nl/bzk/locatieserver/search/v3_1/free";
 
@@ -495,7 +496,7 @@ export default function ServiceHero() {
               </div>
               <div className="flex items-center">
                 <i className="fa-solid fa-star text-yellow-400 mr-2" />
-                4.8/5 Klantbeoordeling
+                <RatingValue />/5 Klantbeoordeling
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { RatingValue } from "@/components/ui";
 
 export default function SubsidieHero() {
   const scrollToSection = (id) => {
@@ -25,10 +25,10 @@ export default function SubsidieHero() {
           </div>
 
           <h1
-            className="hero-enter text-4xl lg:text-5xl font-bold text-white leading-tight mb-6"
+            className="hero-enter text-4xl lg:text-5xl font-bold text-white leading-tight mb-6 text-balance"
             style={{ animationDelay: "0.15s" }}
           >
-            Subsidie voor uw warmtepomp, isolatie of zonneboiler?{" "}<span className="text-white">Wij regelen de aanvraag volledig voor u.</span>
+            Subsidie voor uw warmtepomp, isolatie of zonneboiler?{" "}<span className="text-white">Wij regelen de volledige aanvraag.</span>
           </h1>
 
           <p
@@ -42,12 +42,13 @@ export default function SubsidieHero() {
             className="hero-enter flex flex-col sm:flex-row items-center justify-center gap-4"
             style={{ animationDelay: "0.35s" }}
           >
-            <Link
-              href="/subsidie/aanvragen/isde"
+            {/* Eerst de situatie kiezen: elke doelgroep heeft een eigen wizard */}
+            <button
+              onClick={() => scrollToSection("subsidies")}
               className="inline-flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-primary font-bold px-7 py-3 rounded-lg transition duration-300 shadow-lg text-base w-full sm:w-auto"
             >
-              Bereken mijn subsidie <i className="fa-solid fa-arrow-right ml-2" />
-            </Link>
+              Start mijn aanvraag <i className="fa-solid fa-arrow-down ml-2" />
+            </button>
             <button
               onClick={() => scrollToSection("hoe-het-werkt")}
               className="inline-flex items-center justify-center bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold px-7 py-3 rounded-lg transition duration-300 text-base w-full sm:w-auto"
@@ -65,12 +66,12 @@ export default function SubsidieHero() {
               No Cure No Pay
             </div>
             <div className="flex items-center">
-              <i className="fa-solid fa-clock text-secondary mr-2" />
-              Binnen 2 werkdagen duidelijkheid
+              <i className="fa-solid fa-bolt text-secondary mr-2" />
+              Direct een indicatie
             </div>
             <div className="flex items-center">
               <i className="fa-solid fa-star text-yellow-400 mr-2" />
-              4.8/5 Klantbeoordeling
+              <RatingValue />/5 Klantbeoordeling
             </div>
           </div>
         </div>

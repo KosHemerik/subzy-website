@@ -1,4 +1,5 @@
-import { AuthProviderWrapper } from "@/components/providers";
+import { AuthProviderWrapper, GoogleRatingProvider } from "@/components/providers";
+import { getGoogleRating } from "@/lib/googleRating";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -7,6 +8,9 @@ const inter = Inter({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
 });
+
+// Re-render pages every 6 hours so the live Google rating stays fresh (matches GOOGLE_RATING_REVALIDATE_SECONDS).
+export const revalidate = 21600;
 
 export const metadata = {
   title: "Subzy - Subsidies en Teruggaven voor Huiseigenaren",
@@ -38,7 +42,9 @@ export const metadata = {
   manifest: "/favicon/site.webmanifest",
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const { rating, totalReviews, mapsUrl } = await getGoogleRating();
+
   return (
     <html lang="nl">
       <head>
@@ -50,9 +56,11 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className={`${inter.variable} antialiased bg-white text-gray-800 overflow-x-hidden`}>
-        <AuthProviderWrapper>
-          {children}
-        </AuthProviderWrapper>
+        <GoogleRatingProvider value={{ rating, totalReviews, mapsUrl }}>
+          <AuthProviderWrapper>
+            {children}
+          </AuthProviderWrapper>
+        </GoogleRatingProvider>
       </body>
     </html>
   );

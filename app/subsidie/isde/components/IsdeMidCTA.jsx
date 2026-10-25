@@ -51,14 +51,14 @@ export default function IsdeMidCTA() {
         </div>
 
         <Link
-          href="/subsidie/aanvragen/isde"
+          href="/subsidie#subsidies"
           className="inline-flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-primary font-bold px-8 py-4 rounded-xl transition duration-200 shadow-lg text-lg"
         >
           <i className="fa-solid fa-leaf mr-2" />
           Start mijn subsidiecheck
         </Link>
         <p className="text-gray-400 text-sm mt-4">
-          Gratis check · Geen verplichtingen · Binnen 2 werkdagen duidelijkheid
+          Gratis check · Direct een indicatie · Binnen 2 werkdagen ingediend
         </p>
       </div>
     </section>

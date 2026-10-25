@@ -1,6 +1,7 @@
 import { Footer, Header, TopBar } from "@/components/layout";
 import { Suspense } from "react";
 import AanvraagForm from "./components/AanvraagForm";
+import { RatingValue } from "@/components/ui";
 
 export const metadata = {
   title: "Duurzaamheidssubsidie Aanvragen | Gratis Beoordeling | Subzy",
@@ -53,7 +54,7 @@ export default function SubsidieAanvraagPage() {
                     "Beoordeling binnen 2 werkdagen",
                     "Wij bepalen welke subsidieregeling voor u geldt",
                     "100% No Cure No Pay — u betaalt alleen bij succes",
-                    "Honorarium 20% excl. BTW — alleen bij succes",
+                    "€ 79 incl. btw + € 15 per extra maatregel — alleen bij succes",
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-3 text-gray-700">
                       <i className="fa-solid fa-circle-check text-secondary mt-0.5 text-base shrink-0" />
@@ -117,7 +118,7 @@ export default function SubsidieAanvraagPage() {
             </div>
             <div className="flex items-center gap-2">
               <i className="fa-solid fa-star text-yellow-400" />
-              <span>4.8/5 beoordeling</span>
+              <span><RatingValue />/5 beoordeling</span>
             </div>
           </div>
         </section>

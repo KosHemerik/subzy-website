@@ -4,6 +4,7 @@ import { ForgotPasswordHero } from "./components";
 export const metadata = {
   title: "Wachtwoord vergeten - Subzy",
   description: "Herstel uw wachtwoord voor het Subzy klantportaal.",
+  robots: { index: false, follow: false },
 };
 
 /**

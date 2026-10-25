@@ -1,4 +1,6 @@
-import { StarRating } from "@/components/ui";
+import { StarRating, RatingValue } from "@/components/ui";
+import GoogleReviewCard from "@/components/sections/GoogleReviewCard";
+import { getGoogleRating, getGoogleReviews } from "@/lib/googleRating";
 
 const testimonials = [
   {
@@ -56,7 +58,11 @@ function TestimonialCard({ initials, bgColor, name, meta, service, rating, quote
   );
 }
 
-export default function SubsidieTestimonials() {
+export default async function SubsidieTestimonials() {
+  // Real Google reviews when available (need a full row of 3), otherwise the static fallback.
+  const [googleReviews, { mapsUrl }] = await Promise.all([getGoogleReviews({ limit: 3 }), getGoogleRating()]);
+  const reviews = googleReviews.length >= 3 ? googleReviews : [];
+
   return (
     <section className="py-16 md:py-20 lg:py-24 bg-white w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -70,18 +76,34 @@ export default function SubsidieTestimonials() {
           </p>
           {/* Rating row */}
           <div className="inline-flex items-center gap-3 bg-gray-50 px-6 py-3 rounded-full">
-            <span className="text-2xl font-bold text-primary">4.8</span>
-            <StarRating rating={4.8} className="text-sm" />
+            <span className="text-2xl font-bold text-primary"><RatingValue /></span>
+            <StarRating className="text-sm" />
             <span className="text-xs text-gray-500">Klantreviews</span>
           </div>
         </div>
 
         {/* Cards */}
         <div className="animate-reveal-grid grid grid-cols-1 md:grid-cols-3 gap-6">
-          {testimonials.map((t) => (
-            <TestimonialCard key={t.name} {...t} />
-          ))}
+          {reviews.length > 0
+            ? reviews.map((review) => (
+                <GoogleReviewCard key={review.id} review={review} className="bg-gray-50 border-gray-100" />
+              ))
+            : testimonials.map((t) => (
+                <TestimonialCard key={t.name} {...t} />
+              ))}
         </div>
+        {reviews.length > 0 && (
+          <div className="text-center mt-8">
+            <a
+              href={mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-medium text-secondary hover:underline"
+            >
+              Bekijk alle reviews op Google <i className="fa-solid fa-arrow-right ml-1" aria-hidden="true" />
+            </a>
+          </div>
+        )}
       </div>
     </section>
   );

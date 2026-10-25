@@ -9,13 +9,15 @@ import { useState } from "react";
 const navItems = [
   { label: "Home", href: "/" },
   { label: "Energiebelasting", href: "/energiebelasting" },
-  { 
-    label: "Subsidie", 
+  {
+    label: "Subsidie",
     href: "#",
     dropdown: [
       { label: "Subsidie overzicht", href: "/subsidie" },
-      { label: "ISDE subsidie", href: "/subsidie/isde" },
-      { label: "SVOH subsidie", href: "/subsidie/svoh" },
+      { label: "Warmtepomp subsidie", href: "/subsidie/warmtepomp" },
+      // ISDE- en SVOH-pagina's staan tijdelijk uit
+      // { label: "ISDE subsidie", href: "/subsidie/isde" },
+      // { label: "SVOH subsidie", href: "/subsidie/svoh" },
     ]
   },
   { label: "Over ons", href: "/over-ons" },
@@ -28,7 +30,13 @@ const navItems = [
  */
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openMobileDropdown, setOpenMobileDropdown] = useState(null);
   const pathname = usePathname();
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+    setOpenMobileDropdown(null);
+  };
   const { user } = useAuth();
   const portalHref = user ? "/dashboard" : "/login";
 
@@ -117,15 +125,55 @@ export default function Header() {
       {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-t border-gray-100 py-4 px-4">
-          {navItems.map((item) => (
-            <Link
-              key={item.label}
-              href={item.dropdown ? "#" : item.href}
-              className="block py-2 text-gray-600 hover:text-primary font-medium"
-            >
-              {item.label}
-            </Link>
-          ))}
+          {navItems.map((item) =>
+            item.dropdown ? (
+              // Geen hover op mobiel: het submenu klapt open bij een tik
+              <div key={item.label}>
+                <button
+                  type="button"
+                  onClick={() => setOpenMobileDropdown(openMobileDropdown === item.label ? null : item.label)}
+                  aria-expanded={openMobileDropdown === item.label}
+                  className={`flex w-full items-center justify-between py-2 font-medium ${
+                    isActive(item.href, item.dropdown) ? "text-secondary" : "text-gray-600 hover:text-primary"
+                  }`}
+                >
+                  {item.label}
+                  <i
+                    className={`fa-solid fa-chevron-down text-xs transition-transform ${
+                      openMobileDropdown === item.label ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {openMobileDropdown === item.label && (
+                  <div className="mb-1 border-l-2 border-gray-100 pl-4">
+                    {item.dropdown.map((subItem) => (
+                      <Link
+                        key={subItem.label}
+                        href={subItem.href}
+                        onClick={closeMobileMenu}
+                        className={`block py-2 text-sm font-medium ${
+                          pathname === subItem.href ? "text-secondary" : "text-gray-600 hover:text-primary"
+                        }`}
+                      >
+                        {subItem.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                key={item.label}
+                href={item.href}
+                onClick={closeMobileMenu}
+                className={`block py-2 font-medium ${
+                  isActive(item.href) ? "text-secondary" : "text-gray-600 hover:text-primary"
+                }`}
+              >
+                {item.label}
+              </Link>
+            )
+          )}
         </div>
       )}
     </nav>

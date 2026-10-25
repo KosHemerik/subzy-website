@@ -4,6 +4,7 @@ import { ActivateAccountHero } from "./components";
 export const metadata = {
   title: "Account activeren - Subzy",
   description: "Stel uw wachtwoord in en activeer uw Subzy klantportaal account.",
+  robots: { index: false, follow: false },
 };
 
 export default function AccountActiverenPage() {

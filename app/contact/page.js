@@ -1,5 +1,6 @@
 import { TopBar, Header, Footer } from "@/components/layout";
 import { ContactHero, ContactContent, FAQTeaser } from "./components";
+import { getGoogleRating, toAggregateRatingSchema } from "@/lib/googleRating";
 
 const BASE_URL = "https://subzy.nl";
 const PAGE_URL = `${BASE_URL}/contact`;
@@ -47,19 +48,19 @@ const localBusinessSchema = {
       closes: "17:00",
     },
   ],
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: "4.8",
-    bestRating: "5",
-  },
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const schema = {
+    ...localBusinessSchema,
+    aggregateRating: toAggregateRatingSchema(await getGoogleRating()),
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
       <TopBar />
       <Header />

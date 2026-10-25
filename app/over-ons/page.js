@@ -6,6 +6,7 @@ import {
     OverOnsHero,
     Testimonials,
 } from "./components";
+import { getGoogleRating, toAggregateRatingSchema } from "@/lib/googleRating";
 
 const BASE_URL = "https://subzy.nl";
 const PAGE_URL = `${BASE_URL}/over-ons`;
@@ -28,11 +29,6 @@ const organizationSchema = {
   description:
     "Subzy helpt particuliere woningbezitters, verhuurders en VvE's bij het terugvragen van energiebelasting en het aanvragen van duurzaamheidssubsidies. No Cure No Pay.",
   areaServed: "NL",
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: "4.8",
-    bestRating: "5",
-  },
 };
 
 export const metadata = {
@@ -56,12 +52,17 @@ export const metadata = {
   },
 };
 
-export default function OverOnsPage() {
+export default async function OverOnsPage() {
+  const schema = {
+    ...organizationSchema,
+    aggregateRating: toAggregateRatingSchema(await getGoogleRating()),
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
       <TopBar />
       <Header />

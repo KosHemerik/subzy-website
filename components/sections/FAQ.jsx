@@ -6,7 +6,7 @@ import Link from "next/link";
 const faqs = [
   {
     question: "Wat kost de service van Subzy?",
-    answer: "Wij werken op basis van No Cure No Pay. Voor teruggave energiebelasting rekenen wij 20% excl. BTW over het teruggekregen bedrag. Voor ISDE-subsidie rekenen wij 10% excl. BTW. U betaalt pas achteraf bij succes.",
+    answer: "Wij werken op basis van No Cure No Pay. Voor teruggave energiebelasting rekenen wij 20% excl. BTW over het teruggekregen bedrag. Voor subsidieaanvragen (ISDE en SVOH) rekenen wij een vast tarief van € 79 incl. btw, plus € 15 incl. btw per extra maatregel. U betaalt pas achteraf bij succes.",
   },
   {
     question: "Hoelang duurt een aanvraag gemiddeld?",

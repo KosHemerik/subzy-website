@@ -1,7 +1,7 @@
 "use client";
 
 import { NavigationButtons } from "./components";
-import { MEASURE_META, MEASURE_RANGES } from "./reducer";
+import { isdeMaatregelenVoor, MEASURE_META, MEASURE_RANGES } from "./reducer";
 
 const MEASURE_TYPES = ["warmtepomp", "isolatie", "zonneboiler", "elektrisch"];
 
@@ -38,7 +38,7 @@ function MeasureCard({ type, selected, onToggle }) {
         {type === "isolatie" ? (
           <>
             <p className="text-secondary font-bold text-xs mt-1 whitespace-nowrap">
-              {`Gem. ${fmt.format(range.min)} – ${fmt.format(range.max)}`}
+              {`Ca. ${fmt.format(range.min)} – ${fmt.format(range.max)}`}
             </p>
             <p className="text-gray-400 text-xs italic mt-0.5">afhankelijk van type en m²</p>
           </>
@@ -95,10 +95,20 @@ function WoningRow({ woning, index, showTrash, onToggle, onRemove }) {
 // ─── Step 1 ───────────────────────────────────────────────────────────────────
 export default function Step1({ state, dispatch, regelingType }) {
   const { woningen, measures } = state;
-  const [error, setError] = React.useState("");
+  const [showError, setShowError] = React.useState(false);
 
   const isIsde = regelingType === "ISDE";
   const totalSelected = measures.length;
+
+  // Derived from the current selection, so the message updates on every toggle once shown
+  const validate = () => {
+    if (totalSelected === 0) return "Selecteer minimaal één maatregel om door te gaan.";
+    if (isIsde && state.isde_maatregelen.includes("ventilatie") && !state.isde_maatregelen.includes("isolatie")) {
+      return "Subsidie voor ventilatie is alleen mogelijk in combinatie met isolatie. Selecteer ook isolatie of verwijder ventilatie.";
+    }
+    return "";
+  };
+  const error = showError ? validate() : "";
 
   const handleToggle = (woningId, type) => {
     if (isIsde) {
@@ -106,7 +116,6 @@ export default function Step1({ state, dispatch, regelingType }) {
     } else {
       dispatch({ type: "TOGGLE_WONING_MAATREGEL", payload: { woningId, type } });
     }
-    setError("");
   };
 
   const handleAddWoning = () => {
@@ -118,11 +127,10 @@ export default function Step1({ state, dispatch, regelingType }) {
   };
 
   const handleNext = () => {
-    if (totalSelected === 0) {
-      setError("Selecteer minimaal één maatregel om door te gaan.");
+    if (validate()) {
+      setShowError(true);
       return;
     }
-    setError("");
     dispatch({ type: "NEXT_STEP" });
   };
 
@@ -136,7 +144,7 @@ export default function Step1({ state, dispatch, regelingType }) {
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
-          {MEASURE_TYPES.map((type) => (
+          {isdeMaatregelenVoor(state.doelgroep).map((type) => (
             <MeasureCard
               key={type}
               type={type}

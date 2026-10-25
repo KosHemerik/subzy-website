@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, CheckSquare, ClipboardList, Eye, Upload, User } from "lucide-react";
+import { useRef, useState } from "react";
 
 // ─── ProgressBar ──────────────────────────────────────────────────────────────
 const STEPS = [
@@ -31,12 +32,11 @@ export function ProgressBar({ currentStep }) {
               <div
                 className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${
                   done
-                    ? "bg-green-500 text-white"
+                    ? "bg-blue-100 text-secondary"
                     : active
-                    ? "text-white shadow-md"
+                    ? "bg-secondary text-white shadow-md shadow-secondary/30"
                     : "bg-white border-2 border-gray-200 text-gray-400"
                 }`}
-                style={active ? { backgroundColor: "#3b5bf6", boxShadow: "0 4px 12px rgba(59,91,246,0.3)" } : undefined}
               >
                 {done ? (
                   <Check size={20} strokeWidth={3} />
@@ -46,7 +46,7 @@ export function ProgressBar({ currentStep }) {
               </div>
               <span
                 className={`mt-1.5 text-xs font-medium hidden sm:block ${
-                  active ? "text-[#3b5bf6] font-bold" : done ? "text-green-600" : "text-gray-400"
+                  active ? "text-secondary font-bold" : done ? "text-secondary/80" : "text-gray-400"
                 }`}
               >
                 {label}
@@ -66,10 +66,12 @@ export function StickyPriceBar({ measures, ranges, details }) {
   let totalMin = 0;
   let totalMax = 0;
   let exactCount = 0;
+  let unknownCount = 0;
 
   measures.forEach((m) => {
     const exact = details?.[m.id]?.subsidiebedrag;
-    if (exact) {
+    if (details?.[m.id]?.bedrag_onbekend) unknownCount++;
+    if (exact != null) {
       exactCount++;
       totalMin += exact;
       totalMax += exact;
@@ -86,24 +88,41 @@ export function StickyPriceBar({ measures, ranges, details }) {
       : `${fmt.format(totalMin)} \u2013 ${fmt.format(totalMax)}`;
 
   return (
-    <div className="bg-primary text-white rounded-xl px-5 py-4 mb-6 flex flex-row items-center justify-between gap-4">
-      {/* Left: label + dominant amount */}
-      <div className="flex flex-col min-w-0">
-        <span className="text-white/70 text-xs font-medium mb-0.5">Geschat subsidiebedrag</span>
-        <span className="font-bold text-3xl whitespace-nowrap" style={{ color: "#f5c518" }}>
-          {amountText}
-        </span>
+    <div className="bg-blue-50 border border-blue-100 rounded-2xl px-5 py-4 mb-6 flex items-center gap-4">
+      {/* Icon */}
+      <div className="w-11 h-11 rounded-xl bg-secondary text-white flex items-center justify-center text-lg shrink-0">
+        <i className="fa-solid fa-euro-sign" />
       </div>
-      {/* Divider */}
-      <div className="w-px self-stretch bg-white/20 shrink-0 hidden sm:block" />
-      {/* Right: footnote */}
-      <div className="hidden sm:flex flex-col items-end shrink-0">
-        <span className="text-white/50 text-xs">Indicatief bedrag</span>
-        <span className="text-white/50 text-xs">
-          {allExact
-            ? "Gebaseerd op geselecteerd product"
-            : "Precisere berekening volgt na invullen details"}
-        </span>
+      {/* Label + amount */}
+      <div className="flex-1 min-w-0">
+        <p className="text-xs font-medium text-gray-500">Geschat subsidiebedrag</p>
+        <p className="font-bold text-2xl text-primary whitespace-nowrap">{amountText}</p>
+        <p className="text-xs text-gray-400 mt-0.5 sm:hidden">
+          {unknownCount > 0 ? "Data onbekend voor gekozen jaar" : allExact ? "Gebaseerd op geselecteerd product" : "Indicatief bedrag"}
+        </p>
+      </div>
+      {/* Status */}
+      <div className="hidden sm:flex flex-col items-end gap-1 shrink-0 text-right">
+        {unknownCount > 0 ? (
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800">
+            <i className="fa-solid fa-triangle-exclamation" />
+            Data onbekend
+          </span>
+        ) : (
+          <span
+            className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${
+              allExact ? "bg-green-100 text-green-700" : "bg-white text-secondary border border-blue-100"
+            }`}
+          >
+            <i className={`fa-solid ${allExact ? "fa-circle-check" : "fa-circle-info"}`} />
+            {allExact ? "Op basis van product" : "Indicatief"}
+          </span>
+        )}
+        {unknownCount > 0 ? (
+          <span className="text-xs text-gray-400">Geen bedragen voor het gekozen jaar</span>
+        ) : !allExact && (
+          <span className="text-xs text-gray-400">Exact bedrag na invullen details</span>
+        )}
       </div>
     </div>
   );
@@ -298,48 +317,96 @@ export function AddressBlock({ label, value, onChange, errors = {} }) {
   );
 }
 
-// ─── UploadZone ───────────────────────────────────────────────────────────────
-export function UploadZone({ files, onAdd, onRemove, accept = ".pdf,.jpg,.jpeg,.png", maxFiles = 20 }) {
+// ─── DocumentUpload ───────────────────────────────────────────────────────────
+// One compact row per document: label + hint with an upload button. Files can also be
+// dropped anywhere on the row. Uploaded files are listed below with an "add another" link.
+export function DocumentUpload({ label, hint, required, files, onAdd, onRemove, accept = ".pdf,.jpg,.jpeg,.png", maxFiles = 3, error }) {
+  const inputRef = useRef(null);
+  const [dragging, setDragging] = useState(false);
+  const openPicker = () => inputRef.current?.click();
+  const canAdd = files.length < maxFiles;
+
   const handleDrop = (e) => {
     e.preventDefault();
-    onAdd(Array.from(e.dataTransfer.files));
+    setDragging(false);
+    if (canAdd) onAdd(Array.from(e.dataTransfer.files));
   };
 
   return (
-    <div className="space-y-3">
-      <div
-        onDrop={handleDrop}
-        onDragOver={(e) => e.preventDefault()}
-        onClick={() => document.getElementById("svoh-upload").click()}
-        className="border-2 border-dashed border-gray-200 hover:border-secondary rounded-xl px-4 py-8 text-center cursor-pointer transition hover:bg-gray-50"
-      >
-        <i className="fa-solid fa-cloud-arrow-up text-gray-400 text-3xl mb-2" />
-        <p className="text-sm text-gray-500 font-medium">Selecteer of sleep uw bestanden hierheen</p>
-        <p className="text-xs text-gray-400 mt-1">PDF, JPG of PNG · max 10MB per bestand · max {maxFiles} bestanden</p>
-        <input
-          id="svoh-upload"
-          type="file"
-          multiple
-          accept={accept}
-          className="hidden"
-          onChange={(e) => onAdd(Array.from(e.target.files))}
-        />
+    <div
+      onDrop={handleDrop}
+      onDragOver={(e) => { e.preventDefault(); if (canAdd) setDragging(true); }}
+      onDragLeave={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setDragging(false); }}
+      className={`rounded-xl border px-4 py-3 transition ${
+        dragging ? "border-secondary bg-blue-50" : error ? "border-red-300 bg-red-50/40" : "border-gray-100"
+      }`}
+    >
+      <div className="flex items-center justify-between gap-4">
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-gray-700">
+            {label} {required && <span className="text-red-500">*</span>}
+          </p>
+          {hint && <p className="text-xs text-gray-400 mt-0.5">{hint}</p>}
+        </div>
+        {files.length === 0 ? (
+          <button
+            type="button"
+            onClick={openPicker}
+            className="shrink-0 flex items-center gap-2 border border-blue-100 bg-white text-secondary hover:bg-blue-50 text-sm font-medium px-4 py-2 rounded-xl transition"
+          >
+            <i className="fa-solid fa-arrow-up-from-bracket" /> Uploaden
+          </button>
+        ) : (
+          <span className="shrink-0 flex items-center gap-1.5 text-xs font-semibold text-green-700">
+            <i className="fa-solid fa-circle-check text-green-500" />
+            {files.length} {files.length === 1 ? "bestand" : "bestanden"}
+          </span>
+        )}
       </div>
+
       {files.length > 0 && (
-        <ul className="space-y-1.5">
+        <div className="mt-3 space-y-1.5">
           {files.map((f, i) => (
-            <li key={i} className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2 text-sm">
-              <span className="flex items-center gap-2 text-gray-700 truncate max-w-[80%]">
-                <i className="fa-solid fa-file-lines text-secondary" />
-                {f.name}
+            <div key={`${f.name}-${i}`} className="flex items-center justify-between bg-blue-50 rounded-lg px-3 py-2 text-sm">
+              <span className="flex items-center gap-2 text-gray-700 min-w-0">
+                <i className="fa-solid fa-file-lines text-secondary shrink-0" />
+                <span className="truncate">{f.name}</span>
               </span>
-              <button onClick={() => onRemove(i)} className="text-gray-400 hover:text-red-500 transition ml-2">
+              <button
+                type="button"
+                onClick={() => onRemove(i)}
+                className="text-gray-400 hover:text-red-500 transition ml-3 shrink-0"
+                title="Bestand verwijderen"
+              >
                 <i className="fa-solid fa-xmark" />
               </button>
-            </li>
+            </div>
           ))}
-        </ul>
+          {canAdd && (
+            <button
+              type="button"
+              onClick={openPicker}
+              className="flex items-center gap-1.5 text-xs font-medium text-secondary hover:text-primary transition pt-1"
+            >
+              <i className="fa-solid fa-plus" /> Nog een bestand toevoegen
+            </button>
+          )}
+        </div>
       )}
+
+      {error && <p className="text-red-500 text-xs mt-2">Dit document is verplicht.</p>}
+
+      <input
+        ref={inputRef}
+        type="file"
+        multiple
+        accept={accept}
+        className="hidden"
+        onChange={(e) => {
+          onAdd(Array.from(e.target.files));
+          e.target.value = ""; // allow picking the same file again after removing it
+        }}
+      />
     </div>
   );
 }

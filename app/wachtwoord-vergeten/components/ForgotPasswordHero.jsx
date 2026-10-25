@@ -40,7 +40,7 @@ export default function ForgotPasswordHero() {
 
             {/* Rating */}
             <div className="mt-8 flex items-center justify-center lg:justify-start gap-3">
-              <StarRating rating={4.8} showValue />
+              <StarRating showValue />
               <span className="text-sm text-blue-100">Tevreden klanten</span>
             </div>
           </div>

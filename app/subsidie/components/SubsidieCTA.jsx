@@ -13,12 +13,12 @@ export default function SubsidieCTA() {
         </p>
 
         <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-          <Link
-            href="/subsidie/aanvragen/isde"
+          <a
+            href="#subsidies"
             className="inline-flex items-center bg-yellow-400 hover:bg-yellow-500 text-primary font-bold px-7 py-3 rounded-lg transition duration-300 shadow-lg text-base w-full sm:w-auto justify-center"
           >
-            Start gratis subsidiescan <i className="fa-solid fa-arrow-right ml-2" />
-          </Link>
+            Start gratis subsidiescan <i className="fa-solid fa-arrow-up ml-2" />
+          </a>
           <Link
             href="/subsidie"
             className="inline-flex items-center border-2 border-white hover:bg-white/10 text-white font-bold px-7 py-3 rounded-lg transition duration-300 text-base w-full sm:w-auto justify-center"

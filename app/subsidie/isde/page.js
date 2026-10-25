@@ -1,4 +1,5 @@
 import { Footer, Header, TopBar } from "@/components/layout";
+import { redirect } from "next/navigation";
 import {
   IsdeHero,
   IsdeMeasures,
@@ -30,7 +31,14 @@ export const metadata = {
   },
 };
 
-export default function IsdePage() {
+// Tijdelijk uit: bezoekers gaan naar het subsidie-overzicht. Terugzetten door
+// IsdePage weer als default te exporteren.
+export default function Page() {
+  redirect("/subsidie");
+}
+
+// eslint-disable-next-line no-unused-vars
+function IsdePage() {
   return (
     <>
       <TopBar />

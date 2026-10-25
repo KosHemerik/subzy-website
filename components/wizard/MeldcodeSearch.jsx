@@ -4,6 +4,7 @@ import { Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 const fmt = new Intl.NumberFormat("nl-NL", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+const fmtCents = new Intl.NumberFormat("nl-NL", { style: "currency", currency: "EUR", minimumFractionDigits: 2 });
 
 const CURRENT_YEAR = new Date().getFullYear();
 const YEAR_OPTIONS = [CURRENT_YEAR - 2, CURRENT_YEAR - 1, CURRENT_YEAR];
@@ -50,8 +51,9 @@ function ProductRow({ product, active, onSelect }) {
  *   detail         object       — current detail slice from wizard state
  *   onSelect       fn(product|null) — called when product selected or cleared
  *   onChange       fn(updates)  — called for manual meldcode + year changes
+ *   toonJaren      boolean      — show the plaatsing/aanschaf year pickers (default true)
  */
-export function MeldcodeSearch({ maatregelType, products, productsLoading, detail, onSelect, onChange }) {
+export function MeldcodeSearch({ maatregelType, products, productsLoading, detail, onSelect, onChange, toonJaren = true }) {
   const [query, setQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -61,10 +63,16 @@ export function MeldcodeSearch({ maatregelType, products, productsLoading, detai
   const inputRef = useRef(null);
   const listRef = useRef(null);
 
-  // Products for this measure type, sorted by popularity desc
-  const typeProducts = products
-    .filter((p) => p.maatregel_type === maatregelType)
-    .sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0));
+  // Products for this measure type, one per meldcode (the newest list wins), sorted by popularity desc
+  const typeProducts = Object.values(
+    products
+      .filter((p) => p.maatregel_type === maatregelType)
+      .reduce((acc, p) => {
+        const current = acc[p.meldcode];
+        if (!current || (p.geldigVanaf ?? "") > (current.geldigVanaf ?? "")) acc[p.meldcode] = p;
+        return acc;
+      }, {})
+  ).sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0));
 
   const popularProducts = typeProducts.slice(0, 5);
 
@@ -160,55 +168,73 @@ export function MeldcodeSearch({ maatregelType, products, productsLoading, detai
               <span className="font-mono font-bold text-primary">{selectedProduct.meldcode}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-gray-500">Subsidiebedrag</span>
-              <span className="font-bold text-secondary">{fmt.format(selectedProduct.subsidiebedrag)}</span>
+              <span className="text-gray-500">
+                Subsidiebedrag{detail?.jaar_aanschaf ? ` (${detail.jaar_aanschaf})` : ""}
+              </span>
+              {detail?.bedrag_onbekend ? (
+                <span className="font-bold text-gray-400">{fmtCents.format(0)}</span>
+              ) : (
+                <span className="font-bold text-secondary">{fmt.format(detail?.subsidiebedrag ?? selectedProduct.subsidiebedrag)}</span>
+              )}
             </div>
           </div>
 
-          {/* Year selectors */}
-          <div className="mt-4 pt-4 border-t border-gray-200">
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <p className="text-xs font-semibold text-gray-600 mb-2">Jaar van plaatsing</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {YEAR_OPTIONS.map((y) => (
-                    <button
-                      key={y}
-                      type="button"
-                      onClick={() => onChange({ jaar_plaatsing: y })}
-                      className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
-                        detail?.jaar_plaatsing === y
-                          ? "bg-[#3b5bf6] text-white border-[#3b5bf6]"
-                          : "bg-white text-gray-500 border-gray-300 hover:border-[#3b5bf6] hover:text-[#3b5bf6]"
-                      }`}
-                    >
-                      {y}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <p className="text-xs font-semibold text-gray-600 mb-2">Jaar van aanschaf</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {YEAR_OPTIONS.map((y) => (
-                    <button
-                      key={y}
-                      type="button"
-                      onClick={() => onChange({ jaar_aanschaf: y })}
-                      className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
-                        detail?.jaar_aanschaf === y
-                          ? "bg-[#3b5bf6] text-white border-[#3b5bf6]"
-                          : "bg-white text-gray-500 border-gray-300 hover:border-[#3b5bf6] hover:text-[#3b5bf6]"
-                      }`}
-                    >
-                      {y}
-                    </button>
-                  ))}
-                </div>
-              </div>
+          {detail?.bedrag_onbekend && (
+            <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs text-amber-800">
+              <i className="fa-solid fa-triangle-exclamation mt-0.5 shrink-0" />
+              <span>
+                Data onbekend: de subsidiebedragen voor {detail.jaar_aanschaf} zijn nog niet bekend. Wij controleren het
+                bedrag bij het verwerken van uw aanvraag.
+              </span>
             </div>
-            <p className="text-xs text-gray-400 mt-3 text-center">De exacte datum halen wij op uit uw factuur.</p>
-          </div>
+          )}
+
+          {/* Year selectors */}
+          {toonJaren && (
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <p className="text-xs font-semibold text-gray-600 mb-2">Jaar van plaatsing</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {YEAR_OPTIONS.map((y) => (
+                      <button
+                        key={y}
+                        type="button"
+                        onClick={() => onChange({ jaar_plaatsing: y })}
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
+                          detail?.jaar_plaatsing === y
+                            ? "bg-secondary text-white border-secondary"
+                            : "bg-white text-gray-500 border-gray-300 hover:border-secondary hover:text-secondary"
+                        }`}
+                      >
+                        {y}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-600 mb-2">Jaar van aanschaf</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {YEAR_OPTIONS.map((y) => (
+                      <button
+                        key={y}
+                        type="button"
+                        onClick={() => onChange({ jaar_aanschaf: y })}
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
+                          detail?.jaar_aanschaf === y
+                            ? "bg-secondary text-white border-secondary"
+                            : "bg-white text-gray-500 border-gray-300 hover:border-secondary hover:text-secondary"
+                        }`}
+                      >
+                        {y}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-gray-400 mt-3 text-center">De exacte datum halen wij op uit uw factuur.</p>
+            </div>
+          )}
         </div>
       </div>
     );

@@ -14,7 +14,7 @@ export default function SubsidiePricing() {
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold text-primary mb-4">Vaste, transparante tarieven</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Geen verrassingen achteraf. Wij werken met een vast tarief per aanvraag.
+            Geen verrassingen achteraf. Wij werken met een vast tarief per aanvraag, op basis van No Cure No Pay.
           </p>
         </div>
 
@@ -26,10 +26,10 @@ export default function SubsidiePricing() {
 
           <div className="p-8">
             <div className="flex justify-center items-end mb-6">
-              <span className="text-5xl font-bold text-primary">€ 85,-</span>
+              <span className="text-5xl font-bold text-primary">€ 79,-</span>
               <span className="text-gray-500 ml-2 mb-2">per aanvraag</span>
             </div>
-            <p className="text-center text-gray-500 text-sm mb-8">Inclusief 21% BTW</p>
+            <p className="text-center text-gray-500 text-sm mb-8">Inclusief 21% btw · + € 15 per extra maatregel · alleen bij toekenning</p>
 
             <ul className="space-y-4 mb-8">
               {features.map((feature, index) => (

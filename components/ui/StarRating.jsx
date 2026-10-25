@@ -1,14 +1,20 @@
+"use client";
+
+import { useGoogleRating } from "@/components/providers/GoogleRatingProvider";
+
 /**
- * Star Rating display component
+ * Star Rating display component (defaults to the live Google rating)
  */
-export default function StarRating({ rating = 4.8, showValue = false, className = "" }) {
+export default function StarRating({ rating: ratingProp, showValue = false, className = "" }) {
+  const { rating: googleRating } = useGoogleRating();
+  const rating = ratingProp ?? googleRating;
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating % 1 >= 0.5;
-  
+
   return (
     <div className={`flex items-center ${className}`}>
       {showValue && (
-        <span className="text-white mr-2 font-medium">{rating}</span>
+        <span className="text-white mr-2 font-medium">{rating}/5</span>
       )}
       <div className="flex text-yellow-400">
         {[...Array(fullStars)].map((_, i) => (

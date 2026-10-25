@@ -32,7 +32,7 @@ const faqItems = [
   {
     question: "Wat kost het om via Subzy aan te vragen?",
     answer:
-      "Wij werken op basis van No Cure No Pay. U betaalt 10% excl. BTW over de ontvangen subsidie bij een succesvolle aanvraag. Wordt de subsidie niet toegekend? Dan betaalt u niets. De gratis subsidiecheck is altijd kosteloos en vrijblijvend.",
+      "Wij werken op basis van No Cure No Pay. U betaalt een vast tarief van € 79 incl. btw, plus € 15 incl. btw per extra maatregel, alleen bij een succesvolle aanvraag. Wordt de subsidie niet toegekend? Dan betaalt u niets. De gratis subsidiecheck is altijd kosteloos en vrijblijvend.",
   },
   {
     question: "Moet het installatiebedrijf erkend zijn?",
@@ -89,7 +89,7 @@ export default function IsdeFAQ() {
               Neem contact op
             </Link>
             <Link
-              href="/subsidie/aanvragen/isde"
+              href="/subsidie#subsidies"
               className="inline-flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-primary font-bold px-6 py-3 rounded-xl transition duration-200 shadow"
             >
               Start gratis subsidiecheck <i className="fa-solid fa-arrow-right ml-2" />

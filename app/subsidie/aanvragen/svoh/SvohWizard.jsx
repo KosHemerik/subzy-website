@@ -4,14 +4,16 @@ import { supabase } from "@/lib/supabase/client";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useReducer, useRef, useState } from "react";
 import { ProgressBar, StickyPriceBar } from "./components";
-import { initialState, MEASURE_RANGES, reducer } from "./reducer";
+import { initialState, isdeMaatregelenVoor, MEASURE_RANGES, reducer } from "./reducer";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
 import Step3 from "./Step3";
 import Step4 from "./Step4";
 import Step5 from "./Step5";
 
-const VALID_TYPES = ["warmtepomp", "isolatie", "zonneboiler", "elektrisch", "ventilatie"];
+const VALID_TYPES = ["warmtepomp", "isolatie", "zonneboiler", "elektrisch", "ventilatie", "warmtenet"];
+
+const DOELGROEPEN = ["particulier", "vve", "zakelijk", "verhuurder"];
 
 export default function SvohWizard({ regelingType = "SVOH", doelgroepProp }) {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -46,7 +48,7 @@ export default function SvohWizard({ regelingType = "SVOH", doelgroepProp }) {
         // Fetch all warmtepompen
         const warmtepompen = await fetchAll(
           "meldcodes_warmtepompen",
-          "id, fabrikant, model, meldcode, subsidiebedrag, categorie"
+          "id, fabrikant, model, meldcode, subsidiebedrag, categorie, geldig_vanaf"
         );
 
         const mappedWarmtepompen = warmtepompen.map((p) => ({
@@ -57,13 +59,14 @@ export default function SvohWizard({ regelingType = "SVOH", doelgroepProp }) {
           meldcode: p.meldcode,
           subsidiebedrag: p.subsidiebedrag ?? 0,
           categorie: p.categorie ?? null,
+          geldigVanaf: p.geldig_vanaf,
           popularity: 0,
         }));
 
         // Fetch all zonneboilers
         const zonneboilers = await fetchAll(
           "meldcodes_zonneboilers",
-          "id, fabrikant, model, meldcode, subsidiebedrag, oppervlakte"
+          "id, fabrikant, model, meldcode, subsidiebedrag, oppervlakte, geldig_vanaf"
         );
 
         const mappedZonneboilers = zonneboilers.map((p) => ({
@@ -74,13 +77,14 @@ export default function SvohWizard({ regelingType = "SVOH", doelgroepProp }) {
           meldcode: p.meldcode,
           subsidiebedrag: p.subsidiebedrag ?? 0,
           categorie: p.oppervlakte ?? null,
+          geldigVanaf: p.geldig_vanaf,
           popularity: 0,
         }));
 
         // Fetch all ventilatie
         const ventilatie = await fetchAll(
           "meldcodes_ventilatie",
-          "id, fabrikant, model, meldcode, subsidiebedrag, categorie"
+          "id, fabrikant, model, meldcode, subsidiebedrag, categorie, geldig_vanaf"
         );
 
         const mappedVentilatie = ventilatie.map((p) => ({
@@ -91,6 +95,7 @@ export default function SvohWizard({ regelingType = "SVOH", doelgroepProp }) {
           meldcode: p.meldcode,
           subsidiebedrag: p.subsidiebedrag ?? 0,
           categorie: p.categorie ?? null,
+          geldigVanaf: p.geldig_vanaf,
           popularity: 0,
         }));
 
@@ -107,34 +112,40 @@ export default function SvohWizard({ regelingType = "SVOH", doelgroepProp }) {
     loadProducts();
   }, []);
 
+  // Alleen bekende doelgroepen uit de link; die worden ook bij de aanvraag opgeslagen
+  const doelgroepParam = searchParams.get("doelgroep");
+  const doelgroep =
+    doelgroepProp ??
+    (DOELGROEPEN.includes(doelgroepParam) ? doelgroepParam : null) ??
+    (isIsde ? "particulier" : null);
+
   useEffect(() => {
     if (preselected.current) return;
     const maatregel = searchParams.get("maatregel");
-    const doelgroepParam = searchParams.get("doelgroep");
-    const doelgroep = doelgroepProp ?? doelgroepParam;
+
+    // Doelgroep first: the reducer uses it when a maatregel is preselected
+    if (doelgroep) dispatch({ type: "SET_DOELGROEP", payload: doelgroep });
 
     if (maatregel && VALID_TYPES.includes(maatregel)) {
       if (isIsde) {
-        dispatch({ type: "TOGGLE_ISDE_MAATREGEL", payload: { type: maatregel } });
+        if (isdeMaatregelenVoor(doelgroep).includes(maatregel)) {
+          dispatch({ type: "TOGGLE_ISDE_MAATREGEL", payload: { type: maatregel } });
+        }
       } else {
         dispatch({ type: "TOGGLE_WONING_MAATREGEL", payload: { woningId: 1, type: maatregel } });
       }
     }
-    if (!isIsde && (doelgroep === "verhuurder" || doelgroep === "vve")) {
+    if (isIsde) {
+      dispatch({ type: "SET_AANVRAGER_TYPE", payload: doelgroep === "particulier" ? "particulier" : "bedrijf" });
+    } else if (doelgroep === "verhuurder" || doelgroep === "vve") {
       dispatch({ type: "SET_AANVRAGER_TYPE", payload: "bedrijf" });
     }
-    if (isIsde) {
-      dispatch({ type: "SET_AANVRAGER_TYPE", payload: "particulier" });
-    }
-    if (maatregel || doelgroep) preselected.current = true;
-  }, [searchParams, isIsde, doelgroepProp]);
+    preselected.current = true;
+  }, [searchParams, isIsde, doelgroep]);
 
   return (
     <div className="max-w-3xl mx-auto mb-8">
-      <div
-        className="bg-white rounded-3xl p-8"
-        style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}
-      >
+      <div className="bg-white rounded-2xl border-2 border-gray-100 shadow-sm p-6 sm:p-8">
         {!state.submitted && <ProgressBar currentStep={state.step} />}
         {!state.submitted && state.measures.length > 0 && (
           <StickyPriceBar measures={state.measures} ranges={MEASURE_RANGES} details={state.details} />
@@ -143,8 +154,8 @@ export default function SvohWizard({ regelingType = "SVOH", doelgroepProp }) {
         {state.step === 1 && <Step1 state={state} dispatch={dispatch} regelingType={regelingType} />}
         {state.step === 2 && <Step2 state={state} dispatch={dispatch} products={products} productsLoading={productsLoading} regelingType={regelingType} />}
         {state.step === 3 && <Step3 state={state} dispatch={dispatch} regelingType={regelingType} />}
-        {state.step === 4 && <Step4 state={state} dispatch={dispatch} />}
-        {state.step === 5 && <Step5 state={state} dispatch={dispatch} regelingType={regelingType} doelgroep={doelgroepProp ?? "particulier"} />}
+        {state.step === 4 && <Step4 state={state} dispatch={dispatch} regelingType={regelingType} />}
+        {state.step === 5 && <Step5 state={state} dispatch={dispatch} regelingType={regelingType} doelgroep={doelgroep} />}
       </div>
     </div>
   );
