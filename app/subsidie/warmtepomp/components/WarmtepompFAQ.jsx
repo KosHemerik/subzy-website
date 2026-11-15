@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { FaqAnswer } from "@/components/ui";
 import { faqItems } from "../data";
 
 function FAQItem({ question, answer }) {
@@ -17,11 +18,11 @@ function FAQItem({ question, answer }) {
         <span className="font-semibold text-primary pr-4">{question}</span>
         <i className={`fa-solid fa-chevron-down text-gray-400 transition-transform shrink-0 ${isOpen ? "rotate-180" : ""}`} />
       </button>
-      {isOpen && (
+      <div inert={!isOpen} className={`overflow-hidden transition-all duration-300 ${isOpen ? "max-h-[600px]" : "max-h-0"}`}>
         <div className="px-6 pb-5">
-          <p className="text-gray-600 text-sm leading-relaxed">{answer}</p>
+          <p className="text-gray-600 text-sm leading-relaxed"><FaqAnswer answer={answer} /></p>
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -36,7 +37,7 @@ export default function WarmtepompFAQ() {
 
         <div className="space-y-4">
           {faqItems.map((item) => (
-            <FAQItem key={item.question} question={item.question} answer={item.answer} />
+            <FAQItem key={item.id} question={item.question} answer={item.answer} />
           ))}
         </div>
 

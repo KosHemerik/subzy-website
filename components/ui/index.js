@@ -6,3 +6,4 @@ export { default as Input } from './Input';
 export { default as Select } from './Select';
 export { default as Textarea } from './Textarea';
 export { default as RatingValue } from './RatingValue';
+export { default as FaqAnswer } from './FaqAnswer';

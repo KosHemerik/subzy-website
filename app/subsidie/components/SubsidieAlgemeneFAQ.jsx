@@ -2,40 +2,17 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { FaqAnswer } from "@/components/ui";
+import { faqSets, pickFaqs } from "@/lib/faq";
 
-const faqItems = [
-  {
-    question: "Wie komt in aanmerking voor duurzaamheidssubsidie?",
-    answer:
-      "Particulieren en bedrijven die investeren in een warmtepomp, zonneboiler, isolatie of ventilatiesysteem komen in aanmerking via de ISDE-regeling. Verhuurders en VvE's kunnen subsidie aanvragen via de SVOH-regeling. Wij bepalen automatisch welke regeling voor u van toepassing is.",
-  },
-  {
-    question: "Hoeveel subsidie kan ik krijgen?",
-    answer:
-      "Dit hangt af van het type maatregel en het specifieke product. Voor een warmtepomp ontvangt u gemiddeld €2.400, voor isolatie gemiddeld €1.200 en voor een zonneboiler gemiddeld €900. Bij meerdere maatregelen kunt u combinatievoordeel ontvangen. Gebruik onze gratis subsidiescan voor een exacte berekening.",
-  },
-  {
-    question: "Hoe lang duurt het aanvraagproces?",
-    answer:
-      "Na het indienen van uw aanvraag ontvangt u binnen 2–4 weken een beslissing van RVO. Wij dienen uw aanvraag in zodra alle documenten compleet zijn. De uitbetaling volgt kort daarna direct op uw rekening.",
-  },
-  {
-    question: "Wat kost het als er geen subsidie wordt toegekend?",
-    answer:
-      "Niets. Wij werken volledig op basis van No Cure No Pay. U betaalt alleen ons vaste tarief van € 79 incl. btw (plus € 15 per extra maatregel) als de subsidie daadwerkelijk wordt toegekend. Bij afwijzing zijn er geen kosten.",
-  },
-  {
-    question: "Kan ik subsidie aanvragen voor meerdere maatregelen tegelijk?",
-    answer:
-      "Ja, en dat is juist voordelig. Bij meerdere maatregelen zoals isolatie én een warmtepomp ontvangt u combinatievoordeel — het subsidiebedrag per maatregel is hoger dan bij een enkele aanvraag. Selecteer alle maatregelen in onze subsidiescan voor het maximale bedrag.",
-  },
-];
+const faqItems = pickFaqs(faqSets.subsidie);
 
 function FAQItem({ question, answer, isOpen, onToggle }) {
   return (
     <div className="bg-white border border-gray-200 rounded-[12px] overflow-hidden">
       <button
         onClick={onToggle}
+        aria-expanded={isOpen}
         className="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none min-h-[60px]"
       >
         <span className="font-semibold text-primary pr-4">{question}</span>
@@ -45,11 +22,11 @@ function FAQItem({ question, answer, isOpen, onToggle }) {
           }`}
         />
       </button>
-      {isOpen && (
+      <div inert={!isOpen} className={`overflow-hidden transition-all duration-300 ${isOpen ? "max-h-[600px]" : "max-h-0"}`}>
         <div className="px-6 pb-5 border-t border-gray-100">
-          <p className="text-gray-600 text-sm leading-relaxed pt-4">{answer}</p>
+          <p className="text-gray-600 text-sm leading-relaxed pt-4"><FaqAnswer answer={answer} /></p>
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -82,7 +59,7 @@ export default function SubsidieAlgemeneFAQ() {
         <div className="animate-reveal-grid space-y-3">
           {faqItems.map((item, index) => (
             <FAQItem
-              key={index}
+              key={item.id}
               question={item.question}
               answer={item.answer}
               isOpen={openIndex === index}

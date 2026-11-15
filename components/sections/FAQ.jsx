@@ -2,25 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { FaqAnswer } from "@/components/ui";
+import { faqSets, pickFaqs } from "@/lib/faq";
 
-const faqs = [
-  {
-    question: "Wat kost de service van Subzy?",
-    answer: "Wij werken op basis van No Cure No Pay. Voor teruggave energiebelasting rekenen wij 20% excl. BTW over het teruggekregen bedrag. Voor subsidieaanvragen (ISDE en SVOH) rekenen wij een vast tarief van € 79 incl. btw, plus € 15 incl. btw per extra maatregel. U betaalt pas achteraf bij succes.",
-  },
-  {
-    question: "Hoelang duurt een aanvraag gemiddeld?",
-    answer: "Zodra wij alle documenten compleet hebben, dienen wij de aanvraag binnen 48 uur in. De belastingdienst of RVO doet er vervolgens gemiddeld 6 tot 8 weken over om de aanvraag te verwerken en uit te betalen.",
-  },
-  {
-    question: "Welke documenten heb ik nodig?",
-    answer: "Dit verschilt per aanvraag. Voor energiebelasting hebben we jaarrekeningen van uw energieleverancier nodig. Voor ISDE subsidie vragen we om facturen en betaalbewijzen van de installateur. In ons portaal ziet u precies wat er nodig is.",
-  },
-  {
-    question: "Is mijn data veilig bij jullie?",
-    answer: "Ja, 100%. Ons klantportaal is beveiligd volgens de hoogste standaarden en wij zijn AVG-compliant. Uw documenten worden uitsluitend gebruikt voor de aanvraag en nooit gedeeld met derden.",
-  },
-];
+const faqs = pickFaqs(faqSets.home);
 
 function FAQItem({ question, answer, isOpen, onToggle, itemId }) {
   return (
@@ -42,10 +27,11 @@ function FAQItem({ question, answer, isOpen, onToggle, itemId }) {
         id={`panel-${itemId}`}
         role="region"
         aria-labelledby={`btn-${itemId}`}
+        inert={!isOpen}
         className={`overflow-hidden transition-all duration-300 ${isOpen ? "max-h-[400px]" : "max-h-0"}`}
       >
         <div className="px-6 pb-5">
-          <p className="text-gray-600 text-sm">{answer}</p>
+          <p className="text-gray-600 text-sm"><FaqAnswer answer={answer} /></p>
         </div>
       </div>
     </div>
@@ -69,7 +55,7 @@ export default function FAQ() {
         <div className="animate-reveal-grid space-y-4">
           {faqs.map((faq, index) => (
             <FAQItem
-              key={faq.question}
+              key={faq.id}
               itemId={`home-${index}`}
               question={faq.question}
               answer={faq.answer}

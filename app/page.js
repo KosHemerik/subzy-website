@@ -7,6 +7,7 @@ import {
   Testimonials,
   TrustBar,
 } from "@/components/sections";
+import { faqPageSchema, faqSets, pickFaqs } from "@/lib/faq";
 
 export const metadata = {
   title: "Energiebelasting Terugvragen & Subsidie Aanvragen | Subzy",
@@ -98,43 +99,7 @@ const jsonLd = {
       about: { "@id": "https://subzy.nl/#organization" },
       inLanguage: "nl-NL",
     },
-    {
-      "@type": "FAQPage",
-      mainEntity: [
-        {
-          "@type": "Question",
-          name: "Wat kost de service van Subzy?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Wij werken op basis van No Cure No Pay. Voor teruggave energiebelasting rekenen wij 20% excl. BTW over het teruggekregen bedrag. Voor subsidieaanvragen (ISDE en SVOH) rekenen wij een vast tarief van € 79 incl. btw, plus € 15 incl. btw per extra maatregel. U betaalt pas achteraf bij succes.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "Hoelang duurt een aanvraag gemiddeld?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Zodra wij alle documenten compleet hebben, dienen wij de aanvraag binnen 48 uur in. De belastingdienst of RVO doet er vervolgens gemiddeld 6 tot 8 weken over om de aanvraag te verwerken en uit te betalen.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "Welke documenten heb ik nodig?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Dit verschilt per aanvraag. Voor energiebelasting hebben we jaarrekeningen van uw energieleverancier nodig. Voor ISDE subsidie vragen we om facturen en betaalbewijzen van de installateur. In ons portaal ziet u precies wat er nodig is.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "Is mijn data veilig bij jullie?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Ja, 100%. Ons klantportaal is beveiligd volgens de hoogste standaarden en wij zijn AVG-compliant. Uw documenten worden uitsluitend gebruikt voor de aanvraag en nooit gedeeld met derden.",
-          },
-        },
-      ],
-    },
+    faqPageSchema(pickFaqs(faqSets.home)),
   ],
 };
 

@@ -5,6 +5,7 @@ import SubsidieCalculator from "./components/SubsidieCalculator";
 import Voorwaarden from "./components/Voorwaarden";
 import WarmtepompFAQ from "./components/WarmtepompFAQ";
 import WarmtepompHero from "./components/WarmtepompHero";
+import { faqPageSchema } from "@/lib/faq";
 import { faqItems } from "./data";
 
 const URL = "https://subzy.nl/subsidie/warmtepomp";
@@ -39,14 +40,7 @@ const jsonLd = {
         { "@type": "ListItem", position: 3, name: "Warmtepomp", item: URL },
       ],
     },
-    {
-      "@type": "FAQPage",
-      mainEntity: faqItems.map((f) => ({
-        "@type": "Question",
-        name: f.question,
-        acceptedAnswer: { "@type": "Answer", text: f.answer },
-      })),
-    },
+    faqPageSchema(faqItems),
   ],
 };
 

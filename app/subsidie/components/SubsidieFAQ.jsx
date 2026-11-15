@@ -7,7 +7,7 @@ const faqItems = [
   {
     question: "Binnen welke termijn moet ik de subsidie aanvragen?",
     answer:
-      "U moet de ISDE-subsidie aanvragen binnen 12 maanden na de datum op de factuur van de laatste maatregel. Wij adviseren dit zo snel mogelijk te doen om teleurstelling te voorkomen.",
+      "U moet de ISDE-subsidie uiterlijk 24 maanden na de installatie aanvragen. De installatiedatum op de factuur is hierbij leidend. Wij adviseren dit zo snel mogelijk te doen om teleurstelling te voorkomen.",
   },
   {
     question: "Kom ik in aanmerking als huurder?",

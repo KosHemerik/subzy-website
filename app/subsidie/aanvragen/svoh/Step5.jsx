@@ -1,5 +1,6 @@
 "use client";
 
+import { SUBSIDIE_TARIEF, subsidieKosten } from "@/lib/constants";
 import { supabase } from "@/lib/supabase/client";
 import { useState } from "react";
 import { MEASURE_META, MEASURE_PRICES } from "./reducer";
@@ -90,7 +91,7 @@ function VerklaringCheckbox({ id, checked, onChange, showError, children }) {
           }`}
         />
         <span className="text-sm text-gray-700 leading-relaxed">
-          {children} <span className="text-red-500" aria-hidden="true">*</span>
+          {children}
         </span>
       </label>
       {invalid && (
@@ -140,6 +141,9 @@ export default function Step5({ state, dispatch, regelingType, doelgroep }) {
 
   const measurePrice = (m) => details[m.id]?.subsidiebedrag ?? MEASURE_PRICES[m.type] ?? 0;
   const totalPrice = measures.reduce((sum, m) => sum + measurePrice(m), 0);
+  const kosten = subsidieKosten(measures.length);
+  const extraMaatregelen = Math.max(measures.length - 1, 0);
+  const heeftOnbekendBedrag = measures.some((m) => details[m.id]?.bedrag_onbekend);
   const allChecked = Boolean(verklaringen.verklaring && verklaringen.akkoord_machtiging);
 
   if (submitted) return <SuccessScreen aanvraagId={submitted_id} />;
@@ -264,6 +268,32 @@ export default function Step5({ state, dispatch, regelingType, doelgroep }) {
           <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
             <span className="font-semibold text-primary">Indicatief totaalbedrag</span>
             <span className="text-2xl font-bold text-secondary">{fmt.format(totalPrice)}</span>
+          </div>
+
+          {/* Kosten Subzy */}
+          <div className="mt-4 pt-4 border-t border-gray-100 space-y-1">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <span className="text-sm font-medium text-gray-700">Kosten Subzy</span>
+                <p className="text-xs text-gray-500">
+                  {fmt.format(SUBSIDIE_TARIEF.basis)}
+                  {extraMaatregelen > 0 &&
+                    ` + ${extraMaatregelen} × ${fmt.format(SUBSIDIE_TARIEF.extraMaatregel)} per extra maatregel`}
+                  {" "}· incl. btw
+                </p>
+              </div>
+              <span className="text-sm font-medium text-gray-800">{fmt.format(kosten)}</span>
+            </div>
+            {!heeftOnbekendBedrag && totalPrice > kosten && (
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-sm font-medium text-gray-700">U houdt over (indicatief)</span>
+                <span className="text-sm font-semibold text-primary">{fmt.format(totalPrice - kosten)}</span>
+              </div>
+            )}
+            <p className="flex items-center gap-2 text-xs text-green-700 pt-2">
+              <i className="fa-solid fa-circle-check" aria-hidden="true" />
+              No Cure No Pay: u betaalt alleen als de subsidie wordt toegekend.
+            </p>
           </div>
         </Section>
 

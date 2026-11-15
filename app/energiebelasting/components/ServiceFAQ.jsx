@@ -2,33 +2,10 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { FaqAnswer } from "@/components/ui";
+import { faqSets, pickFaqs } from "@/lib/faq";
 
-const faqItems = [
-  {
-    question: "Wat is teruggave energiebelasting precies?",
-    answer: "De heffingskorting op energiebelasting wordt in de praktijk vaak maar een keer per aansluiting verrekend, terwijl u er per zelfstandig WOZ-object recht op heeft. Daardoor betalen veel eigenaren structureel te veel.",
-  },
-  {
-    question: "Hoeveel kan ik terugkrijgen?",
-    answer: "In 2025 is de heffingskorting €635,19 inclusief btw per extra woning per jaar. Omdat u tot 5 jaar terug kunt corrigeren, kan dit oplopen tot ruim €3.000 per woning.",
-  },
-  {
-    question: "Hoe ver terug kan ik energiebelasting terugvragen?",
-    answer: "U kunt het lopende jaar plus de 4 voorgaande kalenderjaren terugvragen.",
-  },
-  {
-    question: "Waarom krijg ik die korting niet automatisch?",
-    answer: "De energieleverancier ziet meestal maar één aansluiting (EAN) en past de korting daarom vaak maar één keer toe. De Belastingdienst corrigeert dit doorgaans alleen als u hier expliciet om verzoekt.",
-  },
-  {
-    question: "Wat kost de dienst van Subzy?",
-    answer: "Subzy werkt op basis van no cure, no pay. U betaalt 20% excl. btw over het bedrag dat wij daadwerkelijk voor u terugkrijgen.",
-  },
-  {
-    question: "Hoe lang duurt het voordat ik het geld ontvang?",
-    answer: "Gemiddeld duurt het circa 6 weken voordat u de teruggave ontvangt.",
-  },
-];
+const faqItems = pickFaqs(faqSets.energiebelasting);
 
 /**
  * FAQ Accordion Item
@@ -41,17 +18,19 @@ function FAQItem({ question, answer }) {
       <button
         className="w-full px-6 py-5 text-left flex justify-between items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-inset"
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
       >
         <span className="font-semibold text-primary">{question}</span>
         <i className={`fa-solid fa-chevron-down text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`} />
       </button>
       <div
+        inert={!isOpen}
         className={`grid transition-all duration-300 ease-out ${
           isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
         }`}
       >
         <div className="overflow-hidden">
-          <p className="px-6 pb-5 text-gray-600 text-sm">{answer}</p>
+          <p className="px-6 pb-5 text-gray-600 text-sm"><FaqAnswer answer={answer} /></p>
         </div>
       </div>
     </div>
@@ -75,8 +54,8 @@ export default function ServiceFAQ() {
 
         {/* FAQ Items */}
         <div className="animate-reveal-grid space-y-4">
-          {faqItems.map((item, index) => (
-            <FAQItem key={index} question={item.question} answer={item.answer} />
+          {faqItems.map((item) => (
+            <FAQItem key={item.id} question={item.question} answer={item.answer} />
           ))}
         </div>
 

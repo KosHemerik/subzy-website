@@ -5,8 +5,8 @@ import { useState } from "react";
 /**
  * FAQ Hero Section with search functionality
  */
-export default function FAQHero({ onSearch }) {
-  const [searchQuery, setSearchQuery] = useState("");
+export default function FAQHero({ initialQuery = "", onSearch }) {
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
 
   const handleSearch = (e) => {
     const query = e.target.value;
@@ -25,10 +25,10 @@ export default function FAQHero({ onSearch }) {
 
         <div className="max-w-3xl mx-auto relative z-10">
           <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4">
-            Heeft u een vraag? Wij hebben het antwoord.
+            Veelgestelde vragen over energiebelasting en subsidie
           </h1>
           <p className="text-lg text-blue-100">
-            Vind snel antwoord op de meest gestelde vragen rondom energiebelasting en duurzaamheidssubsidies.
+            Vind snel antwoord op uw vragen over teruggave energiebelasting, de heffingskorting, ISDE- en SVOH-subsidie, warmtepompsubsidie en onze kosten.
           </p>
         </div>
       </section>
@@ -45,7 +45,7 @@ export default function FAQHero({ onSearch }) {
             onChange={handleSearch}
             aria-label="Zoek in veelgestelde vragen"
             className="w-full pl-12 pr-4 py-4 rounded-xl shadow-sm border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-secondary text-gray-800"
-            placeholder="Zoek op trefwoord (bijv. 'isolatie', 'termijn', 'kosten')..."
+            placeholder="Zoek op trefwoord (bijv. 'warmtepomp', 'termijn', 'kosten')..."
           />
         </div>
       </div>

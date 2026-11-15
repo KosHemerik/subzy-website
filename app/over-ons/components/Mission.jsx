@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Mission() {
   return (
-    <section className="py-12 md:py-16 lg:py-20 w-full px-4 sm:px-6 lg:px-8">
+    <section className="py-12 md:py-16 lg:py-20 w-full px-4 sm:px-6 lg:px-8 overflow-x-clip">
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12">
         <div className="animate-reveal-left lg:w-1/2 relative w-full h-[500px]">
           <Image

@@ -7,6 +7,7 @@ import {
   ServiceFAQ,
   ServiceHero,
 } from "./components";
+import { faqPageSchema, faqSets, pickFaqs } from "@/lib/faq";
 
 const BASE_URL = "https://subzy.nl";
 const PAGE_URL = `${BASE_URL}/energiebelasting`;
@@ -37,41 +38,7 @@ export const metadata = {
 
 const faqSchema = {
   "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: [
-    {
-      "@type": "Question",
-      name: "Wat is teruggave energiebelasting precies?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "De heffingskorting op energiebelasting wordt in de praktijk vaak maar een keer per aansluiting verrekend, terwijl u er per zelfstandig WOZ-object recht op heeft. Daardoor betalen veel eigenaren structureel te veel.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Hoeveel kan ik terugkrijgen?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "In 2025 is de heffingskorting €635,19 inclusief btw per extra woning per jaar. Omdat u tot 5 jaar terug kunt corrigeren, kan dit oplopen tot ruim €3.000 per woning.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Hoe ver terug kan ik energiebelasting terugvragen?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "U kunt het lopende jaar plus de 4 voorgaande kalenderjaren terugvragen.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Waarom krijg ik die korting niet automatisch?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "De energieleverancier ziet meestal maar één aansluiting (EAN) en past de korting daarom vaak maar één keer toe. De Belastingdienst corrigeert dit doorgaans alleen als u hier expliciet om verzoekt.",
-      },
-    },
-  ],
+  ...faqPageSchema(pickFaqs(faqSets.energiebelasting)),
 };
 
 export default function TeruggaveEnergiebelastingPage() {

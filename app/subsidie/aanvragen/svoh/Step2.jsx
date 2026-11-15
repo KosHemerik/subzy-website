@@ -98,6 +98,11 @@ export function opdrachtFout(detail) {
   return null;
 }
 
+// Zakelijk: the aardgas question only applies once a non lucht-water warmtepomp is chosen
+export function toonAardgasVraag(detail, zakelijk) {
+  return !zakelijk || Boolean(detail?.selectedProduct && !isLuchtWater(detail));
+}
+
 function OpdrachtVraag({ detail, upd, showErrors }) {
   return (
     <div>
@@ -252,8 +257,7 @@ function WarmtepompCard({ id, detail, dispatch, index, total, sectionLabel, prod
     dispatch({ type: "UPDATE_SUB_ITEM", payload: { id, listKey, index: idx, field, value } });
   const handlers = meldcodeHandlers({ maatregelType: "warmtepomp", products: products ?? [], detail, upd });
 
-  // Zakelijk: the aardgas question only applies once a non lucht-water warmtepomp is chosen
-  const toonAardgas = !zakelijk || (detail.selectedProduct && !isLuchtWater(detail));
+  const toonAardgas = toonAardgasVraag(detail, zakelijk);
   const onSelect = (product) => {
     handlers.onSelect(product);
     if (zakelijk && product?.categorie === "Lucht-Water") upd(["nog_aardgas"], "");
@@ -293,6 +297,7 @@ function WarmtepompCard({ id, detail, dispatch, index, total, sectionLabel, prod
             value={detail.nog_aardgas}
             onChange={(v) => upd(["nog_aardgas"], v)}
             options={[{ value: "ja", label: "Ja" }, { value: "nee", label: "Nee" }]}
+            error={showErrors && !detail.nog_aardgas ? "Beantwoord deze vraag." : null}
           />
         )}
 
@@ -839,6 +844,10 @@ export default function Step2({ state, dispatch, products, productsLoading, rege
 
   const opdrachtFouten = zakelijk ? measures.filter((m) => opdrachtFout(details[m.id])) : [];
 
+  const aardgasFouten = measures.filter(
+    (m) => m.type === "warmtepomp" && toonAardgasVraag(details[m.id], zakelijk) && !details[m.id]?.nog_aardgas
+  );
+
   return (
     <div>
       <h2 className="text-xl font-bold text-primary mb-1">Details per maatregel</h2>
@@ -911,11 +920,31 @@ export default function Step2({ state, dispatch, products, productsLoading, rege
         </div>
       )}
 
+      {showErrors && aardgasFouten.length > 0 && (
+        <div className="mt-5 rounded-xl border border-red-200 bg-red-50 px-5 py-4">
+          <p className="text-red-600 font-medium text-sm mb-2">Beantwoord de vraag over aardgas bij:</p>
+          <ul className="list-disc list-inside space-y-1">
+            {aardgasFouten.map((m) => {
+              const woningNum = !isIsde && m.woningId != null ? woningIndexMap[m.woningId] : null;
+              const label = MEASURE_META[m.type]?.label ?? m.type;
+              return (
+                <li key={m.id} className="text-red-500 text-sm">
+                  {woningNum != null ? `Woning ${woningNum} — ${label}` : label}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+
       <NavigationButtons
         step={2}
         onPrev={() => dispatch({ type: "PREV_STEP" })}
         onNext={() => {
-          if (ontbrekendeAdressen.length > 0 || opdrachtFouten.length > 0) { setShowErrors(true); return; }
+          if (ontbrekendeAdressen.length > 0 || opdrachtFouten.length > 0 || aardgasFouten.length > 0) {
+            setShowErrors(true);
+            return;
+          }
           dispatch({ type: "NEXT_STEP" });
         }}
       />

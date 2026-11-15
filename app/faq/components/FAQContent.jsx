@@ -1,8 +1,9 @@
 "use client";
 
 import { useGoogleRating } from "@/components/providers";
+import { FaqAnswer } from "@/components/ui";
+import { faqCategories, faqData, faqPlainText } from "@/lib/faq";
 import { useMemo, useState } from "react";
-import { faqCategories, faqData } from "../faqData";
 
 function FAQItem({ question, answer, isOpen, onToggle, itemId }) {
   return (
@@ -22,16 +23,18 @@ function FAQItem({ question, answer, isOpen, onToggle, itemId }) {
           }`}
         />
       </button>
+      {/* Antwoord staat altijd in de HTML (voor zoekmachines), alleen visueel ingeklapt. */}
       <div
         id={`panel-${itemId}`}
         role="region"
         aria-labelledby={`btn-${itemId}`}
+        inert={!isOpen}
         className={`overflow-hidden transition-all duration-300 ${
           isOpen ? "max-h-[800px]" : "max-h-0"
         }`}
       >
         <div className="p-5 bg-white border-t border-gray-100 text-gray-600 leading-relaxed">
-          {answer}
+          <FaqAnswer answer={answer} />
         </div>
       </div>
     </div>
@@ -41,8 +44,10 @@ function FAQItem({ question, answer, isOpen, onToggle, itemId }) {
 function CategoryTab({ category, isActive, onClick }) {
   return (
     <button
+      id={`tab-${category.id}`}
       role="tab"
       aria-selected={isActive}
+      aria-controls={`tabpanel-${category.id}`}
       className={`w-full text-left px-6 py-4 rounded-xl font-medium transition border ${
         isActive
           ? "bg-secondary text-white border-secondary shadow-sm"
@@ -83,25 +88,45 @@ function TrustBlock() {
   );
 }
 
+function QuestionList({ categoryId, questions, openId, setOpenId }) {
+  return (
+    <div className="space-y-4">
+      {questions.map((faq) => {
+        const itemId = `${categoryId}-${faq.id}`;
+        return (
+          <FAQItem
+            key={itemId}
+            itemId={itemId}
+            question={faq.question}
+            answer={faq.answer}
+            isOpen={openId === itemId}
+            onToggle={() => setOpenId(openId === itemId ? null : itemId)}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
 export default function FAQContent({ searchQuery = "", initialCategory = "algemeen" }) {
   const [activeCategory, setActiveCategory] = useState(
     faqData[initialCategory] ? initialCategory : "algemeen"
   );
-  const [openIndex, setOpenIndex] = useState(null);
+  const [openId, setOpenId] = useState(null);
 
-  const filteredData = useMemo(() => {
-    if (!searchQuery.trim()) {
-      return { [activeCategory]: faqData[activeCategory] };
-    }
+  const isSearching = searchQuery.trim().length > 0;
 
-    const query = searchQuery.toLowerCase();
+  const searchResults = useMemo(() => {
+    if (!isSearching) return {};
+
+    const query = searchQuery.trim().toLowerCase();
     const results = {};
 
     Object.entries(faqData).forEach(([categoryId, categoryData]) => {
       const filteredQuestions = categoryData.questions.filter(
         (q) =>
           q.question.toLowerCase().includes(query) ||
-          q.answer.toLowerCase().includes(query)
+          faqPlainText(q.answer).toLowerCase().includes(query)
       );
 
       if (filteredQuestions.length > 0) {
@@ -110,9 +135,7 @@ export default function FAQContent({ searchQuery = "", initialCategory = "algeme
     });
 
     return results;
-  }, [searchQuery, activeCategory]);
-
-  const isSearching = searchQuery.trim().length > 0;
+  }, [searchQuery, isSearching]);
 
   return (
     <section className="pt-10 pb-16 px-4 sm:px-6 lg:px-8 bg-surface">
@@ -128,7 +151,7 @@ export default function FAQContent({ searchQuery = "", initialCategory = "algeme
                   isActive={!isSearching && activeCategory === category.id}
                   onClick={() => {
                     setActiveCategory(category.id);
-                    setOpenIndex(null);
+                    setOpenId(null);
                   }}
                 />
               ))}
@@ -139,31 +162,17 @@ export default function FAQContent({ searchQuery = "", initialCategory = "algeme
 
         {/* FAQ Accordions */}
         <div className="lg:w-2/3">
-          {isSearching ? (
-            Object.keys(filteredData).length > 0 ? (
-              Object.entries(filteredData).map(([categoryId, categoryData]) => (
+          {isSearching &&
+            (Object.keys(searchResults).length > 0 ? (
+              Object.entries(searchResults).map(([categoryId, categoryData]) => (
                 <div key={categoryId} className="mb-8">
-                  <h2 className="text-2xl font-bold text-primary mb-6">
-                    {categoryData.title}
-                  </h2>
-                  <div className="space-y-4">
-                    {categoryData.questions.map((faq, index) => (
-                      <FAQItem
-                        key={`${categoryId}-${index}`}
-                        itemId={`${categoryId}-${index}`}
-                        question={faq.question}
-                        answer={faq.answer}
-                        isOpen={openIndex === `${categoryId}-${index}`}
-                        onToggle={() =>
-                          setOpenIndex(
-                            openIndex === `${categoryId}-${index}`
-                              ? null
-                              : `${categoryId}-${index}`
-                          )
-                        }
-                      />
-                    ))}
-                  </div>
+                  <h2 className="text-2xl font-bold text-primary mb-6">{categoryData.title}</h2>
+                  <QuestionList
+                    categoryId={`zoek-${categoryId}`}
+                    questions={categoryData.questions}
+                    openId={openId}
+                    setOpenId={setOpenId}
+                  />
                 </div>
               ))
             ) : (
@@ -176,28 +185,26 @@ export default function FAQContent({ searchQuery = "", initialCategory = "algeme
                   Probeer een andere zoekterm of bekijk de categorieën
                 </p>
               </div>
-            )
-          ) : (
-            <div>
-              <h2 className="text-2xl font-bold text-primary mb-6">
-                {faqData[activeCategory].title}
-              </h2>
-              <div className="space-y-4">
-                {faqData[activeCategory].questions.map((faq, index) => (
-                  <FAQItem
-                    key={index}
-                    itemId={`${activeCategory}-${index}`}
-                    question={faq.question}
-                    answer={faq.answer}
-                    isOpen={openIndex === index}
-                    onToggle={() =>
-                      setOpenIndex(openIndex === index ? null : index)
-                    }
-                  />
-                ))}
-              </div>
+            ))}
+
+          {/* Alle categorieën staan in de HTML; alleen de actieve is zichtbaar. */}
+          {faqCategories.map(({ id }) => (
+            <div
+              key={id}
+              id={`tabpanel-${id}`}
+              role="tabpanel"
+              aria-labelledby={`tab-${id}`}
+              hidden={isSearching || activeCategory !== id}
+            >
+              <h2 className="text-2xl font-bold text-primary mb-6">{faqData[id].title}</h2>
+              <QuestionList
+                categoryId={id}
+                questions={faqData[id].questions}
+                openId={openId}
+                setOpenId={setOpenId}
+              />
             </div>
-          )}
+          ))}
         </div>
       </div>
     </section>

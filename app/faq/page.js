@@ -1,8 +1,11 @@
 import { Footer, Header, TopBar } from "@/components/layout";
-import { Suspense } from "react";
-import { faqData } from "./faqData";
+import { allFaqs, faqData, faqPageSchema } from "@/lib/faq";
 import { ContactCTA } from "./components";
 import FAQShell from "./components/FAQShell";
+
+const TITLE = "Veelgestelde vragen over energiebelasting & subsidie | Subzy";
+const DESCRIPTION =
+  "Antwoord op veelgestelde vragen over teruggave energiebelasting, de heffingskorting 2026, ISDE- en SVOH-subsidie, warmtepompsubsidie, kosten en het aanvraagproces.";
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -11,22 +14,12 @@ const jsonLd = {
       "@type": "WebPage",
       "@id": "https://subzy.nl/faq",
       url: "https://subzy.nl/faq",
-      name: "Veelgestelde Vragen | Subzy",
-      description:
-        "Vind antwoord op de meest gestelde vragen over energiebelasting teruggave, ISDE-subsidies, het aanvraagproces en onze kosten.",
+      name: TITLE,
+      description: DESCRIPTION,
       inLanguage: "nl-NL",
       isPartOf: { "@id": "https://subzy.nl" },
     },
-    {
-      "@type": "FAQPage",
-      mainEntity: Object.values(faqData).flatMap((category) =>
-        category.questions.map((q) => ({
-          "@type": "Question",
-          name: q.question,
-          acceptedAnswer: { "@type": "Answer", text: q.answer },
-        }))
-      ),
-    },
+    faqPageSchema(allFaqs),
     {
       "@type": "BreadcrumbList",
       itemListElement: [
@@ -38,16 +31,14 @@ const jsonLd = {
 };
 
 export const metadata = {
-  title: "Veelgestelde Vragen | Subzy",
-  description:
-    "Vind antwoord op de meest gestelde vragen over energiebelasting teruggave, ISDE-subsidies, het aanvraagproces en onze kosten.",
+  title: TITLE,
+  description: DESCRIPTION,
   alternates: {
     canonical: "https://subzy.nl/faq",
   },
   openGraph: {
-    title: "Veelgestelde Vragen | Subzy",
-    description:
-      "Vind antwoord op de meest gestelde vragen over energiebelasting teruggave, ISDE-subsidies en onze diensten.",
+    title: TITLE,
+    description: DESCRIPTION,
     url: "https://subzy.nl/faq",
     type: "website",
     siteName: "Subzy",
@@ -55,13 +46,16 @@ export const metadata = {
   },
   twitter: {
     card: "summary",
-    title: "Veelgestelde Vragen | Subzy",
-    description:
-      "Vind antwoord op de meest gestelde vragen over energiebelasting teruggave en subsidies.",
+    title: TITLE,
+    description: DESCRIPTION,
   },
 };
 
-export default function FAQPage() {
+export default async function FAQPage({ searchParams }) {
+  const { category, q } = await searchParams;
+  const initialCategory = typeof category === "string" && faqData[category] ? category : "algemeen";
+  const initialQuery = typeof q === "string" ? q : "";
+
   return (
     <>
       <script
@@ -71,9 +65,7 @@ export default function FAQPage() {
       <TopBar />
       <Header />
       <main>
-        <Suspense fallback={<div className="hero-bg py-16" />}>
-          <FAQShell />
-        </Suspense>
+        <FAQShell initialCategory={initialCategory} initialQuery={initialQuery} />
         <ContactCTA />
       </main>
       <Footer />

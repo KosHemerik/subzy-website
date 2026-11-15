@@ -11,6 +11,7 @@ import {
   SubsidieTimeline,
   WhatMeasures,
 } from "./components";
+import { faqPageSchema, faqSets, pickFaqs } from "@/lib/faq";
 
 export const metadata = {
   title: "Duurzaamheidssubsidie Aanvragen | ISDE & SVOH | No Cure No Pay | Subzy",
@@ -20,16 +21,21 @@ export const metadata = {
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "Service",
-  name: "Duurzaamheidssubsidie aanvragen",
-  provider: {
-    "@type": "Organization",
-    name: "Subzy",
-    url: "https://subzy.nl",
-  },
-  description: "Subzy regelt uw ISDE of SVOH subsidieaanvraag volledig. No Cure No Pay.",
-  areaServed: "NL",
-  serviceType: "Subsidieaanvraag",
+  "@graph": [
+    {
+      "@type": "Service",
+      name: "Duurzaamheidssubsidie aanvragen",
+      provider: {
+        "@type": "Organization",
+        name: "Subzy",
+        url: "https://subzy.nl",
+      },
+      description: "Subzy regelt uw ISDE of SVOH subsidieaanvraag volledig. No Cure No Pay.",
+      areaServed: "NL",
+      serviceType: "Subsidieaanvraag",
+    },
+    faqPageSchema(pickFaqs(faqSets.subsidie)),
+  ],
 };
 
 export default function SubsidiePage() {

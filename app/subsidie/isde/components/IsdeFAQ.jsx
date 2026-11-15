@@ -2,44 +2,10 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { FaqAnswer } from "@/components/ui";
+import { faqSets, pickFaqs } from "@/lib/faq";
 
-const faqItems = [
-  {
-    question: "Wat is de ISDE subsidie?",
-    answer:
-      "De ISDE (Investeringssubsidie Duurzame Energie en Energiebesparing) is een subsidieregeling van de Nederlandse rijksoverheid, uitgevoerd door RVO. Particuliere woningeigenaren en zakelijke partijen kunnen subsidie aanvragen voor energiebesparende maatregelen zoals warmtepompen, zonneboilers en isolatie.",
-  },
-  {
-    question: "Hoeveel ISDE subsidie kan ik krijgen?",
-    answer:
-      "Het subsidiebedrag is afhankelijk van het type maatregel en het specifieke product. Voor een warmtepomp kunt u tot €3.500 ontvangen, voor een zonneboiler tot €800, en voor isolatie een vast bedrag per m². In 2026 is er in totaal €500 miljoen beschikbaar. Via onze gratis check berekenen we uw exacte subsidiebedrag.",
-  },
-  {
-    question: "Moet ik eerst aanvragen en dan installeren, of andersom?",
-    answer:
-      "Voor particulieren geldt: u mag de maatregel al laten installeren en daarna nog aanvragen — mits de installateur en het product op de RVO-subsidielijst staan. Voor zakelijke aanvragers geldt echter een harde eis: de aanvraag moet worden ingediend vóórdat u het installatiebedrijf opdracht geeft. Vraagt u zakelijk aan? Neem dan eerst contact met ons op.",
-  },
-  {
-    question: "Kan ik ISDE combineren met andere subsidies?",
-    answer:
-      "Ja, in veel gevallen kunt u ISDE combineren met andere regelingen zoals de BTW-vrijstelling op zonnepanelen, de Energiebespaarlening of gemeentelijke subsidies. Subzy helpt u bij het in kaart brengen van alle subsidies waar u recht op heeft, zodat u niets misloopt.",
-  },
-  {
-    question: "Hoe lang duurt de aanvraagprocedure bij RVO?",
-    answer:
-      "Na indiening bij RVO ontvangt u doorgaans binnen enkele weken een beslissing. Voor particulieren gaat dit relatief snel. Zakelijke aanvragen kunnen iets langer duren vanwege de aanvullende controles. Wij houden u op de hoogte van de voortgang.",
-  },
-  {
-    question: "Wat kost het om via Subzy aan te vragen?",
-    answer:
-      "Wij werken op basis van No Cure No Pay. U betaalt een vast tarief van € 79 incl. btw, plus € 15 incl. btw per extra maatregel, alleen bij een succesvolle aanvraag. Wordt de subsidie niet toegekend? Dan betaalt u niets. De gratis subsidiecheck is altijd kosteloos en vrijblijvend.",
-  },
-  {
-    question: "Moet het installatiebedrijf erkend zijn?",
-    answer:
-      "Ja, een erkend installatiebedrijf is verplicht. RVO controleert dit bij de aanvraag. Wij adviseren u over welke installateurs aan de voorwaarden voldoen en controleren dit voor u bij de indiening van uw aanvraag.",
-  },
-];
+const faqItems = pickFaqs(faqSets.isde);
 
 function FAQItem({ question, answer }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -49,15 +15,16 @@ function FAQItem({ question, answer }) {
       <button
         className="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none"
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
       >
         <span className="font-semibold text-primary pr-4">{question}</span>
         <i className={`fa-solid fa-chevron-down text-gray-400 transition-transform shrink-0 ${isOpen ? "rotate-180" : ""}`} />
       </button>
-      {isOpen && (
+      <div inert={!isOpen} className={`overflow-hidden transition-all duration-300 ${isOpen ? "max-h-[600px]" : "max-h-0"}`}>
         <div className="px-6 pb-5">
-          <p className="text-gray-600 text-sm leading-relaxed">{answer}</p>
+          <p className="text-gray-600 text-sm leading-relaxed"><FaqAnswer answer={answer} /></p>
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -74,8 +41,8 @@ export default function IsdeFAQ() {
         </div>
 
         <div className="space-y-4">
-          {faqItems.map((item, i) => (
-            <FAQItem key={i} question={item.question} answer={item.answer} />
+          {faqItems.map((item) => (
+            <FAQItem key={item.id} question={item.question} answer={item.answer} />
           ))}
         </div>
 
